@@ -579,7 +579,7 @@ async function claude(prompt, system) {
       max_tokens: 1000,
       system: system || 'Tu es le rédacteur en chef de KO MAG. Réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick.',
       messages: [{role:'user', content: prompt}]
-    })
+    })d
   });
   const d = await r.json();
   const txt = (d.content||[]).map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
