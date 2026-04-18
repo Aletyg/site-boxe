@@ -272,7 +272,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
       <a href="#equipement">Équipement</a>
     </nav>
     <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
-    <button onclick="configGemini()" title="Configurer Gemini IA Images" style="background:none;border:1px solid var(--grey);color:var(--muted);padding:6px 10px;cursor:pointer;font-size:.75rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--grey)';this.style.color='var(--muted)'">🎨 Illustrations</button>
+
   </div>
 </header>
 
@@ -437,8 +437,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 // CONFIG
 // ════════════════════════════════════════════════════════════════
 const AMAZON_TAG = 'VOTRETAG-21';
-// ↓ Collez votre clé API Google Gemini ici (console.cloud.google.com)
-const GEMINI_API_KEY = localStorage.getItem('gemini_key') || '';
+// Gemini via proxy Vercel — clé cachée côté serveur
 const REFRESH_MS = 15 * 60 * 1000;
 
 const AFF = {
@@ -602,37 +601,21 @@ function setStatus(color, text, time) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// GEMINI — RÉDACTEUR EN CHEF
+// GEMINI — RÉDACTEUR EN CHEF (via proxy Vercel, clé cachée serveur)
 // ════════════════════════════════════════════════════════════════
 async function callGemini(prompt) {
-  const key = GEMINI_API_KEY || localStorage.getItem('gemini_key');
-  if (!key) throw new Error('Clé Gemini non configurée');
-
-  const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.85,
-          maxOutputTokens: 4000,
-          responseMimeType: 'application/json'
-        },
-        systemInstruction: {
-          parts: [{ text: `Tu es le rédacteur en chef de KO MAG, magazine de boxe de référence en France. Tu rédiges des articles longs, fouillés, avec un ton expert et engageant — comme L'Équipe ou RMC Sport. Tes articles font minimum 400 mots, structurés en 4-5 paragraphes distincts. Tu utilises les vraies actualités qu'on te fournit pour contextualiser. Tu réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick.` }]
-        }
-      })
-    }
-  );
+  const r = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt, task: 'text' })
+  });
   if (!r.ok) {
-    const err = await r.json().catch(() => ({}));
-    throw new Error('Gemini ' + r.status + ': ' + (err.error?.message || ''));
+    const e = await r.json().catch(() => ({}));
+    throw new Error('Proxy Gemini ' + r.status + ': ' + (e.error || ''));
   }
   const d = await r.json();
-  const txt = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
-  return safeJSON(txt.replace(/```json|```/g, '').trim());
+  if (d.error) throw new Error(d.error);
+  return safeJSON(d.result);
 }
 
 function safeJSON(txt) {
@@ -658,31 +641,21 @@ function safeJSON(txt) {
 const imgCache = {}; // cache pour ne pas regénérer la même image
 
 async function generateImage(prompt) {
-  const key = GEMINI_API_KEY || localStorage.getItem('gemini_key');
-  if (!key) return null;
-  // Vérifier le cache
   if (imgCache[prompt]) return imgCache[prompt];
   try {
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${key}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          instances: [{ prompt: `Professional boxing photo, ${prompt}, dramatic lighting, sports photography, high quality, cinematic` }],
-          parameters: { sampleCount: 1, aspectRatio: '16:9', safetySetting: 'block_only_high' }
-        })
-      }
-    );
-    if (!r.ok) throw new Error('Gemini ' + r.status);
+    const fullPrompt = `Professional boxing photo, ${prompt}, dramatic lighting, sports photography, high quality, cinematic`;
+    const r = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: fullPrompt, task: 'image' })
+    });
+    if (!r.ok) throw new Error('Proxy image ' + r.status);
     const d = await r.json();
-    const b64 = d.predictions?.[0]?.bytesBase64Encoded;
-    if (!b64) throw new Error('No image returned');
-    const dataUrl = `data:image/png;base64,${b64}`;
-    imgCache[prompt] = dataUrl;
-    return dataUrl;
+    if (!d.image) throw new Error('Pas d'image');
+    imgCache[prompt] = d.image;
+    return d.image;
   } catch(e) {
-    console.info('Gemini image error:', e.message);
+    console.info('Image generation skipped:', e.message);
     return null;
   }
 }
@@ -743,15 +716,13 @@ async function loadNews() {
     updateTicker(articles);
     setStatus('yellow', '🔄 Chargement des actualités...', '');
     observeAll();
-    // Générer illustrations Gemini pour les articles statiques en arrière-plan
-    if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
-      enrichArticlesWithImages([...STATIC_ARTICLES]).then(enriched => {
-        articles = enriched;
-        renderNews(articles);
-        updateHero(articles[0]);
-        updateSidebar(articles.slice(1,5));
-      }).catch(() => {});
-    }
+    // Générer illustrations en arrière-plan
+    enrichArticlesWithImages([...STATIC_ARTICLES]).then(enriched => {
+      articles = enriched;
+      renderNews(articles);
+      updateHero(articles[0]);
+      updateSidebar(articles.slice(1,5));
+    }).catch(() => {});
   }
 
   // ÉTAPE 2 — Vraies news via proxy Vercel
@@ -821,17 +792,15 @@ CAHIER DES CHARGES STRICT :
       updateSidebar(articles.slice(1,5));
       updateTicker(articles);
 
-      // Enrichir avec images Gemini en arrière-plan si clé disponible
-      if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
-        setStatus('yellow', '🔄 Chargement des illustrations...', '');
-        enrichArticlesWithImages(final).then(enriched => {
-          articles = enriched;
-          renderNews(articles);
-          updateHero(articles[0]);
-          updateSidebar(articles.slice(1,5));
-          setStatus('green', '🟢 Actualités en direct — KO MAG', '');
-        }).catch(() => {});
-      }
+      // Enrichir avec illustrations en arrière-plan
+      setStatus('yellow', '🔄 Chargement des illustrations...', '');
+      enrichArticlesWithImages(final).then(enriched => {
+        articles = enriched;
+        renderNews(articles);
+        updateHero(articles[0]);
+        updateSidebar(articles.slice(1,5));
+        setStatus('green', '🟢 Actualités en direct — KO MAG', '');
+      }).catch(() => {});
 
       aiLoaded = true;
       lastUpdate = new Date();
@@ -1108,29 +1077,6 @@ function observeAll() {
 
 // ════════════════════════════════════════════════════════════════
 // INIT
-// ════════════════════════════════════════════════════════════════
-// ════════════════════════════════════════════════════════════════
-// CONFIG GEMINI UI
-// ════════════════════════════════════════════════════════════════
-function configGemini() {
-  const current = localStorage.getItem('gemini_key') || '';
-  const key = prompt(
-    '🎨 Configuration des illustrations (Gemini)\n\n' +
-    'Obtenez votre clé gratuite sur : aistudio.google.com\n' +
-    '(Imagen 3 est gratuit avec quota généreux)\n\n' +
-    'Clé actuelle : ' + (current ? current.slice(0,8) + '...' : 'non configurée'),
-    current
-  );
-  if (key === null) return; // annulé
-  if (key.trim().length > 10) {
-    localStorage.setItem('gemini_key', key.trim());
-    alert('✅ Configuration enregistrée ! Les illustrations vont se générer automatiquement.');
-    loadNews(); // recharger avec images
-  } else if (key.trim() === '') {
-    localStorage.removeItem('gemini_key');
-    alert('Clé Gemini supprimée.');
-  }
-}
 
 async function init() {
   setStatus('yellow', '🔄 Connexion au serveur d\'actualités...', '');
