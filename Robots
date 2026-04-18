@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://komag.fr/sitemap.xml
+
+# Bloquer les ressources inutiles pour les bots
+Disallow: /api/
