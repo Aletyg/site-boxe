@@ -983,36 +983,26 @@ async function loadNews() {
     : '';
 
   try {
-    // 6 appels en parallèle — 1 article par appel pour JSON minimal
-    const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
-    const boxeurs = ['Usyk','Fury','Canelo','Crawford','Davis','Garcia'];
-    const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
-    const date = new Date().toLocaleDateString('fr-FR');
-
-    const singlePrompt = (i) => {
-      const hasReal = ctx && realNewsForGemini[i];
-      const realArt = hasReal ? realNewsForGemini[i] : null;
-      return `KO MAG redacteur boxe. Date: ${date}.
-${hasReal ? `Traduis et réécris cet article en français professionnel:\nTitre original: "${realArt.titre}"\nResume: "${realArt.resume}"\nSource: ${realArt.source}\nURL originale: ${realArt.url}` : `Redige un article sur ${boxeurs[i]} en boxe.`}
-
-JSON uniquement (pas apostrophe dans valeurs):
-{"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","contenu":"...","temps":"${hasReal ? timeAgo(realArt.date) : 'Il y a ' + (i+1) + 'h'}","source":"${hasReal ? realArt.source : sources[i]}","url":"${hasReal ? realArt.url : ''}"}]}
-
-- titre: traduit en français accrocheur
-- categorie: ${cats[i]}
-- resume: 1 phrase française max 12 mots
-- contenu: 2 paragraphes français separes par ###, style LEquipe, 80 mots chacun
-- Inclure faits precis et contexte boxe`;
-    };
-
-    const results = await Promise.all([0,1,2,3,4,5].map(i => 
-      callGemini(singlePrompt(i)).catch(() => null)
-    ));
-
-    const allArts = results
-      .filter(r => r && r.articles && r.articles.length > 0)
-      .flatMap(r => r.articles);
-    const d = { articles: allArts };
+    // Appel au cache serveur — articles déjà générés et mis en cache 1h
+    let d = { articles: [] };
+    try {
+      const cacheResp = await fetch('/api/articles', { cache: 'no-store' });
+      if (cacheResp.ok) {
+        const cacheData = await cacheResp.json();
+        d = { articles: cacheData.articles || [] };
+        const wasCached = cacheData.cached;
+        console.info('[KO MAG] Articles:', wasCached ? 'servis depuis le cache ⚡' : 'fraîchement générés 🔄');
+      }
+    } catch(e) {
+      console.warn('[KO MAG] /api/articles indisponible, fallback IA directe');
+      // Fallback : générer directement si le cache est indisponible
+      const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
+      const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
+      const results = await Promise.all(cats.map((cat, i) =>
+        callGemini(`KO MAG. JSON: {"articles":[{"titre":"...","categorie":"${cat}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}","url":""}]} 1 article boxe. resume 10 mots. contenu 2x80 mots separes ###.`).catch(() => null)
+      ));
+      d = { articles: results.filter(r => r?.articles?.length > 0).flatMap(r => r.articles) };
+    }
 
     if (d && d.articles && d.articles.length > 0) {
       let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
@@ -1078,18 +1068,38 @@ function timeAgo(str) {
 // ════════════════════════════════════════════════════════════════
 // RENDER
 // ════════════════════════════════════════════════════════════════
+// Images Unsplash boxing par catégorie
+const BOXING_IMGS = {
+  'RÉSULTATS': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80',
+  'ANALYSE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
+  'INTERVIEW': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+  'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80',
+  'ÉVÉNEMENT': 'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80',
+  'TRANSFERTS': 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80',
+  'LIVE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
+  'default': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
+};
+
+// Mots-clés NON boxing — images à remplacer
+const NON_BOXING_KEYWORDS = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','athlet','cricket','baseball','hockey','nfl','nba','mlb','nhl'];
+
+function isBoxingImage(url) {
+  if (!url) return false;
+  const u = url.toLowerCase();
+  // Vérifier que l'URL ne contient pas de mots-clés non boxing
+  return !NON_BOXING_KEYWORDS.some(k => u.includes(k));
+}
+
+function getBoxingImg(article, index) {
+  // Si l'article a une image ET qu'elle semble liée à la boxe → l'utiliser
+  if (article.img && isBoxingImage(article.img)) return article.img;
+  // Sinon utiliser une photo Unsplash boxing par catégorie
+  return BOXING_IMGS[article.categorie] || BOXING_IMGS.default;
+}
+
 function renderNews(list) {
   document.getElementById('news-grid').innerHTML = list.map((a, i) => {
-    // Choisir une image Unsplash boxing si pas d'image disponible
-    const BOXING_IMGS = [
-      "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80",
-      "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80",
-      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
-      "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80",
-      "https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80",
-    ];
-    const imgSrc = a.img || BOXING_IMGS[i % BOXING_IMGS.length];
+    const imgSrc = getBoxingImg(a, i);
     return `
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
       <div class="news-card-img">
@@ -1120,12 +1130,9 @@ function updateHero(a) {
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
   // Image hero
-  const heroImgs = [
-    "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85",
-    "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=1200&q=85",
-    "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=85",
-  ];
-  const heroImg = a.img || heroImgs[Math.floor(Math.random() * heroImgs.length)];
+  const heroImg = (a.img && isBoxingImage(a.img)) 
+    ? a.img 
+    : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
   const heroMain = document.querySelector('.hero-main');
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
   heroMain.style.backgroundSize = 'cover';
