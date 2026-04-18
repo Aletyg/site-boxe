@@ -28,22 +28,16 @@ export default async function handler(req, res) {
       const d = await r.json();
       if (!r.ok) throw new Error(d.error?.message || 'Imagen error ' + r.status);
       const b64 = d.predictions?.[0]?.bytesBase64Encoded;
-      if (!b64) throw new Error('Pas d\'image retournée');
+      if (!b64) throw new Error('Pas image');
       res.setHeader('Cache-Control', 's-maxage=3600');
       return res.status(200).json({ image: `data:image/png;base64,${b64}` });
     } catch(err) {
-      console.error('[KO MAG] Image error:', err.message);
       return res.status(502).json({ error: err.message });
     }
   }
 
-  // Modèles stables disponibles en avril 2026
-  const MODELS = [
-    'gemini-2.5-flash',
-    'gemini-2.5-flash-lite',
-    'gemini-2.0-flash-lite',
-    'gemini-1.5-flash',
-  ];
+  // Modèles disponibles
+  const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
   let lastError = null;
   for (const model of MODELS) {
@@ -56,13 +50,13 @@ export default async function handler(req, res) {
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.85,
-              maxOutputTokens: 4000,
+              temperature: 0.7,
+              maxOutputTokens: 1200,
               responseMimeType: 'application/json'
             },
             systemInstruction: {
               parts: [{
-                text: `Tu es le rédacteur en chef de KO MAG, magazine de boxe de référence en France. Tu rédiges des articles longs, fouillés, avec un ton expert — comme L'Équipe ou RMC Sport. Tes articles font minimum 400 mots, 4-5 paragraphes séparés par ###. Tu réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick.`
+                text: 'Tu es redacteur de KO MAG. Reponds UNIQUEMENT en JSON valide et complet. Pas apostrophes dans les valeurs JSON. Texte court.'
               }]
             }
           })
@@ -72,22 +66,33 @@ export default async function handler(req, res) {
       const d = await r.json();
       if (!r.ok) {
         lastError = d.error?.message || 'HTTP ' + r.status;
-        console.error(`[KO MAG] Model ${model} failed:`, lastError);
+        console.error(`Model ${model} failed:`, lastError);
         continue;
       }
 
       const txt = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      if (!txt) { lastError = 'Réponse vide'; continue; }
+      if (!txt) { lastError = 'Reponse vide'; continue; }
+
+      const clean = txt.replace(/```json|```/g, '').trim();
+      
+      // Valider que le JSON est complet
+      try {
+        JSON.parse(clean);
+      } catch(jsonErr) {
+        lastError = 'JSON incomplet: ' + jsonErr.message;
+        console.error(`Model ${model} JSON invalide:`, lastError);
+        continue; // essayer le modèle suivant
+      }
 
       res.setHeader('Cache-Control', 's-maxage=600');
-      console.log(`[KO MAG] Success with model: ${model}`);
-      return res.status(200).json({ result: txt.replace(/```json|```/g, '').trim(), model });
+      console.log(`Success: ${model}`);
+      return res.status(200).json({ result: clean, model });
 
     } catch(err) {
       lastError = err.message;
-      console.error(`[KO MAG] Model ${model} exception:`, err.message);
+      console.error(`Model ${model} exception:`, err.message);
     }
   }
 
-  return res.status(502).json({ error: 'Tous les modèles ont échoué: ' + lastError });
+  return res.status(502).json({ error: 'Echec: ' + lastError });
 }
