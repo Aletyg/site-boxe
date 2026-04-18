@@ -604,18 +604,29 @@ function setStatus(color, text, time) {
 // GEMINI — RÉDACTEUR EN CHEF (via proxy Vercel, clé cachée serveur)
 // ════════════════════════════════════════════════════════════════
 async function callGemini(prompt) {
-  const r = await fetch('/api/gemini', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, task: 'text' })
-  });
-  if (!r.ok) {
-    const e = await r.json().catch(() => ({}));
-    throw new Error('Proxy Gemini ' + r.status + ': ' + (e.error || ''));
+  // Timeout 20s — si Gemini ne répond pas, on garde les articles statiques
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const r = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, task: 'text' }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      throw new Error('Proxy Gemini ' + r.status + ': ' + (e.error || ''));
+    }
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+    return safeJSON(d.result);
+  } catch(e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('Timeout Gemini');
+    throw e;
   }
-  const d = await r.json();
-  if (d.error) throw new Error(d.error);
-  return safeJSON(d.result);
 }
 
 function safeJSON(txt) {
@@ -651,7 +662,7 @@ async function generateImage(prompt) {
     });
     if (!r.ok) throw new Error('Proxy image ' + r.status);
     const d = await r.json();
-    if (!d.image) throw new Error('Pas d'image');
+    if (!d.image) throw new Error("Pas d'image");
     imgCache[prompt] = d.image;
     return d.image;
   } catch(e) {
@@ -693,7 +704,9 @@ async function enrichArticlesWithImages(arts) {
 // ════════════════════════════════════════════════════════════════
 async function fetchProxy() {
   try {
-    const r = await fetch('/api/news', { cache: 'no-store' });
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 5000); // timeout 5s
+    const r = await fetch('/api/news', { cache: 'no-store', signal: controller.signal });
     if (!r.ok) return null;
     const d = await r.json();
     return d.articles?.length ? d.articles : null;
@@ -707,23 +720,7 @@ async function loadNews() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('loading');
 
-  // ÉTAPE 1 — Afficher statique IMMÉDIATEMENT (toujours)
-  if (!aiLoaded) {
-    articles = [...STATIC_ARTICLES];
-    renderNews(articles);
-    updateHero(articles[0]);
-    updateSidebar(articles.slice(1,5));
-    updateTicker(articles);
-    setStatus('yellow', '🔄 Chargement des actualités...', '');
-    observeAll();
-    // Générer illustrations en arrière-plan
-    enrichArticlesWithImages([...STATIC_ARTICLES]).then(enriched => {
-      articles = enriched;
-      renderNews(articles);
-      updateHero(articles[0]);
-      updateSidebar(articles.slice(1,5));
-    }).catch(() => {});
-  }
+  // Statique déjà affiché par init() — on passe directement aux vraies news
 
   // ÉTAPE 2 — Vraies news via proxy Vercel
   const realNews = await fetchProxy();
@@ -1079,15 +1076,26 @@ function observeAll() {
 // INIT
 
 async function init() {
-  setStatus('yellow', '🔄 Connexion au serveur d\'actualités...', '');
+  // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
   renderFights('upcoming');
   renderRanks('heavyweight');
   renderEquip('all');
   renderTipsStatic('technique');
-  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1200);
-  await loadNews();
-  await loadTips('technique');
+  articles = [...STATIC_ARTICLES];
+  renderNews(articles);
+  updateHero(articles[0]);
+  updateSidebar(articles.slice(1,5));
+  updateTicker(articles);
+  setStatus('yellow', '🔄 Chargement des dernières actualités...', '');
   observeAll();
+
+  // Cacher le loader immédiatement — le contenu est déjà visible
+  document.getElementById('loader').classList.add('hidden');
+
+  // Charger les vraies actualités en arrière-plan (sans bloquer)
+  loadNews().catch(e => console.info('loadNews:', e.message));
+  loadTips('technique').catch(() => {});
+
   setInterval(loadNews, REFRESH_MS);
   setInterval(() => {
     if (lastUpdate) document.getElementById('s-time').textContent =
