@@ -578,11 +578,17 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   <div class="container">
     <div class="section-hd">
       <h2 class="section-title">CLASS<span>EMENT</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="refresh-btn" id="ranks-btn" onclick="loadRanks(currentWeightClass)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Actualiser
+      </button>
       <div class="tabs" style="border:none;margin:0;">
         <button class="tab-btn active" onclick="switchWeight('heavyweight',this)">Lourds</button>
         <button class="tab-btn" onclick="switchWeight('super-middleweight',this)">S-Moyens</button>
         <button class="tab-btn" onclick="switchWeight('welterweight',this)">Welters</button>
         <button class="tab-btn" onclick="switchWeight('lightweight',this)">Légers</button>
+      </div>
       </div>
     </div>
     <table class="ranking-table" id="ranking-table"></table>
@@ -748,33 +754,33 @@ const EQUIP = [
 
 const RANKS = {
   heavyweight:[
-    {name:'Oleksandr Usyk',country:'🇺🇦 Ukraine',record:'23-0 (14 KO)',org:'WBA·WBO·IBF·IBO',trend:'—'},
-    {name:'Tyson Fury',country:'🇬🇧 Angleterre',record:'34-1-1 (24 KO)',org:'WBC',trend:'↓'},
-    {name:'Daniel Dubois',country:'🇬🇧 Angleterre',record:'21-2 (20 KO)',org:'IBF',trend:'↑'},
-    {name:'Anthony Joshua',country:'🇬🇧 Angleterre',record:'27-4 (24 KO)',org:'Ex-Champion',trend:'↑'},
-    {name:'Zhilei Zhang',country:'🇨🇳 Chine',record:'27-1-1 (22 KO)',org:'WBO #2',trend:'↑'},
-    {name:'Deontay Wilder',country:'🇺🇸 États-Unis',record:'43-3-1 (42 KO)',org:'Ex-WBC',trend:'—'},
+    {name:'Oleksandr Usyk',flag:'🇺🇦',country:'Ukraine',record:'23-0 (14 KO)',org:'WBA·WBO·IBF·IBO',trend:'—'},
+    {name:'Tyson Fury',flag:'🇬🇧',country:'Angleterre',record:'34-1-1 (24 KO)',org:'WBC',trend:'↓'},
+    {name:'Daniel Dubois',flag:'🇬🇧',country:'Angleterre',record:'21-2 (20 KO)',org:'IBF',trend:'↑'},
+    {name:'Anthony Joshua',flag:'🇬🇧',country:'Angleterre',record:'27-4 (24 KO)',org:'Ex-Champion',trend:'↑'},
+    {name:'Zhilei Zhang',flag:'🇨🇳',country:'Chine',record:'27-1-1 (22 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Deontay Wilder',flag:'🇺🇸',country:'États-Unis',record:'43-3-1 (42 KO)',org:'Ex-WBC',trend:'—'},
   ],
   'super-middleweight':[
-    {name:"Canelo Alvarez",country:'🇲🇽 Mexique',record:'61-2-2 (39 KO)',org:'WBA·WBC·WBO·IBF',trend:'—'},
-    {name:'David Benavidez',country:'🇺🇸 États-Unis',record:'29-0 (24 KO)',org:'WBC #1',trend:'↑'},
-    {name:'Jermall Charlo',country:'🇺🇸 États-Unis',record:'32-0 (22 KO)',org:'WBC',trend:'↓'},
-    {name:'Edgar Berlanga',country:'🇵🇷 Porto Rico',record:'22-0 (17 KO)',org:'WBO #3',trend:'↑'},
-    {name:'Chris Eubank Jr',country:'🇬🇧 Angleterre',record:'33-3 (24 KO)',org:'WBO #4',trend:'—'},
+    {name:'Canelo Alvarez',flag:'🇲🇽',country:'Mexique',record:'61-2-2 (39 KO)',org:'WBA·WBC·WBO·IBF',trend:'—'},
+    {name:'David Benavidez',flag:'🇺🇸',country:'États-Unis',record:'29-0 (24 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Edgar Berlanga',flag:'🇵🇷',country:'Porto Rico',record:'22-0 (17 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Chris Eubank Jr',flag:'🇬🇧',country:'Angleterre',record:'33-3 (24 KO)',org:'WBO #3',trend:'—'},
+    {name:'Carlos Adames',flag:'🇩🇴',country:'Rép. Dominicaine',record:'24-1 (18 KO)',org:'WBC #4',trend:'↑'},
   ],
   welterweight:[
-    {name:'Terence Crawford',country:'🇺🇸 États-Unis',record:'40-0 (31 KO)',org:'WBA·WBO·IBF',trend:'—'},
-    {name:'Errol Spence Jr',country:'🇺🇸 États-Unis',record:'29-1 (22 KO)',org:'WBC',trend:'↓'},
-    {name:'Jaron Ennis',country:'🇺🇸 États-Unis',record:'31-0 (28 KO)',org:'IBF',trend:'↑'},
-    {name:'Vergil Ortiz Jr',country:'🇺🇸 États-Unis',record:'22-0 (22 KO)',org:'WBO #2',trend:'↑'},
-    {name:'Sebastian Fundora',country:'🇺🇸 États-Unis',record:'21-1-1 (13 KO)',org:'WBC #3',trend:'↑'},
+    {name:'Terence Crawford',flag:'🇺🇸',country:'États-Unis',record:'40-0 (31 KO)',org:'WBA·WBO·IBF',trend:'—'},
+    {name:'Jaron Ennis',flag:'🇺🇸',country:'États-Unis',record:'31-0 (28 KO)',org:'IBF',trend:'↑'},
+    {name:'Vergil Ortiz Jr',flag:'🇺🇸',country:'États-Unis',record:'22-0 (22 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Sebastian Fundora',flag:'🇺🇸',country:'États-Unis',record:'21-1-1 (13 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Errol Spence Jr',flag:'🇺🇸',country:'États-Unis',record:'29-1 (22 KO)',org:'Ex-WBC',trend:'↓'},
   ],
   lightweight:[
-    {name:'Gervonta Davis',country:'🇺🇸 États-Unis',record:'31-0 (28 KO)',org:'WBA',trend:'—'},
-    {name:'Devin Haney',country:'🇺🇸 États-Unis',record:'31-1 (15 KO)',org:'WBC·WBO',trend:'↓'},
-    {name:'Ryan Garcia',country:'🇺🇸 États-Unis',record:'24-1 (20 KO)',org:'WBO #2',trend:'↑'},
-    {name:'Vasyl Lomachenko',country:'🇺🇦 Ukraine',record:'17-3 (11 KO)',org:'WBO',trend:'—'},
-    {name:'William Zepeda',country:'🇲🇽 Mexique',record:'31-0 (27 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Gervonta Davis',flag:'🇺🇸',country:'États-Unis',record:'31-0 (28 KO)',org:'WBA',trend:'—'},
+    {name:'Devin Haney',flag:'🇺🇸',country:'États-Unis',record:'31-1 (15 KO)',org:'WBC·WBO',trend:'↓'},
+    {name:'William Zepeda',flag:'🇲🇽',country:'Mexique',record:'31-0 (27 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Ryan Garcia',flag:'🇺🇸',country:'États-Unis',record:'24-1 (20 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Vasyl Lomachenko',flag:'🇺🇦',country:'Ukraine',record:'17-3 (11 KO)',org:'WBO',trend:'—'},
   ],
 };
 
@@ -1264,19 +1270,57 @@ function switchFight(t, el) {
 function renderRanks(wc) {
   const medals = ['gold','silver','bronze'];
   document.getElementById('ranking-table').innerHTML =
-    '<thead><tr><th>#</th><th>Boxeur</th><th>Pays</th><th>Bilan</th><th>Titre / Rang</th><th>↕</th></tr></thead><tbody>' +
+    '<thead><tr><th>#</th><th>Boxeur</th><th style="text-align:center">Pays</th><th>Bilan</th><th>Titre / Rang</th><th>↕</th></tr></thead><tbody>' +
     (RANKS[wc]||[]).map((f,i) =>
       '<tr><td><div class="rank-num ' + (medals[i]||'') + '">' + (i+1) + '</div></td>' +
       '<td><div class="fighter-name">' + f.name + '</div></td>' +
-      '<td class="fighter-country">' + f.country + '</td>' +
+      '<td style="text-align:center">' +
+        '<span style="font-size:1.4rem;line-height:1" title="' + f.country + '">' + (f.flag||'') + '</span>' +
+        '<div style="font-size:.65rem;color:var(--muted);font-family:Barlow Condensed,sans-serif;letter-spacing:.05em;">' + f.country + '</div>' +
+      '</td>' +
       '<td class="fighter-record">' + f.record + '</td>' +
       '<td class="fighter-org">' + f.org + '</td>' +
       '<td class="' + (f.trend==='↑'?'trend-up':f.trend==='↓'?'trend-down':'trend-same') + '">' + f.trend + '</td></tr>'
     ).join('') + '</tbody>';
 }
+let currentWeightClass = 'heavyweight';
+
 function switchWeight(wc, el) {
   document.querySelectorAll('#classement .tab-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active'); renderRanks(wc);
+  el.classList.add('active');
+  currentWeightClass = wc;
+  renderRanks(wc);
+}
+
+async function loadRanks(wc) {
+  const btn = document.getElementById('ranks-btn');
+  if (btn) btn.classList.add('loading');
+  try {
+    const weightNames = {
+      'heavyweight': 'poids lourds',
+      'super-middleweight': 'super-moyens',
+      'welterweight': 'welters',
+      'lightweight': 'poids légers'
+    };
+    const d = await callGemini(
+      `Donne le classement mondial actuel ${weightNames[wc]||wc} en boxe (avril 2026).
+JSON: {"fighters":[{"name":"...","flag":"...","country":"...","record":"...","org":"...","trend":"..."}]}
+- 5 boxeurs maximum
+- flag: emoji drapeau du pays
+- country: nom du pays en francais
+- record: format "X-Y (Z KO)"
+- org: organisation(s) WBA WBC WBO IBF ou rang comme WBC #1
+- trend: uniquement ↑ ↓ ou —
+- Basé sur les vrais classements actuels 2026`
+    );
+    if (d && d.fighters && d.fighters.length > 0) {
+      RANKS[wc] = d.fighters;
+      renderRanks(wc);
+    }
+  } catch(e) {
+    console.info('Classement: fallback statique');
+  }
+  if (btn) btn.classList.remove('loading');
 }
 
 function renderEquip(tab) {
@@ -1328,6 +1372,7 @@ async function init() {
   // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
   renderFights('upcoming');
   renderRanks('heavyweight');
+  loadRanks('heavyweight'); // Mise à jour Gemini en arrière-plan
   renderEquip('all');
   renderTipsStatic('technique');
   articles = [...STATIC_ARTICLES];
