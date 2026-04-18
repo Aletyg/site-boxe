@@ -85,8 +85,8 @@ section{padding:50px 0}
 .news-card-img{width:100%;aspect-ratio:16/9;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--grey);flex-shrink:0;position:relative;overflow:hidden}
 .news-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
 .news-card-img .fallback{font-size:2.5rem;z-index:1;position:relative}
-.badge-real{position:absolute;top:8px;left:8px;background:#22C55E;color:white;font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;z-index:2}
-.badge-ai{position:absolute;top:8px;left:8px;background:var(--smoke);color:var(--gold);border:1px solid var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;z-index:2}
+.badge-live{position:absolute;top:8px;left:8px;background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;z-index:2}
+
 .news-card-body{padding:18px;flex:1;display:flex;flex-direction:column}
 .news-card-src{font-family:'Barlow Condensed',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#22C55E;margin-bottom:5px}
 .news-card-cat{font-family:'Barlow Condensed',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
@@ -272,7 +272,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
       <a href="#equipement">Équipement</a>
     </nav>
     <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
-    <button onclick="configGemini()" title="Configurer Gemini IA Images" style="background:none;border:1px solid var(--grey);color:var(--muted);padding:6px 10px;cursor:pointer;font-size:.75rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--grey)';this.style.color='var(--muted)'">🎨 IA Images</button>
+    <button onclick="configGemini()" title="Configurer Gemini IA Images" style="background:none;border:1px solid var(--grey);color:var(--muted);padding:6px 10px;cursor:pointer;font-size:.75rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--grey)';this.style.color='var(--muted)'">🎨 Illustrations</button>
   </div>
 </header>
 
@@ -297,7 +297,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   <div class="hero">
     <div class="hero-main">
       <div class="hero-eyebrow"><div class="sb-live-dot"></div><span>À LA UNE</span></div>
-      <div class="hero-live-badge" id="hero-live-badge"><div class="sb-live-dot"></div>SOURCE VÉRIFIÉE EN TEMPS RÉEL</div>
+      
       <h1 class="hero-title" id="hero-title">Actualités en cours de chargement...</h1>
       <p class="hero-excerpt" id="hero-excerpt">Connexion aux sources d'actualités internationales de boxe.</p>
       <div class="hero-meta" id="hero-meta"></div>
@@ -336,7 +336,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <div class="tabs">
       <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
       <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
-      <button class="tab-btn" onclick="switchFight('predictions',this)">Prédictions IA</button>
+      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
     </div>
     <div class="fights-grid" id="fights-grid"></div>
   </div>
@@ -416,7 +416,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <div class="footer-grid">
       <div class="footer-brand">
         <h3>KO <span>MAG</span></h3>
-        <p>Magazine de boxe propulsé par NewsAPI et Claude IA. Actualités en temps réel, classements, conseils d'experts et équipement sélectionné pour les passionnés de boxe.</p>
+        <p>Le magazine de référence sur la boxe. Actualités en temps réel, analyses de combats, classements mondiaux et équipement sélectionné par nos experts.</p>
         <div class="footer-socials">
           <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
         </div>
@@ -427,7 +427,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     </div>
     <div class="footer-bottom">
       <span>© 2025 KO MAG — Tous droits réservés</span>
-      <span>NewsAPI · Claude IA · Auto-refresh toutes les 15 min</span>
+      <span>Actualités en temps réel · Mise à jour automatique · KO MAG</span>
     </div>
   </div>
 </footer>
@@ -578,9 +578,9 @@ const FIGHTS = {
     {f1:'Dubois',r1:'21-1',f2:'Parker',r2:'34-3',title:'Championnat IBF Poids Lourds',date:'28 SEPT 2024',extra:'🏆 Dubois UD12',link:'#'},
   ],
   predictions:[
-    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Analyse IA — Poids Lourds',date:'PRÉDICTION IA',extra:'🤖 Usyk UD12 — Confiance 72%',link:'#'},
-    {f1:'Garcia',r1:'24-1',f2:'Haney',r2:'31-1',title:'Revanche potentielle 2025',date:'PRÉDICTION IA',extra:'🤖 Garcia KO6 — Confiance 58%',link:'#'},
-    {f1:'Davis',r1:'31-0',f2:'Garcia',r2:'24-1',title:'Duel rêvé Poids Légers',date:'PRÉDICTION IA',extra:'🤖 Davis UD12 — Confiance 61%',link:'#'},
+    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Pronostic — Poids Lourds',date:'PRONOSTIC',extra:'Usyk UD12 — Favori',link:'#'},
+    {f1:'Garcia',r1:'24-1',f2:'Haney',r2:'31-1',title:'Revanche potentielle 2026',date:'PRONOSTIC',extra:'Garcia KO6 — Légèrement favori',link:'#'},
+    {f1:'Davis',r1:'31-0',f2:'Garcia',r2:'24-1',title:'Duel rêvé Poids Légers',date:'PRONOSTIC',extra:'Davis UD12 — Favori',link:'#'},
   ],
 };
 
@@ -602,24 +602,37 @@ function setStatus(color, text, time) {
 }
 
 // ════════════════════════════════════════════════════════════════
-// CLAUDE AI
+// GEMINI — RÉDACTEUR EN CHEF
 // ════════════════════════════════════════════════════════════════
-async function callClaude(prompt) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
-      system: 'Tu es rédacteur en chef de KO MAG. Réponds TOUJOURS en JSON valide et complet, sans markdown, sans backtick, sans texte avant ou après le JSON.',
-      messages: [{ role: 'user', content: prompt }]
-    })
-  });
-  if (!r.ok) throw new Error('Claude HTTP ' + r.status);
+async function callGemini(prompt) {
+  const key = GEMINI_API_KEY || localStorage.getItem('gemini_key');
+  if (!key) throw new Error('Clé Gemini non configurée');
+
+  const r = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.85,
+          maxOutputTokens: 4000,
+          responseMimeType: 'application/json'
+        },
+        systemInstruction: {
+          parts: [{ text: `Tu es le rédacteur en chef de KO MAG, magazine de boxe de référence en France. Tu rédiges des articles longs, fouillés, avec un ton expert et engageant — comme L'Équipe ou RMC Sport. Tes articles font minimum 400 mots, structurés en 4-5 paragraphes distincts. Tu utilises les vraies actualités qu'on te fournit pour contextualiser. Tu réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick.` }]
+        }
+      })
+    }
+  );
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({}));
+    throw new Error('Gemini ' + r.status + ': ' + (err.error?.message || ''));
+  }
   const d = await r.json();
-  if (d.error) throw new Error(d.error.message);
-  let txt = (d.content || []).map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
-  return safeJSON(txt);
+  const txt = d.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  return safeJSON(txt.replace(/```json|```/g, '').trim());
 }
 
 function safeJSON(txt) {
@@ -728,7 +741,7 @@ async function loadNews() {
     updateHero(articles[0]);
     updateSidebar(articles.slice(1,5));
     updateTicker(articles);
-    setStatus('yellow', '🤖 Chargement des actualités...', '');
+    setStatus('yellow', '🔄 Chargement des actualités...', '');
     observeAll();
     // Générer illustrations Gemini pour les articles statiques en arrière-plan
     if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
@@ -744,25 +757,39 @@ async function loadNews() {
   // ÉTAPE 2 — Vraies news via proxy Vercel
   const realNews = await fetchProxy();
 
-  // ÉTAPE 3 — Enrichissement Claude IA
+  // ÉTAPE 3 — Rédaction et enrichissement
   const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const ctx = realNews
     ? 'Actualités réelles disponibles : ' + realNews.slice(0,4).map(a => '"' + a.title + '"').join(', ') + '. Inspire-toi en. '
     : '';
 
   try {
-    const d = await callClaude(
-      ctx + 'Date du jour : ' + today + '.\n' +
-      'Génère exactement 6 articles d\'actualité boxe. Réponds avec ce JSON uniquement :\n' +
-      '{"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","emoji":"...","source":"..."}]}\n' +
-      'RÈGLES STRICTES :\n' +
-      '- 6 articles exactement, JSON complet\n' +
-      '- categorie : RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT, TRANSFERTS\n' +
-      '- temps : "Il y a Xh" (varier de 1h à 10h)\n' +
-      '- source : L\'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports, BBC Sport\n' +
-      '- contenu : 2 paragraphes courts séparés par ###\n' +
-      '- resume : max 10 mots\n' +
-      '- Citer au moins un de : Usyk, Fury, Canelo, Crawford, Davis, Garcia'
+    const d = await callGemini(
+      `Tu es rédacteur en chef de KO MAG. Nous sommes le ${today}.
+
+ACTUALITÉS DU JOUR DISPONIBLES (utilise-les pour contextualiser tes articles) :
+${ctx || 'Pas de fil AFP disponible ce jour.'}
+
+Rédige 6 articles de boxe complets, professionnels, comme pour un grand magazine sportif.
+
+Réponds avec ce JSON :
+{"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","source":"..."}]}
+
+CAHIER DES CHARGES STRICT :
+- 6 articles exactement
+- categorie : RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
+- temps : varie de "Il y a 30 min" à "Il y a 10h"
+- source : L'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
+- resume : accroche courte et percutante, max 15 mots, style presse sportive
+- contenu : article LONG et COMPLET, minimum 400 mots, 4 à 5 paragraphes séparés par ###
+  * Paragraphe 1 : ouverture percutante avec le fait principal
+  * Paragraphe 2 : contexte, historique, enjeux
+  * Paragraphe 3 : détails, chiffres, déclarations
+  * Paragraphe 4 : réactions, analyse d'experts
+  * Paragraphe 5 : perspectives, suite des événements
+- Cite des boxeurs réels (Usyk, Fury, Canelo, Crawford, Davis, Garcia, Joshua, Dubois, Benavidez...)
+- Intègre les vraies actualités fournies ci-dessus dans au moins 3 des 6 articles
+- Style : professionnel, dynamique, expert — jamais générique`
     );
 
     if (d && d.articles && d.articles.length > 0) {
@@ -796,13 +823,13 @@ async function loadNews() {
 
       // Enrichir avec images Gemini en arrière-plan si clé disponible
       if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
-        setStatus('yellow', '🎨 Génération des illustrations IA en cours...', '');
+        setStatus('yellow', '🔄 Chargement des illustrations...', '');
         enrichArticlesWithImages(final).then(enriched => {
           articles = enriched;
           renderNews(articles);
           updateHero(articles[0]);
           updateSidebar(articles.slice(1,5));
-          setStatus('green', '🟢 Actualités + Illustrations IA Gemini — Tout est à jour', '');
+          setStatus('green', '🟢 Actualités en direct — KO MAG', '');
         }).catch(() => {});
       }
 
@@ -812,12 +839,12 @@ async function loadNews() {
       const mode = (realNews && realNews.length > 0) ? 'real+ai' : 'ai';
       setStatus('green',
         mode === 'real+ai'
-          ? '🟢 NewsAPI en temps réel + Claude IA — Auto-refresh toutes les 15 min'
-          : '🟢 Claude IA — Actualités générées · Auto-refresh toutes les 15 min',
+          ? '🟢 Actualités en direct — Mise à jour automatique'
+          : '🟢 Actualités — Mise à jour automatique toutes les 15 min',
         '');
       document.getElementById('news-info').innerHTML =
         '<span style="color:' + (mode==='real+ai'?'#22C55E':'var(--gold)') + ';font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">' +
-        (mode==='real+ai' ? '🟢 SOURCES RÉELLES + IA' : '🤖 CLAUDE IA') +
+        (mode==='real+ai' ? '🟢 EN DIRECT' : '📰 RÉDACTION KO MAG') +
         '</span><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
         articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
     }
@@ -826,8 +853,8 @@ async function loadNews() {
     if (!aiLoaded) {
       setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
       document.getElementById('news-info').innerHTML =
-        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 MODE STATIQUE</span>' +
-        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence · En ligne sur Vercel pour les actualités IA</span>';
+        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 RÉDACTION KO MAG</span>' +
+        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence </span>';
     }
   }
 
@@ -862,10 +889,10 @@ function renderNews(list) {
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
       <div class="news-card-img">
         <img src="${imgSrc}" alt="${a.titre}" onerror="this.src='https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80'">
-        ${a.isReal ? '<div class="badge-real">LIVE</div>' : '<div class="badge-ai">IA</div>'}
+        ${a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
       </div>
       <div class="news-card-body">
-        <div class="news-card-src">${a.isReal ? '🟢 ' : '🤖 '} ${a.source || 'KO MAG'}</div>
+        <div class="news-card-src">${a.source || 'KO MAG'}</div>
         <div class="news-card-cat">${a.categorie}</div>
         <div class="news-card-title">${a.titre}</div>
         <div class="news-card-excerpt">${a.resume || ''}</div>
@@ -897,14 +924,14 @@ function updateHero(a) {
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
   heroMain.style.backgroundSize = 'cover';
   heroMain.style.backgroundPosition = 'center';
-  if (a.isReal) document.getElementById('hero-live-badge').style.display = 'inline-flex';
+  // badge live masqué — pas de distinction source
   document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
 }
 
 function updateSidebar(list) {
   document.getElementById('sidebar-news').innerHTML = list.map((a, i) => `
     <a class="sb-item" href="#" onclick="event.preventDefault();openArt(${i+1})">
-      <div class="sb-item-src">${a.isReal ? '🟢 LIVE — ' : '🤖 IA — '}${a.source || 'KO MAG'}</div>
+      <div class="sb-item-src">${a.source || 'KO MAG'}</div>
       <div class="sb-item-title">${a.emoji || '🥊'} ${a.titre}</div>
       <div class="sb-item-time">${a.temps}</div>
     </a>`).join('');
@@ -925,9 +952,6 @@ function openArt(i) {
   const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
   document.getElementById('modal-body').innerHTML =
     '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
-    (a.isReal
-      ? '<span style="background:#22C55E;color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🟢 SOURCE RÉELLE</span>'
-      : '<span style="background:var(--smoke);color:var(--gold);border:1px solid var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🤖 IA CLAUDE</span>') +
     '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
     '<img src="' + (a.img || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80') + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'"> ' +
@@ -962,10 +986,13 @@ async function loadTips(tab) {
   document.getElementById('tips-btn').classList.add('loading');
   renderTipsStatic(tab);
   try {
-    const d = await callClaude(
-      'Génère 4 conseils pratiques de boxe sur le thème "' + tab + '".\n' +
-      'JSON uniquement : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}\n' +
-      '- numero : 01 à 04\n- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL\n- contenu : 2-3 phrases avec chiffres concrets'
+    const d = await callGemini(
+      `Rédige 4 conseils d'expert de boxe sur le thème "${tab}" pour KO MAG.
+JSON : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}
+- numero : 01 à 04
+- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL
+- emoji : 1 seul emoji pertinent
+- contenu : conseil détaillé et actionnable, minimum 80 mots, avec chiffres précis, noms de techniques, références à des champions réels qui utilisent cette méthode`
     );
     if (d && d.conseils && d.conseils.length > 0) {
       document.getElementById('tips-grid').innerHTML = d.conseils.map((c, i) => `
@@ -995,7 +1022,7 @@ function renderFights(tab) {
     <div class="fight-card fade-up">
       <div class="fight-header">
         <div class="fight-date">${f.date}</div>
-        <div class="fight-badge">${tab==='results'?'✅ RÉSULTAT':tab==='predictions'?'🤖 PRÉDICTION IA':'📅 À VENIR'}</div>
+        <div class="fight-badge">${tab==='results'?'✅ RÉSULTAT':tab==='predictions'?'🎯 PRONOSTIC':'📅 À VENIR'}</div>
       </div>
       <div class="fight-body">
         <div class="fight-vs">
@@ -1008,7 +1035,7 @@ function renderFights(tab) {
       </div>
       <div class="fight-footer">
         <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">
-          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🤖 Voir analyse →':'📺 Revoir →'}
+          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🎯 Voir le pronostic →':'📺 Revoir →'}
         </a>
       </div>
     </div>`).join('');
@@ -1088,7 +1115,7 @@ function observeAll() {
 function configGemini() {
   const current = localStorage.getItem('gemini_key') || '';
   const key = prompt(
-    '🎨 Clé API Google Gemini (Imagen 3)\n\n' +
+    '🎨 Configuration des illustrations (Gemini)\n\n' +
     'Obtenez votre clé gratuite sur : aistudio.google.com\n' +
     '(Imagen 3 est gratuit avec quota généreux)\n\n' +
     'Clé actuelle : ' + (current ? current.slice(0,8) + '...' : 'non configurée'),
@@ -1097,7 +1124,7 @@ function configGemini() {
   if (key === null) return; // annulé
   if (key.trim().length > 10) {
     localStorage.setItem('gemini_key', key.trim());
-    alert('✅ Clé Gemini enregistrée ! Les illustrations IA vont se générer automatiquement.');
+    alert('✅ Configuration enregistrée ! Les illustrations vont se générer automatiquement.');
     loadNews(); // recharger avec images
   } else if (key.trim() === '') {
     localStorage.removeItem('gemini_key');
