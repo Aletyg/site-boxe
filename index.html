@@ -588,25 +588,16 @@ async function claude(prompt, system) {
 
 // ────────────────────────────────────────────────
 // NEWS API — tentative fetch
-// ────────────────────────────────────────────────
 async function fetchNewsAPI() {
-  if (!newsApiKey) return null;
-  try {
-    const url = `https://newsapi.org/v2/everything?q=boxing+champion&language=fr&sortBy=publishedAt&pageSize=6&apiKey=${newsApiKey}`;
-    const r = await fetch(url);
-    if (!r.ok) {
-      if (r.status === 401) { localStorage.removeItem('napi'); newsApiKey=''; return 'INVALID_KEY'; }
-      if (r.status === 426) return 'CORS'; // plan gratuit = bloqué en navigateur
-      return 'ERROR_' + r.status;
+    try {
+        const r = await fetch('/api/news'); // On appelle ton tunnel Vercel, pas NewsAPI directement
+        if (!r.ok) return 'CORS';
+        const d = await r.json();
+        return d.articles || [];
+    } catch(e) {
+        return 'CORS';
     }
-    const d = await r.json();
-    return d.articles || [];
-  } catch(e) {
-    // CORS ou réseau
-    return 'CORS';
-  }
 }
-
 // ────────────────────────────────────────────────
 // MAIN LOAD NEWS
 // ────────────────────────────────────────────────
