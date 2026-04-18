@@ -1,16 +1,14 @@
 {
   "version": 2,
   "functions": {
-    "api/gemini.js": {
-      "maxDuration": 30
-    },
-    "api/news.js": {
-      "maxDuration": 10
-    }
+    "api/articles.js": { "maxDuration": 60 },
+    "api/gemini.js":   { "maxDuration": 30 },
+    "api/news.js":     { "maxDuration": 10 }
   },
   "routes": [
-    { "src": "/api/news",   "dest": "/api/news.js" },
-    { "src": "/api/gemini", "dest": "/api/gemini.js" },
-    { "src": "/(.*)",       "dest": "/index.html" }
+    { "src": "/api/articles", "dest": "/api/articles.js" },
+    { "src": "/api/news",     "dest": "/api/news.js" },
+    { "src": "/api/gemini",   "dest": "/api/gemini.js" },
+    { "src": "/(.*)",         "dest": "/index.html" }
   ]
 }
