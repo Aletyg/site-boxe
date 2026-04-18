@@ -813,15 +813,7 @@ JSON: {"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","conte
       updateSidebar(articles.slice(1,5));
       updateTicker(articles);
 
-      // Enrichir avec illustrations en arrière-plan
-      setStatus('yellow', '🔄 Chargement des illustrations...', '');
-      enrichArticlesWithImages(final).then(enriched => {
-        articles = enriched;
-        renderNews(articles);
-        updateHero(articles[0]);
-        updateSidebar(articles.slice(1,5));
-        setStatus('green', '🟢 Actualités en direct — KO MAG', '');
-      }).catch(() => {});
+      // Pas d'illustrations Imagen (non disponible) — afficher directement
 
       aiLoaded = true;
       lastUpdate = new Date();
