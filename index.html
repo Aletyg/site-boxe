@@ -759,8 +759,16 @@ async function loadNews() {
 
   // ÉTAPE 3 — Rédaction et enrichissement
   const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  const ctx = realNews
-    ? 'Actualités réelles disponibles : ' + realNews.slice(0,4).map(a => '"' + a.title + '"').join(', ') + '. Inspire-toi en. '
+  // Préparer les vraies news avec URL pour traduction
+  const realNewsForGemini = realNews ? realNews.slice(0, 6).map(a => ({
+    titre: a.title,
+    resume: (a.description || '').slice(0, 200),
+    url: a.url,
+    source: a.source?.name || 'Source',
+    date: a.publishedAt
+  })) : [];
+  const ctx = realNewsForGemini.length > 0
+    ? realNewsForGemini.map((a, i) => `[${i}] "${a.titre}" — ${a.resume} (source: ${a.source}, url: ${a.url})`).join('\n')
     : '';
 
   try {
@@ -770,10 +778,21 @@ async function loadNews() {
     const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
     const date = new Date().toLocaleDateString('fr-FR');
 
-    const singlePrompt = (i) =>
-      `KO MAG. ${date}. ${ctx && i < 3 ? 'Actualite: ' + (ctx.split(',')[i] || '') : ''}
-JSON: {"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}"}]}
-1 article sur ${boxeurs[i]}. Resume 8 mots. Contenu 2 phrases separees par ###. Pas apostrophe.`;
+    const singlePrompt = (i) => {
+      const hasReal = ctx && realNewsForGemini[i];
+      const realArt = hasReal ? realNewsForGemini[i] : null;
+      return `KO MAG redacteur boxe. Date: ${date}.
+${hasReal ? `Traduis et réécris cet article en français professionnel:\nTitre original: "${realArt.titre}"\nResume: "${realArt.resume}"\nSource: ${realArt.source}\nURL originale: ${realArt.url}` : `Redige un article sur ${boxeurs[i]} en boxe.`}
+
+JSON uniquement (pas apostrophe dans valeurs):
+{"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","contenu":"...","temps":"${hasReal ? timeAgo(realArt.date) : 'Il y a ' + (i+1) + 'h'}","source":"${hasReal ? realArt.source : sources[i]}","url":"${hasReal ? realArt.url : ''}"}]}
+
+- titre: traduit en français accrocheur
+- categorie: ${cats[i]}
+- resume: 1 phrase française max 12 mots
+- contenu: 2 paragraphes français separes par ###, style LEquipe, 80 mots chacun
+- Inclure faits precis et contexte boxe`;
+    };
 
     const results = await Promise.all([0,1,2,3,4,5].map(i => 
       callGemini(singlePrompt(i)).catch(() => null)
@@ -788,23 +807,16 @@ JSON: {"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","conte
       let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
       let final = aiArts;
 
+      // Les vraies news sont déjà traduites par Gemini dans aiArts
+      // On garde juste les images des vraies news si disponibles
       if (realNews && realNews.length > 0) {
-        const live = realNews.slice(0, 3)
-          .filter(a => a.title && a.title !== '[Removed]')
-          .map(a => ({
-            titre: a.title,
-            categorie: 'LIVE',
-            resume: (a.description || '').slice(0, 90),
-            contenu: a.content || a.description || 'Lire la suite sur la source originale.',
-            temps: timeAgo(a.publishedAt),
-            emoji: '📰',
-            source: a.source?.name || 'NewsAPI',
-            url: a.url,
-            img: a.urlToImage,
-            isReal: true,
-          }));
-        final = [...live, ...aiArts.slice(0, 3)];
+        aiArts = aiArts.map((art, i) => ({
+          ...art,
+          img: art.img || (realNews[i] ? realNews[i].urlToImage : null),
+          isReal: !!art.url,
+        }));
       }
+      final = aiArts;
 
       // Afficher d'abord sans images Gemini
       articles = final;
