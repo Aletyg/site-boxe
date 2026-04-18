@@ -764,26 +764,24 @@ async function loadNews() {
     : '';
 
   try {
-    // Générer 3 articles à la fois pour éviter la troncature JSON
-    const makePrompt = (batch, ctx) => `KO MAG rédacteur. ${new Date().toLocaleDateString('fr-FR')}.
-${ctx || ''}
-Génère exactement ${batch} articles de boxe. JSON valide uniquement, sans apostrophes dans les valeurs:
-{"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","source":"..."}]}
-- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
-- temps: "Il y a Xh"
-- source: LEquipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
-- resume: max 10 mots
-- contenu: 2 paragraphes de 60 mots chacun, séparés par ###
-- Boxeurs: Usyk, Fury, Canelo, Crawford, Davis, Garcia`;
+    // 6 appels en parallèle — 1 article par appel pour JSON minimal
+    const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
+    const boxeurs = ['Usyk','Fury','Canelo','Crawford','Davis','Garcia'];
+    const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
+    const date = new Date().toLocaleDateString('fr-FR');
 
-    const [d1, d2] = await Promise.all([
-      callGemini(makePrompt(3, ctx)),
-      callGemini(makePrompt(3, ''))
-    ]);
+    const singlePrompt = (i) =>
+      `KO MAG. ${date}. ${ctx && i < 3 ? 'Actualite: ' + (ctx.split(',')[i] || '') : ''}
+JSON: {"articles":[{"titre":"...","categorie":"${cats[i]}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}"}]}
+1 article sur ${boxeurs[i]}. Resume 8 mots. Contenu 2 phrases separees par ###. Pas apostrophe.`;
 
-    const arts1 = d1?.articles || [];
-    const arts2 = d2?.articles || [];
-    const allArts = [...arts1, ...arts2];
+    const results = await Promise.all([0,1,2,3,4,5].map(i => 
+      callGemini(singlePrompt(i)).catch(() => null)
+    ));
+
+    const allArts = results
+      .filter(r => r && r.articles && r.articles.length > 0)
+      .flatMap(r => r.articles);
     const d = { articles: allArts };
 
     if (d && d.articles && d.articles.length > 0) {
