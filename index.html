@@ -28,13 +28,6 @@ nav a.active{color:var(--red)}
 .header-cta:hover{background:#c00015}
 
 /* API BANNER */
-.api-banner{background:linear-gradient(135deg,#1a1200,#2a1e00);border-bottom:2px solid var(--gold);padding:12px 24px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
-.api-banner-text{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;color:var(--gold);letter-spacing:.05em}
-.api-banner input{background:rgba(255,255,255,.08);border:1px solid rgba(245,184,0,.4);color:white;padding:6px 14px;font-family:'Barlow',sans-serif;font-size:.82rem;width:260px;outline:none;border-radius:2px}
-.api-banner input::placeholder{color:rgba(255,255,255,.3)}
-.api-banner button{background:var(--gold);color:var(--dark);border:none;padding:7px 18px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;border-radius:2px;transition:all .2s}
-.api-banner button:hover{background:#e6ad00}
-.api-link{font-family:'Barlow Condensed',sans-serif;font-size:.75rem;color:rgba(245,184,0,.7);text-decoration:underline;cursor:pointer;background:none;border:none}
 
 /* STATUS */
 .status-wrap{background:var(--smoke);border-bottom:1px solid var(--grey)}
@@ -282,14 +275,6 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </header>
 
-<!-- API BANNER -->
-<div class="api-banner" id="api-banner">
-  <div class="api-banner-text">🔑 Entrez votre clé NewsAPI pour activer les vraies actualités en temps réel :</div>
-  <input type="text" id="key-input" placeholder="Votre clé NewsAPI (ex: a1b2c3d4e5f6g7h8...)" />
-  <button onclick="saveKey()">✓ Activer</button>
-  <button class="api-link" onclick="window.open('https://newsapi.org/register','_blank')">Obtenir une clé gratuite →</button>
-</div>
-
 <div class="status-wrap">
   <div class="status-bar">
     <div class="status-badge"><div class="dot yellow" id="s-dot"></div><span id="s-text">Initialisation...</span></div>
@@ -447,13 +432,12 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 </footer>
 
 <script>
-// ────────────────────────────────────────────────
-// CONFIG — MODIFIEZ ICI
-// ────────────────────────────────────────────────
-const AMAZON_TAG = 'VOTRETAG-21'; // ← Remplacez par votre ID affilié Amazon France
-const REFRESH_MS = 15 * 60 * 1000; // 15 minutes
+// ════════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════════
+const AMAZON_TAG = 'VOTRETAG-21';
+const REFRESH_MS = 15 * 60 * 1000;
 
-// Liens affiliés
 const AFF = {
   g_everlast:`https://www.amazon.fr/s?k=gants+boxe+everlast&tag=${AMAZON_TAG}`,
   g_venum:`https://www.amazon.fr/s?k=gants+boxe+venum&tag=${AMAZON_TAG}`,
@@ -469,23 +453,72 @@ const AFF = {
   corde:`https://www.amazon.fr/s?k=corde+sauter+boxe&tag=${AMAZON_TAG}`,
 };
 
-// Equipment
+// ════════════════════════════════════════════════════════════════
+// ARTICLES STATIQUES — toujours affichés instantanément
+// ════════════════════════════════════════════════════════════════
+const STATIC_ARTICLES = [
+  { titre:"Usyk vs Fury II : Le combat de la décennie se confirme", categorie:"ÉVÉNEMENT", emoji:"🏆", source:"L'Équipe", temps:"Il y a 2h", isReal:false,
+    resume:"La revanche Usyk-Fury se précise pour 2025, avec une bourse record attendue.",
+    contenu:"Après le combat historique de Riyad, les deux camps négocient une revanche qui promet d'être encore plus spectaculaire. Usyk, champion unifié incontesté, a déclaré être prêt à remettre ses ceintures en jeu face au géant britannique.###Les promoteurs confirment des discussions avancées pour une date au printemps 2025 en Arabie Saoudite, avec une bourse estimée à 200 millions de dollars. Ce serait le combat le plus lucratif de l'histoire de la boxe poids lourds." },
+  { titre:"Canelo Alvarez vs Berlanga : La date est fixée", categorie:"RÉSULTATS", emoji:"🥊", source:"RMC Sport", temps:"Il y a 4h", isReal:false,
+    resume:"Canelo défend ses quatre ceintures face à l'invaincu Berlanga en septembre.",
+    contenu:"Le champion mexicain a confirmé en conférence de presse que son prochain combat aura lieu le 13 septembre au T-Mobile Arena de Las Vegas. Berlanga, 22 victoires dont 17 par KO, représente le défi le plus sérieux depuis des années.###'Je suis prêt à montrer que je suis encore le meilleur' a déclaré Canelo. Le combat sera diffusé sur DAZN et devrait générer plus de 100 millions de dollars de revenus." },
+  { titre:"Crawford domine et unifie — analyse tactique complète", categorie:"ANALYSE", emoji:"📊", source:"ESPN", temps:"Il y a 5h", isReal:false,
+    resume:"Terence Crawford confirme son statut de meilleur livre pour livre mondial.",
+    contenu:"Son KO au 9e round face à Madrimov lui a permis d'unifier les ceintures WBA, WBC et WBO des super-welters. Les experts le placent en tête du classement livre pour livre, devant Canelo et Usyk.###Son prochain adversaire pourrait être Jaron Ennis dans un choc entre deux invaincus très attendu par les fans américains. Un combat qui pourrait générer un record d'audience pour la catégorie." },
+  { titre:"Davis vs Garcia II : la revanche prend forme", categorie:"TRANSFERTS", emoji:"⚡", source:"Sky Sports", temps:"Il y a 6h", isReal:false,
+    resume:"Les deux stars des légers américains pourraient se retrouver dès cet été.",
+    contenu:"Après le premier affrontement qui avait battu tous les records PPV chez les légers, une revanche se profile. L'entourage de Gervonta Davis confirme des pourparlers sérieux avec l'équipe de Ryan Garcia pour un combat en juillet ou août 2025.###Les deux combattants généreraient selon les estimations plus de 150 millions de dollars de revenus. Un événement que les fans réclament depuis la fin du premier combat." },
+  { titre:"Tony Yoka : 'Je vise le titre mondial en 2025'", categorie:"INTERVIEW", emoji:"🇫🇷", source:"L'Équipe", temps:"Il y a 7h", isReal:false,
+    resume:"Le champion olympique français annonce son retour imminent sur le ring.",
+    contenu:"Champion olympique à Rio 2016, Tony Yoka affiche une forme impressionnante à l'entraînement et annonce un retour imminent. 'J'ai revu ma technique, mon travail de jambes, et je me sens prêt pour aller chercher un titre mondial' confie-t-il.###Son prochain combat devrait avoir lieu en France cet automne. Yoka, soutenu par son équipe de Levallois, veut prouver qu'il a le niveau pour rivaliser avec les meilleurs lourds mondiaux." },
+  { titre:"5 exercices pour une frappe plus puissante", categorie:"ENTRAÎNEMENT", emoji:"💪", source:"Eurosport", temps:"Il y a 8h", isReal:false,
+    resume:"Les secrets des champions pour développer une frappe dévastatrice.",
+    contenu:"La puissance vient de la chaîne musculaire complète : deadlifts, rotations avec médecine-ball, sprints courts et exercices pliométriques sont les piliers d'un programme efficace pour les boxeurs.###Combinez force et technique : rotation des hanches, transfert de poids et explosion à l'impact. Ces principes, appliqués 3 fois par semaine, produisent des résultats visibles en 8 semaines." },
+];
+
+const STATIC_TIPS = {
+  technique:[
+    {numero:'01',emoji:'👊',titre:'Le jab parfait en 3 points',contenu:"Partez de la garde, tendez le bras complètement en faisant pivoter le poing à 90° à l'impact, puis ramenez immédiatement. Le jab doit partir et revenir sur le même trajet. Travaillez-le 100 fois chaque séance — c'est votre arme principale.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'💥',titre:'Direct du droit : la puissance vient des hanches',contenu:"Pivotez l'épaule droite vers l'avant en poussant sur la jambe arrière. Transférez le poids du pied droit vers le gauche. Cette rotation peut tripler votre puissance par rapport à un bras seul. Pratiquez devant un miroir pour corriger la mécanique.",tag:'INTERMÉDIAIRE'},
+    {numero:'03',emoji:'🔄',titre:'Le crochet : timing et précision',contenu:"Le crochet se déclenche à 90° du coude, jamais en balançant. Explosez latéralement avec la rotation de l'épaule. Combinez-le toujours après un jab (1-2-3) pour surprendre. Travaillez ce combo sur les pattes 200 fois par session.",tag:'AVANCÉ'},
+    {numero:'04',emoji:'🛡️',titre:'Défense : slip et roll',contenu:"Le slip déplace la tête de côté pour esquiver un direct. Le roll évite les crochets en baissant le buste en arc de cercle. Ces deux mouvements combinés forment la défense offensive — esquiver sans reculer, comme Muhammad Ali.",tag:'INTERMÉDIAIRE'},
+  ],
+  entrainement:[
+    {numero:'01',emoji:'⏱️',titre:'Structurer ses rounds',contenu:"Un round dure 3 minutes, 1 minute de repos. Basez tout votre entraînement sur ce rythme : 3 min d'effort intense, 1 min de récupération active. 6 à 12 rounds par session selon votre niveau pour développer l'endurance spécifique boxe.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'🏃',titre:'La corde : secret des champions',contenu:"30 minutes de corde par jour minimum. Alternez : 2 min vitesse normale, 30 sec sprint maximal. La corde améliore la coordination, le cardio et la vitesse des jambes. Floyd Mayweather en faisait 45 minutes chaque matin sans exception.",tag:'AVANCÉ'},
+    {numero:'03',emoji:'💪',titre:'Renforcement fonctionnel',contenu:"Pompes (100/jour), tractions (50/jour), burpees (30/jour), gainage (3x2 min). Ces exercices développent la force explosive et la stabilité du tronc essentielles pour encaisser et frapper. Oubliez les machines, misez sur le poids de corps.",tag:'INTERMÉDIAIRE'},
+    {numero:'04',emoji:'🛌',titre:"La récupération : l'entraînement invisible",contenu:"Les muscles se construisent pendant le repos. 8h de sommeil minimum, 3L d'eau par jour, 1-2 jours de récupération active par semaine. Un boxeur sous-récupéré plafonne ou se blesse. La récupération est aussi importante que l'effort.",tag:'ESSENTIEL'},
+  ],
+  nutrition:[
+    {numero:'01',emoji:'🥩',titre:'Protéines : la brique musculaire',contenu:"Visez 2g de protéines par kg de poids de corps par jour. Sources optimales : poulet, thon, oeufs, fromage blanc 0%, légumineuses. Répartissez sur 4-5 repas. Un boxeur de 75kg a besoin d'au moins 150g de protéines quotidiennement.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'⚡',titre:'Glucides : carburant du combattant',contenu:"Riz, avoine, patate douce, pâtes complètes — votre carburant principal. Chargez 3h avant l'entraînement. Après l'effort, fenêtre anabolique de 30 minutes : glucides rapides + protéines pour optimiser la récupération musculaire.",tag:'INTERMÉDIAIRE'},
+    {numero:'03',emoji:'💧',titre:'Hydratation : performance et sécurité',contenu:"Une déshydratation de 2% diminue les performances de 20%. Buvez 500ml d'eau 2h avant l'effort, puis 200ml toutes les 15 minutes pendant l'entraînement. Pour les séances de plus de 60 min, ajoutez des électrolytes.",tag:'ESSENTIEL'},
+    {numero:'04',emoji:'🌿',titre:'Compléments validés par la science',contenu:"Créatine monohydrate (3-5g/jour pour la puissance), bêta-alanine (3,2g/jour pour l'endurance), caféine (3-6mg/kg avant l'effort). Évitez les pré-workouts aux formules douteuses. La base reste toujours l'alimentation complète.",tag:'AVANCÉ'},
+  ],
+  mental:[
+    {numero:'01',emoji:'🧠',titre:'La visualisation : entraînement mental',contenu:"15 minutes par jour : visualisez vos combos, vos déplacements, vos victoires. Les études montrent que la visualisation active les mêmes circuits neuronaux que l'entraînement physique. Muhammad Ali pratiquait cette technique chaque jour.",tag:'PRO'},
+    {numero:'02',emoji:'😤',titre:'Gérer le stress avant le combat',contenu:"Respiration en boîte : 4 sec inhaler, 4 tenir, 4 exhaler, 4 tenir. Répétez 5 fois. Cette méthode active le système parasympathique et réduit le cortisol en quelques minutes. Technique utilisée par les forces spéciales et les sportifs de haut niveau.",tag:'ESSENTIEL'},
+    {numero:'03',emoji:'🎯',titre:'Concentration pendant le round',contenu:"Définissez 2-3 objectifs tactiques simples avant chaque round. Ne pensez pas au score — concentrez-vous sur votre plan de jeu. La simplicité cognitive sous pression est la marque des grands champions. Trop d'infos = paralysie de l'action.",tag:'AVANCÉ'},
+    {numero:'04',emoji:'🏆',titre:'Construire une mentalité de champion',contenu:"Tyson Fury a traversé une dépression sévère avant ses plus grands triomphes. La résilience se construit dans les défaites et les difficultés. Analysez chaque échec comme un cours magistral gratuit sur la voie du progrès.",tag:'PRO'},
+  ],
+};
+
 const EQUIP = [
-  {cat:'gants',emoji:'🥊',badge:'BEST-SELLER',name:'Everlast Pro Style Elite',desc:'Mousse multi-couches. Référence du marché depuis 1910. Idéal débutants et confirmés.',price:'À partir de 39€',link:AFF.g_everlast},
+  {cat:'gants',emoji:'🥊',badge:'BEST-SELLER',name:'Everlast Pro Style Elite',desc:"Mousse multi-couches. Référence du marché depuis 1910. Idéal débutants et confirmés.",price:'À partir de 39€',link:AFF.g_everlast},
   {cat:'gants',emoji:'🥊',badge:'CHAMPION',name:'Cleto Reyes Extra Padding',desc:'Le choix des champions du monde. Cuir véritable, protection et maintien maximaux.',price:'À partir de 189€',link:AFF.g_cleto},
   {cat:'gants',emoji:'🥊',badge:'RAPPORT/QUALITÉ',name:'Venum Contender 2.0',desc:'Triple densité mousse, triple Velcro. Meilleur rapport qualité/prix du marché.',price:'À partir de 55€',link:AFF.g_venum},
   {cat:'gants',emoji:'🥊',badge:'TRAINING',name:'Title Boxing Classic',desc:'Gants durables pour les séances intenses. Grip intégré, poignet renforcé.',price:'À partir de 65€',link:AFF.g_title},
   {cat:'protections',emoji:'⛑️',badge:'SÉCURITÉ',name:'Casque Ringside Pro',desc:'Certification professionnelle. Rembourrage triple couche, visière complète disponible.',price:'À partir de 79€',link:AFF.casque},
-  {cat:'protections',emoji:'🦷',badge:'ESSENTIEL',name:'Protège-dents Shock Doctor',desc:'Standard de l\'industrie. Moulage personnalisé, protection optimale certifiée.',price:'À partir de 12€',link:AFF.pdents},
+  {cat:'protections',emoji:'🦷',badge:'ESSENTIEL',name:'Protège-dents Shock Doctor',desc:"Standard de l'industrie. Moulage personnalisé, protection optimale certifiée.",price:'À partir de 12€',link:AFF.pdents},
   {cat:'protections',emoji:'🩹',badge:'BASE',name:'Bandages Coton 4,5m',desc:'Lavables, réutilisables. Indispensables pour protéger poignets et articulations.',price:'À partir de 8€',link:AFF.bandages},
   {cat:'protections',emoji:'🛡️',badge:'SPARRING',name:'Coquille Adidas Pro',desc:'Protection corps ergonomique. Légère, certifiée compétition amateur et pro.',price:'À partir de 25€',link:AFF.coquille},
   {cat:'sacs',emoji:'💥',badge:'POPULAIRE',name:'Sac de Frappe 40kg',desc:'Sac lourd rembourré pour entraînement intensif. Crochet rotatif robuste inclus.',price:'À partir de 89€',link:AFF.sac},
-  {cat:'sacs',emoji:'⚡',badge:'VITESSE',name:'Poire de Vitesse Everlast',desc:'Améliore rapidité, coordination et timing. Idéale pour l\'échauffement.',price:'À partir de 35€',link:AFF.poire},
+  {cat:'sacs',emoji:'⚡',badge:'VITESSE',name:'Poire de Vitesse Everlast',desc:"Améliore rapidité, coordination et timing. Idéale pour l'échauffement.",price:'À partir de 35€',link:AFF.poire},
   {cat:'vetements',emoji:'🎽',badge:'PRO',name:'Short Boxe Leone 1947',desc:'Satin premium, coupe boxeur classique. Référence des clubs professionnels.',price:'À partir de 45€',link:AFF.short},
   {cat:'vetements',emoji:'🔄',badge:'CARDIO',name:'Corde à Sauter Lestée',desc:'Améliore cardio, rythme et coordination. Incontournable pour tout boxeur sérieux.',price:'À partir de 18€',link:AFF.corde},
 ];
 
-// Rankings
 const RANKS = {
   heavyweight:[
     {name:'Oleksandr Usyk',country:'🇺🇦 Ukraine',record:'23-0 (14 KO)',org:'WBA·WBO·IBF·IBO',trend:'—'},
@@ -518,12 +551,11 @@ const RANKS = {
   ],
 };
 
-// Fights
 const FIGHTS = {
   upcoming:[
     {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Unification Poids Lourds',date:'2025 TBD',extra:null,link:'https://www.dazn.com'},
     {f1:'Canelo',r1:'61-2-2',f2:'Berlanga',r2:'22-0',title:'Défense Titres Super-Moyens',date:'SEPT 2025',extra:null,link:'https://www.dazn.com'},
-    {f1:'Crawford',r1:'40-0',f2:'Ennis',r2:'31-0',title:'Choc des invaincu Welters',date:'TBD 2025',extra:null,link:'https://www.espn.com'},
+    {f1:'Crawford',r1:'40-0',f2:'Ennis',r2:'31-0',title:'Choc des invaincus Welters',date:'TBD 2025',extra:null,link:'https://www.espn.com'},
   ],
   results:[
     {f1:'Crawford',r1:'40-0',f2:'Madrimov',r2:'9-1',title:'Champion Unifié WBA/WBC/WBO S-Welters',date:'03 AOÛT 2024',extra:'🏆 Crawford KO9',link:'#'},
@@ -537,153 +569,165 @@ const FIGHTS = {
   ],
 };
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // STATE
-// ────────────────────────────────────────────────
-let articles = [];
+// ════════════════════════════════════════════════════════════════
+let articles = [...STATIC_ARTICLES];
 let currentTipTab = 'technique';
-let newsApiKey = localStorage.getItem('napi') || '';
 let lastUpdate = null;
+let aiLoaded = false;
 
-// ────────────────────────────────────────────────
-// API KEY
-// ────────────────────────────────────────────────
-function saveKey() {
-  const k = document.getElementById('key-input').value.trim();
-  if (k.length < 10) { document.getElementById('key-input').style.borderColor='#f55'; return; }
-  newsApiKey = k;
-  localStorage.setItem('napi', k);
-  document.getElementById('api-banner').style.display = 'none';
-  setStatus('yellow','🔄 Connexion à NewsAPI en cours...','');
-  loadNews();
-}
-
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // STATUS
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 function setStatus(color, text, time) {
   document.getElementById('s-dot').className = 'dot ' + color;
   document.getElementById('s-text').textContent = text;
   if (time) document.getElementById('s-time').textContent = time;
 }
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // CLAUDE AI
-// ────────────────────────────────────────────────
-async function claude(prompt, system) {
+// ════════════════════════════════════════════════════════════════
+async function callClaude(prompt) {
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {'Content-Type':'application/json'},
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      system: system || 'Tu es le rédacteur en chef de KO MAG. Réponds UNIQUEMENT en JSON valide, sans markdown, sans backtick.',
-      messages: [{role:'user', content: prompt}]
-    })d
+      max_tokens: 2000,
+      system: 'Tu es rédacteur en chef de KO MAG. Réponds TOUJOURS en JSON valide et complet, sans markdown, sans backtick, sans texte avant ou après le JSON.',
+      messages: [{ role: 'user', content: prompt }]
+    })
   });
+  if (!r.ok) throw new Error('Claude HTTP ' + r.status);
   const d = await r.json();
-  const txt = (d.content||[]).map(i=>i.text||'').join('').replace(/```json|```/g,'').trim();
-  return JSON.parse(txt);
+  if (d.error) throw new Error(d.error.message);
+  let txt = (d.content || []).map(i => i.text || '').join('').replace(/```json|```/g, '').trim();
+  return safeJSON(txt);
 }
 
-// ────────────────────────────────────────────────
-// NEWS API — tentative fetch
-async function fetchNewsAPI() {
-    try {
-        const r = await fetch('/api/news'); 
-        if (!r.ok) return 'CORS';
-        const d = await r.json();
-        return d.articles || [];
-    } catch(e) {
-        console.error("Erreur de connexion au proxy:", e);
-        return 'CORS';
+function safeJSON(txt) {
+  try { return JSON.parse(txt); } catch(e) {
+    let depth = 0, lastClose = -1, inStr = false, esc = false;
+    for (let i = 0; i < txt.length; i++) {
+      const c = txt[i];
+      if (esc) { esc = false; continue; }
+      if (c === '\\') { esc = true; continue; }
+      if (c === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (c === '{' || c === '[') depth++;
+      if (c === '}' || c === ']') { depth--; if (depth === 0) lastClose = i; }
     }
+    if (lastClose > 0) return JSON.parse(txt.slice(0, lastClose + 1));
+    throw e;
+  }
 }
-// ────────────────────────────────────────────────
-// MAIN LOAD NEWS
-// ────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════════════
+// PROXY /api/news — silencieux si absent
+// ════════════════════════════════════════════════════════════════
+async function fetchProxy() {
+  try {
+    const r = await fetch('/api/news', { cache: 'no-store' });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.articles?.length ? d.articles : null;
+  } catch(e) { return null; }
+}
+
+// ════════════════════════════════════════════════════════════════
+// LOAD NEWS
+// ════════════════════════════════════════════════════════════════
 async function loadNews() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('loading');
-  showSkeletons();
-  setStatus('yellow','🔄 Chargement en cours...','');
 
-  let realNews = null;
-  let mode = 'ai'; // 'ai' | 'real+ai' | 'cors'
-
-  // Try NewsAPI
-  if (newsApiKey) {
-    setStatus('yellow','🔄 Connexion à NewsAPI...','');
-    const result = await fetchNewsAPI();
-    if (result === 'CORS') {
-      mode = 'cors';
-      document.getElementById('news-info').innerHTML = `
-        <div class="info-box">
-          <strong>ℹ️ NewsAPI Plan Gratuit — Limitation CORS</strong>
-          Le plan gratuit de NewsAPI (<strong style="color:var(--gold)">newsapi.org</strong>) bloque les appels depuis un navigateur web (erreur CORS). C'est une restriction de NewsAPI, pas du site.<br><br>
-          <strong>Pour activer les vraies actualités en temps réel, 2 options :</strong><br>
-          1. <strong>Plan payant NewsAPI</strong> ($449/mois) — autorise les appels navigateur<br>
-          2. <strong>Proxy backend simple</strong> (PHP/Node.js gratuit sur Vercel) — relaye les requêtes côté serveur ✅ Recommandé<br><br>
-          <em>En attendant, les actualités sont générées par <strong style="color:var(--gold)">Claude IA</strong> avec les dernières infos connues.</em>
-        </div>`;
-    } else if (result === 'INVALID_KEY') {
-      document.getElementById('news-info').innerHTML = `<div class="info-box"><strong>❌ Clé NewsAPI invalide</strong>Veuillez vérifier votre clé sur newsapi.org</div>`;
-      document.getElementById('api-banner').style.display = 'flex';
-    } else if (Array.isArray(result) && result.length > 0) {
-      realNews = result;
-      mode = 'real+ai';
-    }
+  // ÉTAPE 1 — Afficher statique IMMÉDIATEMENT (toujours)
+  if (!aiLoaded) {
+    articles = [...STATIC_ARTICLES];
+    renderNews(articles);
+    updateHero(articles[0]);
+    updateSidebar(articles.slice(1,5));
+    updateTicker(articles);
+    setStatus('yellow', '🤖 Chargement des vraies actualités...', '');
+    observeAll();
   }
 
-  // Generate with Claude AI
+  // ÉTAPE 2 — Vraies news via proxy Vercel
+  const realNews = await fetchProxy();
+
+  // ÉTAPE 3 — Enrichissement Claude IA
+  const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const ctx = realNews
+    ? 'Actualités réelles disponibles : ' + realNews.slice(0,4).map(a => '"' + a.title + '"').join(', ') + '. Inspire-toi en. '
+    : '';
+
   try {
-    const today = new Date().toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    let ctx = '';
-    if (realNews) ctx = 'Vraies actualités récentes :\n' + realNews.map(a=>`- ${a.title} (${a.source?.name})`).join('\n') + '\n\n';
+    const d = await callClaude(
+      ctx + 'Date du jour : ' + today + '.\n' +
+      'Génère exactement 6 articles d\'actualité boxe. Réponds avec ce JSON uniquement :\n' +
+      '{"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","emoji":"...","source":"..."}]}\n' +
+      'RÈGLES STRICTES :\n' +
+      '- 6 articles exactement, JSON complet\n' +
+      '- categorie : RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT, TRANSFERTS\n' +
+      '- temps : "Il y a Xh" (varier de 1h à 10h)\n' +
+      '- source : L\'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports, BBC Sport\n' +
+      '- contenu : 2 paragraphes courts séparés par ###\n' +
+      '- resume : max 10 mots\n' +
+      '- Citer au moins un de : Usyk, Fury, Canelo, Crawford, Davis, Garcia'
+    );
 
-    const d = await claude(`${ctx}Génère 6 articles d'actualité boxe percutants pour le ${today}.
-JSON: {"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","emoji":"...","source":"..."}]}
-- categorie: RÉSULTATS | TRANSFERTS | ANALYSE | INTERVIEW | ENTRAÎNEMENT | ÉVÉNEMENT
-- temps: "Il y a X heures" (varier entre 1h et 8h)
-- source: ESPN / BBC Sport / L'Équipe / RMC Sport / Eurosport / Sky Sports / The Ring...
-- contenu: 4 paragraphes séparés par ###
-- Cite boxeurs réels actuels (Usyk, Fury, Canelo, Crawford, Davis, Garcia, Joshua, Dubois...)`);
+    if (d && d.articles && d.articles.length > 0) {
+      let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
+      let final = aiArts;
 
-    let final = [];
-    if (realNews && realNews.length > 0) {
-      // Mix real + AI articles
-      final = [
-        ...realNews.slice(0,3).map(a=>({
-          titre:a.title, categorie:'LIVE', resume:a.description||'',
-          contenu:a.content||a.description||'Lire la suite sur la source originale.',
-          temps:timeAgo(a.publishedAt), emoji:'📰', source:a.source?.name||'NewsAPI',
-          url:a.url, img:a.urlToImage, isReal:true
-        })),
-        ...(d.articles||[]).slice(0,3).map(a=>({...a,isReal:false}))
-      ];
-    } else {
-      final = (d.articles||[]).map(a=>({...a,isReal:false}));
+      if (realNews && realNews.length > 0) {
+        const live = realNews.slice(0, 3)
+          .filter(a => a.title && a.title !== '[Removed]')
+          .map(a => ({
+            titre: a.title,
+            categorie: 'LIVE',
+            resume: (a.description || '').slice(0, 90),
+            contenu: a.content || a.description || 'Lire la suite sur la source originale.',
+            temps: timeAgo(a.publishedAt),
+            emoji: '📰',
+            source: a.source?.name || 'NewsAPI',
+            url: a.url,
+            img: a.urlToImage,
+            isReal: true,
+          }));
+        final = [...live, ...aiArts.slice(0, 3)];
+      }
+
+      articles = final;
+      renderNews(articles);
+      updateHero(articles[0]);
+      updateSidebar(articles.slice(1,5));
+      updateTicker(articles);
+      aiLoaded = true;
+      lastUpdate = new Date();
+
+      const mode = (realNews && realNews.length > 0) ? 'real+ai' : 'ai';
+      setStatus('green',
+        mode === 'real+ai'
+          ? '🟢 NewsAPI en temps réel + Claude IA — Auto-refresh toutes les 15 min'
+          : '🟢 Claude IA — Actualités générées · Auto-refresh toutes les 15 min',
+        '');
+      document.getElementById('news-info').innerHTML =
+        '<span style="color:' + (mode==='real+ai'?'#22C55E':'var(--gold)') + ';font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">' +
+        (mode==='real+ai' ? '🟢 SOURCES RÉELLES + IA' : '🤖 CLAUDE IA') +
+        '</span><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
+        articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
     }
-
-    articles = final;
-    renderNews(final);
-    updateHero(final[0]);
-    updateSidebar(final.slice(1,5));
-    updateTicker(final);
-
-    lastUpdate = new Date();
-    const label = mode==='real+ai' ? '🟢 NewsAPI + Claude IA — Mise à jour automatique active' : '🤖 Claude IA — Mise à jour automatique toutes les 15 min';
-    setStatus(mode==='real+ai'?'green':'yellow', label, '');
-    if (mode !== 'cors' && !document.getElementById('news-info').querySelector('.info-box')) {
-      document.getElementById('news-info').innerHTML = mode==='real+ai'
-        ? `<span style="color:#22C55E;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">🟢 SOURCES RÉELLES</span> <span style="font-family:'Barlow Condensed',sans-serif;font-size:.78rem;color:var(--muted);">NewsAPI + Claude IA · ${final.length} articles</span>`
-        : `<span style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">🤖 CLAUDE IA</span> <span style="font-family:'Barlow Condensed',sans-serif;font-size:.78rem;color:var(--muted);">Actualités générées par IA · ${final.length} articles · ${new Date().toLocaleTimeString('fr-FR')}</span>`;
-    }
-
   } catch(e) {
-    console.error(e);
-    document.getElementById('news-grid').innerHTML = `<div style="grid-column:1/-1"><div class="info-box"><strong>⚠️ Erreur</strong>Impossible de charger les actualités. Vérifiez votre connexion.</div></div>`;
-    setStatus('red','❌ Erreur de chargement','');
+    console.info('IA non disponible :', e.message);
+    if (!aiLoaded) {
+      setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
+      document.getElementById('news-info').innerHTML =
+        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 MODE STATIQUE</span>' +
+        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence · En ligne sur Vercel pour les actualités IA</span>';
+    }
   }
 
   btn.classList.remove('loading');
@@ -693,38 +737,27 @@ JSON: {"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"..
 function timeAgo(str) {
   if (!str) return 'Récemment';
   const diff = Math.floor((Date.now() - new Date(str)) / 60000);
-  if (diff < 60) return `Il y a ${diff} min`;
-  if (diff < 1440) return `Il y a ${Math.floor(diff/60)}h`;
-  return `Il y a ${Math.floor(diff/1440)}j`;
+  if (diff < 60) return 'Il y a ' + diff + ' min';
+  if (diff < 1440) return 'Il y a ' + Math.floor(diff/60) + 'h';
+  return 'Il y a ' + Math.floor(diff/1440) + 'j';
 }
 
-function showSkeletons() {
-  document.getElementById('news-grid').innerHTML = Array(6).fill(0).map(()=>`
-    <div class="news-card">
-      <div class="news-card-img"><div class="sk" style="width:100%;height:100%"></div></div>
-      <div class="news-card-body">
-        <div class="sk" style="height:12px;width:55%;margin-bottom:9px"></div>
-        <div class="sk" style="height:17px;width:90%;margin-bottom:5px"></div>
-        <div class="sk" style="height:17px;width:72%;margin-bottom:13px"></div>
-        <div class="sk" style="height:11px;width:100%;margin-bottom:4px"></div>
-        <div class="sk" style="height:11px;width:80%"></div>
-      </div>
-    </div>`).join('');
-}
-
+// ════════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════════
 function renderNews(list) {
-  document.getElementById('news-grid').innerHTML = list.map((a,i)=>`
+  document.getElementById('news-grid').innerHTML = list.map((a, i) => `
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
       <div class="news-card-img">
-        ${a.img?`<img src="${a.img}" alt="" onerror="this.style.display='none'">`:``}
-        <div class="fallback">${a.emoji||'🥊'}</div>
-        ${a.isReal?'<div class="badge-real">LIVE</div>':'<div class="badge-ai">IA</div>'}
+        ${a.img ? `<img src="${a.img}" alt="" onerror="this.style.display='none'">` : ''}
+        <div class="fallback">${a.emoji || '🥊'}</div>
+        ${a.isReal ? '<div class="badge-real">LIVE</div>' : '<div class="badge-ai">IA</div>'}
       </div>
       <div class="news-card-body">
-        <div class="news-card-src">${a.isReal?'🟢 ':''} ${a.source||'KO MAG'}</div>
+        <div class="news-card-src">${a.isReal ? '🟢 ' : '🤖 '} ${a.source || 'KO MAG'}</div>
         <div class="news-card-cat">${a.categorie}</div>
         <div class="news-card-title">${a.titre}</div>
-        <div class="news-card-excerpt">${a.resume||''}</div>
+        <div class="news-card-excerpt">${a.resume || ''}</div>
         <div class="news-card-footer">
           <span class="news-card-time">${a.temps}</span>
           <a href="#" class="read-link" onclick="event.stopPropagation();openArt(${i})">LIRE →</a>
@@ -736,89 +769,106 @@ function renderNews(list) {
 function updateHero(a) {
   if (!a) return;
   document.getElementById('hero-title').textContent = a.titre;
-  document.getElementById('hero-excerpt').textContent = a.resume||'';
-  document.getElementById('hero-meta').innerHTML = `
-    <span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">${a.categorie}</span>
-    <span class="hero-meta-src">${a.source||'KO MAG'}</span>
-    <span>${a.temps}</span>`;
-  if (a.isReal) { const b=document.getElementById('hero-live-badge'); b.style.display='inline-flex'; }
-  document.getElementById('hero-btn').onclick = e=>{e.preventDefault();openArt(0);};
+  document.getElementById('hero-excerpt').textContent = a.resume || '';
+  document.getElementById('hero-meta').innerHTML =
+    '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
+    '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
+    '<span>' + a.temps + '</span>';
+  if (a.isReal) document.getElementById('hero-live-badge').style.display = 'inline-flex';
+  document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
 }
 
 function updateSidebar(list) {
-  document.getElementById('sidebar-news').innerHTML = list.map((a,i)=>`
+  document.getElementById('sidebar-news').innerHTML = list.map((a, i) => `
     <a class="sb-item" href="#" onclick="event.preventDefault();openArt(${i+1})">
-      <div class="sb-item-src">${a.isReal?'🟢 LIVE — ':'🤖 IA — '}${a.source||'KO MAG'}</div>
-      <div class="sb-item-title">${a.emoji||'🥊'} ${a.titre}</div>
+      <div class="sb-item-src">${a.isReal ? '🟢 LIVE — ' : '🤖 IA — '}${a.source || 'KO MAG'}</div>
+      <div class="sb-item-title">${a.emoji || '🥊'} ${a.titre}</div>
       <div class="sb-item-time">${a.temps}</div>
     </a>`).join('');
 }
 
 function updateTicker(list) {
   const t = document.getElementById('ticker');
-  const items = list.map(a=>`<span class="tki"><span class="tkd"></span>${a.emoji||'🥊'} ${a.titre}</span>`);
-  t.innerHTML = [...items,...items].join('');
+  const items = list.map(a => `<span class="tki"><span class="tkd"></span>${a.emoji || '🥊'} ${a.titre}</span>`);
+  t.innerHTML = [...items, ...items].join('');
 }
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // MODAL
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 function openArt(i) {
-  const a = articles[i]; if(!a) return;
-  document.getElementById('modal-title').textContent = (a.emoji||'🥊')+' '+a.titre;
-  const paras = (a.contenu||a.resume||'').split('###').map(p=>p.trim()).filter(Boolean);
-  document.getElementById('modal-body').innerHTML = `
-    <div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
-      ${a.isReal?'<span style="background:#22C55E;color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🟢 SOURCE RÉELLE</span>':'<span style="background:var(--smoke);color:var(--gold);border:1px solid var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🤖 IA CLAUDE</span>'}
-      <span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">${a.categorie}</span>
-      <span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">${a.source||'KO MAG'} · ${a.temps}</span>
-    </div>
-    ${a.img?`<img src="${a.img}" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display='none'">`:``}
-    ${paras.map(p=>`<p>${p}</p>`).join('')}
-    ${a.url?`<div style="margin-top:16px;"><a href="${a.url}" target="_blank" rel="noopener" style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l'article original →</a></div>`:''}
-    <div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>
-      <a href="${AFF.g_everlast}" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a>
-    </div>`;
+  const a = articles[i]; if (!a) return;
+  document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
+  const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
+    (a.isReal
+      ? '<span style="background:#22C55E;color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🟢 SOURCE RÉELLE</span>'
+      : '<span style="background:var(--smoke);color:var(--gold);border:1px solid var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🤖 IA CLAUDE</span>') +
+    '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
+    '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
+    (a.img ? '<img src="' + a.img + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">' : '') +
+    paras.map(p => '<p>' + p + '</p>').join('') +
+    (a.url ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
+    '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
+    '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
   document.getElementById('modal').classList.add('open');
 }
-function closeModal(){document.getElementById('modal').classList.remove('open')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // TIPS
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
+function renderTipsStatic(tab) {
+  const tips = STATIC_TIPS[tab] || STATIC_TIPS.technique;
+  document.getElementById('tips-grid').innerHTML = tips.map((c, i) => `
+    <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
+      <div class="tip-num">${c.numero}</div>
+      <div class="tip-icon">${c.emoji}</div>
+      <div class="tip-title">${c.titre}</div>
+      <div class="tip-body">${c.contenu}</div>
+      <div class="tip-tag">${c.tag}</div>
+    </div>`).join('');
+  observeAll();
+}
+
 async function loadTips(tab) {
   currentTipTab = tab;
   document.getElementById('tips-btn').classList.add('loading');
-  document.getElementById('tips-grid').innerHTML = `<div class="tip-card"><div class="sk" style="height:190px"></div></div>`.repeat(4);
+  renderTipsStatic(tab);
   try {
-    const d = await claude(`Génère 4 conseils pratiques de boxe sur le thème "${tab}".
-JSON:{"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}
-- numero: 01 à 04
-- tag: DÉBUTANT / INTERMÉDIAIRE / AVANCÉ / PRO / ESSENTIEL
-- contenu: 3-4 phrases concrètes avec chiffres et techniques nommées`);
-    document.getElementById('tips-grid').innerHTML = (d.conseils||[]).map((c,i)=>`
-      <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
-        <div class="tip-num">${c.numero||String(i+1).padStart(2,'0')}</div>
-        <div class="tip-icon">${c.emoji}</div>
-        <div class="tip-title">${c.titre}</div>
-        <div class="tip-body">${c.contenu}</div>
-        <div class="tip-tag">${c.tag}</div>
-      </div>`).join('');
-    observeAll();
-  } catch(e) {
-    document.getElementById('tips-grid').innerHTML=`<div style="grid-column:1/-1"><div class="info-box"><strong>Erreur</strong>Réessayez.</div></div>`;
-  }
+    const d = await callClaude(
+      'Génère 4 conseils pratiques de boxe sur le thème "' + tab + '".\n' +
+      'JSON uniquement : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}\n' +
+      '- numero : 01 à 04\n- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL\n- contenu : 2-3 phrases avec chiffres concrets'
+    );
+    if (d && d.conseils && d.conseils.length > 0) {
+      document.getElementById('tips-grid').innerHTML = d.conseils.map((c, i) => `
+        <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
+          <div class="tip-num">${c.numero || String(i+1).padStart(2,'0')}</div>
+          <div class="tip-icon">${c.emoji}</div>
+          <div class="tip-title">${c.titre}</div>
+          <div class="tip-body">${c.contenu}</div>
+          <div class="tip-tag">${c.tag}</div>
+        </div>`).join('');
+      observeAll();
+    }
+  } catch(e) { /* garder statique silencieusement */ }
   document.getElementById('tips-btn').classList.remove('loading');
 }
-function switchTip(t,el){document.querySelectorAll('#conseils .tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');loadTips(t)}
 
-// ────────────────────────────────────────────────
-// FIGHTS
-// ────────────────────────────────────────────────
+function switchTip(t, el) {
+  document.querySelectorAll('#conseils .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); loadTips(t);
+}
+
+// ════════════════════════════════════════════════════════════════
+// FIGHTS / RANKINGS / EQUIPMENT
+// ════════════════════════════════════════════════════════════════
 function renderFights(tab) {
-  document.getElementById('fights-grid').innerHTML = FIGHTS[tab].map(f=>`
+  document.getElementById('fights-grid').innerHTML = FIGHTS[tab].map(f => `
     <div class="fight-card fade-up">
       <div class="fight-header">
         <div class="fight-date">${f.date}</div>
@@ -831,42 +881,44 @@ function renderFights(tab) {
           <div class="fight-fighter"><div class="fight-fighter-name">${f.f2}</div><div class="fight-fighter-rec">${f.r2}</div></div>
         </div>
         <div class="fight-title-small">${f.title}</div>
-        ${f.extra?`<div style="text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;color:${tab==='results'?'#22C55E':'var(--gold)'};font-size:.86rem;letter-spacing:.08em;">${f.extra}</div>`:''}
+        ${f.extra ? '<div style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;color:' + (tab==='results'?'#22C55E':'var(--gold)') + ';font-size:.86rem;letter-spacing:.08em;">' + f.extra + '</div>' : ''}
       </div>
       <div class="fight-footer">
-        <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🤖 Voir analyse →':'📺 Revoir →'}</a>
+        <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">
+          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🤖 Voir analyse →':'📺 Revoir →'}
+        </a>
       </div>
     </div>`).join('');
   observeAll();
 }
-function switchFight(t,el){document.querySelectorAll('#combats .tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderFights(t)}
+function switchFight(t, el) {
+  document.querySelectorAll('#combats .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); renderFights(t);
+}
 
-// ────────────────────────────────────────────────
-// RANKINGS
-// ────────────────────────────────────────────────
 function renderRanks(wc) {
   const medals = ['gold','silver','bronze'];
-  document.getElementById('ranking-table').innerHTML = `
-    <thead><tr><th>#</th><th>Boxeur</th><th>Pays</th><th>Bilan</th><th>Titre / Rang</th><th>↕</th></tr></thead>
-    <tbody>${(RANKS[wc]||[]).map((f,i)=>`<tr>
-      <td><div class="rank-num ${medals[i]||''}">${i+1}</div></td>
-      <td><div class="fighter-name">${f.name}</div></td>
-      <td class="fighter-country">${f.country}</td>
-      <td class="fighter-record">${f.record}</td>
-      <td class="fighter-org">${f.org}</td>
-      <td class="${f.trend==='↑'?'trend-up':f.trend==='↓'?'trend-down':'trend-same'}">${f.trend}</td>
-    </tr>`).join('')}</tbody>`;
+  document.getElementById('ranking-table').innerHTML =
+    '<thead><tr><th>#</th><th>Boxeur</th><th>Pays</th><th>Bilan</th><th>Titre / Rang</th><th>↕</th></tr></thead><tbody>' +
+    (RANKS[wc]||[]).map((f,i) =>
+      '<tr><td><div class="rank-num ' + (medals[i]||'') + '">' + (i+1) + '</div></td>' +
+      '<td><div class="fighter-name">' + f.name + '</div></td>' +
+      '<td class="fighter-country">' + f.country + '</td>' +
+      '<td class="fighter-record">' + f.record + '</td>' +
+      '<td class="fighter-org">' + f.org + '</td>' +
+      '<td class="' + (f.trend==='↑'?'trend-up':f.trend==='↓'?'trend-down':'trend-same') + '">' + f.trend + '</td></tr>'
+    ).join('') + '</tbody>';
 }
-function switchWeight(wc,el){document.querySelectorAll('#classement .tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderRanks(wc)}
+function switchWeight(wc, el) {
+  document.querySelectorAll('#classement .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); renderRanks(wc);
+}
 
-// ────────────────────────────────────────────────
-// EQUIPMENT
-// ────────────────────────────────────────────────
 function renderEquip(tab) {
-  const list = tab==='all'?EQUIP:EQUIP.filter(e=>e.cat===tab);
-  document.getElementById('equip-grid').innerHTML = list.map(e=>`
+  const list = tab === 'all' ? EQUIP : EQUIP.filter(e => e.cat === tab);
+  document.getElementById('equip-grid').innerHTML = list.map(e => `
     <div class="equip-card fade-up">
-      ${e.badge?`<div class="equip-badge">${e.badge}</div>`:''}
+      ${e.badge ? '<div class="equip-badge">' + e.badge + '</div>' : ''}
       <span class="equip-emoji">${e.emoji}</span>
       <div class="equip-cat">${e.cat}</div>
       <div class="equip-name">${e.name}</div>
@@ -877,58 +929,51 @@ function renderEquip(tab) {
     </div>`).join('');
   observeAll();
 }
-function switchEquip(t,el){document.querySelectorAll('#equipement .tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');renderEquip(t)}
+function switchEquip(t, el) {
+  document.querySelectorAll('#equipement .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); renderEquip(t);
+}
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // NEWSLETTER
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 function subscribe() {
-  const i=document.getElementById('email-input');
-  if(!i.value.includes('@')){i.style.border='1px solid #f55';return}
-  i.style.border='';
-  const b=event.target;
-  b.textContent='✓ Abonné(e) !';b.style.background='#22C55E';i.value='';
-  setTimeout(()=>{b.textContent="S'abonner — Gratuit";b.style.background=''},3000);
+  const inp = document.getElementById('email-input');
+  if (!inp.value.includes('@')) { inp.style.border = '1px solid #f55'; return; }
+  inp.style.border = '';
+  const b = event.target;
+  b.textContent = '✓ Abonné(e) !'; b.style.background = '#22C55E'; inp.value = '';
+  setTimeout(() => { b.textContent = "S'abonner — Gratuit"; b.style.background = ''; }, 3000);
 }
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // ANIMATIONS
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 function observeAll() {
-  const obs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
-  },{threshold:.08});
-  document.querySelectorAll('.fade-up:not(.visible)').forEach(el=>obs.observe(el));
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: .08 });
+  document.querySelectorAll('.fade-up:not(.visible)').forEach(el => obs.observe(el));
 }
 
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 // INIT
-// ────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════
 async function init() {
-  // Pre-fill key if saved
-  if (newsApiKey) {
-    document.getElementById('api-banner').style.display = 'none';
-    setStatus('yellow','🔄 Connexion NewsAPI en cours...','');
-  } else {
-    setStatus('yellow','⚙️ En attente de la clé NewsAPI — Actualités IA en cours de chargement...','');
-  }
-
+  setStatus('yellow', '🔄 Connexion au serveur d\'actualités...', '');
   renderFights('upcoming');
   renderRanks('heavyweight');
   renderEquip('all');
-
-  setTimeout(()=>document.getElementById('loader').classList.add('hidden'), 1800);
-
+  renderTipsStatic('technique');
+  setTimeout(() => document.getElementById('loader').classList.add('hidden'), 1200);
   await loadNews();
   await loadTips('technique');
   observeAll();
-
-  // Auto-refresh toutes les 15 min
   setInterval(loadNews, REFRESH_MS);
-  // Update status time
-  setInterval(()=>{
-    if(lastUpdate) document.getElementById('s-time').textContent =
-      `Mise à jour : ${lastUpdate.toLocaleTimeString('fr-FR')} (il y a ${Math.floor((Date.now()-lastUpdate)/60000)} min)`;
+  setInterval(() => {
+    if (lastUpdate) document.getElementById('s-time').textContent =
+      'Mise à jour : ' + lastUpdate.toLocaleTimeString('fr-FR') +
+      ' (il y a ' + Math.floor((Date.now() - lastUpdate) / 60000) + ' min)';
   }, 30000);
 }
 
