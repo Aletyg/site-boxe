@@ -3,8 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KO MAG — L'Actualité Boxe Sans Filtre</title>
+
+<!-- SEO PRIMAIRE -->
+<title>KO MAG — Actualité Boxe en Direct | Résultats, Analyses, Équipement</title>
+<meta name="description" content="KO MAG, le magazine de boxe de référence. Actualités en temps réel, résultats de combats, classements mondiaux, conseils d'entraînement et équipement de boxe sélectionné par des experts.">
+<meta name="keywords" content="boxe actualité, résultats boxe, classement boxe, Usyk, Fury, Canelo, Crawford, gants de boxe, équipement boxe, magazine boxe">
+<meta name="author" content="KO MAG">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://komag.fr/">
+
+<!-- OPEN GRAPH (Facebook, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KO MAG">
+<meta property="og:title" content="KO MAG — Actualité Boxe en Direct">
+<meta property="og:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
+<meta property="og:url" content="https://komag.fr/">
+<meta property="og:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
+<meta property="og:locale" content="fr_FR">
+
+<!-- TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KO MAG — Actualité Boxe en Direct">
+<meta name="twitter:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
+
+<!-- SCHEMA.ORG — Organisation -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsMediaOrganization",
+  "name": "KO MAG",
+  "url": "https://komag.fr",
+  "logo": "https://komag.fr/logo.png",
+  "description": "Magazine de boxe de référence en France. Actualités, résultats, classements et équipement.",
+  "sameAs": [],
+  "publishingPrinciples": "https://komag.fr",
+  "foundingDate": "2025",
+  "areaServed": "FR",
+  "inLanguage": "fr"
+}
+</script>
+
+<!-- SCHEMA.ORG — WebSite avec SearchAction -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "KO MAG",
+  "url": "https://komag.fr",
+  "description": "Magazine de boxe — Actualités, résultats et équipement",
+  "inLanguage": "fr",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://komag.fr/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+
+<!-- PERFORMANCE -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--red:#E8001A;--gold:#F5B800;--dark:#0A0A0B;--charcoal:#141416;--smoke:#1E1E22;--grey:#2E2E35;--muted:#6B6B78;--light:#E8E8EC;--white:#FAFAFA}
@@ -238,9 +298,160 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 .fade-up{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
 .fade-up.visible{opacity:1;transform:translateY(0)}
 
-/* RESPONSIVE */
-@media(max-width:1000px){.news-grid{grid-template-columns:1fr 1fr}.equip-grid{grid-template-columns:1fr 1fr}.hero{grid-template-columns:1fr}.hero-sidebar{display:none}nav{display:none}.fights-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr 1fr}.newsletter-inner{flex-direction:column}}
-@media(max-width:640px){.news-grid{grid-template-columns:1fr}.tips-grid{grid-template-columns:1fr}.equip-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.fights-grid{grid-template-columns:1fr}}
+/* RESPONSIVE TABLETTE */
+@media(max-width:1000px){
+  .news-grid{grid-template-columns:1fr 1fr}
+  .equip-grid{grid-template-columns:1fr 1fr}
+  .hero{grid-template-columns:1fr}
+  .hero-sidebar{display:none}
+  nav{display:none}
+  .fights-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .newsletter-inner{flex-direction:column}
+}
+
+/* RESPONSIVE MOBILE */
+@media(max-width:640px){
+  /* Layout */
+  .news-grid{grid-template-columns:1fr}
+  .tips-grid{grid-template-columns:1fr}
+  .equip-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .fights-grid{grid-template-columns:1fr}
+
+  /* Header mobile */
+  .header-top{padding:0 16px;height:54px}
+  .logo{font-size:1.8rem}
+  .header-cta{display:none}
+
+  /* Hero mobile */
+  .hero-main{padding:24px 16px 80px}
+  .hero-title{font-size:1.9rem !important}
+  .hero-excerpt{font-size:.88rem;-webkit-line-clamp:2}
+
+  /* Sections */
+  .container{padding:0 14px}
+  section{padding:32px 0}
+  .section-hd{margin-bottom:18px}
+  .section-title{font-size:1.5rem}
+
+  /* Cards */
+  .news-card-title{font-size:1rem}
+  .equip-grid{gap:12px}
+  .equip-card{padding:16px}
+
+  /* Tabs scroll horizontal */
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab-btn{white-space:nowrap;padding:8px 14px;font-size:.78rem}
+
+  /* Ticker */
+  .ticker-label{font-size:.65rem;padding:0 10px}
+
+  /* Newsletter */
+  .newsletter-form{flex-direction:column;width:100%}
+  .newsletter-form input{width:100%;border-right:1px solid rgba(255,255,255,.3);border-bottom:none}
+  .newsletter-form button{width:100%}
+  .newsletter-text h2{font-size:1.5rem}
+
+  /* Footer */
+  footer{padding:32px 0 100px}
+  .footer-bottom{flex-direction:column;gap:6px;font-size:.7rem}
+
+  /* Ranking table mobile */
+  .ranking-table th:nth-child(3),
+  .ranking-table td:nth-child(3){display:none}
+  .ranking-table th:nth-child(5),
+  .ranking-table td:nth-child(5){display:none}
+
+  /* Bottom nav padding */
+  body{padding-bottom:64px}
+
+  /* Status bar */
+  .status-bar{padding:4px 14px}
+  #s-text{font-size:.65rem}
+}
+
+/* BOTTOM NAVIGATION MOBILE */
+.mobile-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(10,10,11,.97);
+  backdrop-filter:blur(16px);
+  border-top:2px solid var(--red);
+  z-index:200;
+  padding:0;
+  height:60px;
+}
+
+.mobile-nav-inner{
+  display:flex;
+  align-items:stretch;
+  height:100%;
+  max-width:600px;
+  margin:0 auto;
+}
+
+.mobile-nav-btn{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  background:none;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .2s;
+  text-decoration:none;
+  padding:6px 4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.58rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.mobile-nav-btn:hover,
+.mobile-nav-btn.active{color:var(--red)}
+
+.mobile-nav-btn svg{
+  width:20px;height:20px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.mobile-nav-btn.active svg{stroke:var(--red)}
+
+@media(max-width:640px){
+  .mobile-nav{display:flex}
+}
+
+/* PULL TO REFRESH indicator */
+.ptr-indicator{
+  display:none;
+  position:fixed;
+  top:60px;left:50%;
+  transform:translateX(-50%);
+  background:var(--red);
+  color:white;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.75rem;
+  font-weight:700;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  padding:6px 18px;
+  border-radius:0 0 20px 20px;
+  z-index:150;
+  transition:all .3s;
+}
+@media(max-width:640px){.ptr-indicator{display:block;opacity:0}}
+.ptr-indicator.show{opacity:1}
 </style>
 </head>
 <body>
@@ -901,6 +1112,7 @@ function renderNews(list) {
 
 function updateHero(a) {
   if (!a) return;
+  updateSEOMeta(a);
   document.getElementById('hero-title').textContent = a.titre;
   document.getElementById('hero-excerpt').textContent = a.resume || '';
   document.getElementById('hero-meta').innerHTML =
@@ -1133,6 +1345,106 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// SEO — Mettre à jour les meta dynamiquement avec le premier article
+function updateSEOMeta(article) {
+  if (!article) return;
+  // Title
+  document.title = article.titre + ' — KO MAG';
+  // Description
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.content = article.resume || article.titre;
+  // OG
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.content = article.titre + ' — KO MAG';
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.content = article.resume || article.titre;
+  const ogImg = document.querySelector('meta[property="og:image"]');
+  if (ogImg && article.img) ogImg.content = article.img;
+  // Twitter
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.content = article.titre + ' — KO MAG';
+  // Schema Article
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.titre,
+    "description": article.resume,
+    "image": article.img || "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200",
+    "datePublished": new Date().toISOString(),
+    "publisher": {
+      "@type": "Organization",
+      "name": "KO MAG",
+      "url": "https://komag.fr"
+    },
+    "inLanguage": "fr",
+    "url": "https://komag.fr"
+  };
+  let schemaEl = document.getElementById('schema-article');
+  if (!schemaEl) {
+    schemaEl = document.createElement('script');
+    schemaEl.type = 'application/ld+json';
+    schemaEl.id = 'schema-article';
+    document.head.appendChild(schemaEl);
+  }
+  schemaEl.textContent = JSON.stringify(schema);
+}
+</script>
+<!-- BOTTOM NAVIGATION MOBILE -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="#actualites" class="mobile-nav-btn active" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Accueil
+    </a>
+    <a href="#actualites" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M4 11h12"/><path d="M4 16h8"/><path d="M2 7h6v6H2z"/></svg>
+      Actus
+    </a>
+    <a href="#combats" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Combats
+    </a>
+    <a href="#equipement" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Shop
+    </a>
+    <button class="mobile-nav-btn" onclick="loadNews();setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Refresh
+    </button>
+  </div>
+</nav>
+
+<div class="ptr-indicator" id="ptr">↓ Actualiser</div>
+
+<script>
+function setMobileNav(el) {
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Pull to refresh
+let startY = 0, pulling = false;
+document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', e => {
+  if (window.scrollY === 0 && e.touches[0].clientY - startY > 60) {
+    pulling = true;
+    document.getElementById('ptr').classList.add('show');
+    document.getElementById('ptr').textContent = '↓ Relâchez pour actualiser';
+  }
+}, {passive:true});
+document.addEventListener('touchend', () => {
+  if (pulling) {
+    pulling = false;
+    const ptr = document.getElementById('ptr');
+    ptr.textContent = '🔄 Actualisation...';
+    loadNews().finally(() => {
+      ptr.classList.remove('show');
+      ptr.textContent = '↓ Actualiser';
+    });
+  }
+});
 </script>
 </body>
 </html>
