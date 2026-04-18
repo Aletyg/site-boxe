@@ -521,6 +521,21 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </div>
 
+<section id="combats">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">COM<span>BATS</span></h2>
+      <a href="#" class="section-link">Planning complet →</a>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
+      <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
+      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
+    </div>
+    <div class="fights-grid" id="fights-grid"></div>
+  </div>
+</section>
+
 <section id="actualites">
   <div class="container">
     <div class="section-hd">
@@ -538,20 +553,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </section>
 
-<section id="combats">
-  <div class="container">
-    <div class="section-hd">
-      <h2 class="section-title">COM<span>BATS</span></h2>
-      <a href="#" class="section-link">Planning complet →</a>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
-      <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
-      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
-    </div>
-    <div class="fights-grid" id="fights-grid"></div>
-  </div>
-</section>
+
 
 <section id="conseils">
   <div class="container">
