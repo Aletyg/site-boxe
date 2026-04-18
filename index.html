@@ -272,6 +272,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
       <a href="#equipement">Équipement</a>
     </nav>
     <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
+    <button onclick="configGemini()" title="Configurer Gemini IA Images" style="background:none;border:1px solid var(--grey);color:var(--muted);padding:6px 10px;cursor:pointer;font-size:.75rem;font-family:'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--grey)';this.style.color='var(--muted)'">🎨 IA Images</button>
   </div>
 </header>
 
@@ -436,6 +437,8 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 // CONFIG
 // ════════════════════════════════════════════════════════════════
 const AMAZON_TAG = 'VOTRETAG-21';
+// ↓ Collez votre clé API Google Gemini ici (console.cloud.google.com)
+const GEMINI_API_KEY = localStorage.getItem('gemini_key') || '';
 const REFRESH_MS = 15 * 60 * 1000;
 
 const AFF = {
@@ -457,24 +460,36 @@ const AFF = {
 // ARTICLES STATIQUES — toujours affichés instantanément
 // ════════════════════════════════════════════════════════════════
 const STATIC_ARTICLES = [
-  { titre:"Usyk vs Fury II : Le combat de la décennie se confirme", categorie:"ÉVÉNEMENT", emoji:"🏆", source:"L'Équipe", temps:"Il y a 2h", isReal:false,
-    resume:"La revanche Usyk-Fury se précise pour 2025, avec une bourse record attendue.",
-    contenu:"Après le combat historique de Riyad, les deux camps négocient une revanche qui promet d'être encore plus spectaculaire. Usyk, champion unifié incontesté, a déclaré être prêt à remettre ses ceintures en jeu face au géant britannique.###Les promoteurs confirment des discussions avancées pour une date au printemps 2025 en Arabie Saoudite, avec une bourse estimée à 200 millions de dollars. Ce serait le combat le plus lucratif de l'histoire de la boxe poids lourds." },
-  { titre:"Canelo Alvarez vs Berlanga : La date est fixée", categorie:"RÉSULTATS", emoji:"🥊", source:"RMC Sport", temps:"Il y a 4h", isReal:false,
-    resume:"Canelo défend ses quatre ceintures face à l'invaincu Berlanga en septembre.",
-    contenu:"Le champion mexicain a confirmé en conférence de presse que son prochain combat aura lieu le 13 septembre au T-Mobile Arena de Las Vegas. Berlanga, 22 victoires dont 17 par KO, représente le défi le plus sérieux depuis des années.###'Je suis prêt à montrer que je suis encore le meilleur' a déclaré Canelo. Le combat sera diffusé sur DAZN et devrait générer plus de 100 millions de dollars de revenus." },
-  { titre:"Crawford domine et unifie — analyse tactique complète", categorie:"ANALYSE", emoji:"📊", source:"ESPN", temps:"Il y a 5h", isReal:false,
-    resume:"Terence Crawford confirme son statut de meilleur livre pour livre mondial.",
-    contenu:"Son KO au 9e round face à Madrimov lui a permis d'unifier les ceintures WBA, WBC et WBO des super-welters. Les experts le placent en tête du classement livre pour livre, devant Canelo et Usyk.###Son prochain adversaire pourrait être Jaron Ennis dans un choc entre deux invaincus très attendu par les fans américains. Un combat qui pourrait générer un record d'audience pour la catégorie." },
-  { titre:"Davis vs Garcia II : la revanche prend forme", categorie:"TRANSFERTS", emoji:"⚡", source:"Sky Sports", temps:"Il y a 6h", isReal:false,
-    resume:"Les deux stars des légers américains pourraient se retrouver dès cet été.",
-    contenu:"Après le premier affrontement qui avait battu tous les records PPV chez les légers, une revanche se profile. L'entourage de Gervonta Davis confirme des pourparlers sérieux avec l'équipe de Ryan Garcia pour un combat en juillet ou août 2025.###Les deux combattants généreraient selon les estimations plus de 150 millions de dollars de revenus. Un événement que les fans réclament depuis la fin du premier combat." },
-  { titre:"Tony Yoka : 'Je vise le titre mondial en 2025'", categorie:"INTERVIEW", emoji:"🇫🇷", source:"L'Équipe", temps:"Il y a 7h", isReal:false,
-    resume:"Le champion olympique français annonce son retour imminent sur le ring.",
-    contenu:"Champion olympique à Rio 2016, Tony Yoka affiche une forme impressionnante à l'entraînement et annonce un retour imminent. 'J'ai revu ma technique, mon travail de jambes, et je me sens prêt pour aller chercher un titre mondial' confie-t-il.###Son prochain combat devrait avoir lieu en France cet automne. Yoka, soutenu par son équipe de Levallois, veut prouver qu'il a le niveau pour rivaliser avec les meilleurs lourds mondiaux." },
-  { titre:"5 exercices pour une frappe plus puissante", categorie:"ENTRAÎNEMENT", emoji:"💪", source:"Eurosport", temps:"Il y a 8h", isReal:false,
-    resume:"Les secrets des champions pour développer une frappe dévastatrice.",
-    contenu:"La puissance vient de la chaîne musculaire complète : deadlifts, rotations avec médecine-ball, sprints courts et exercices pliométriques sont les piliers d'un programme efficace pour les boxeurs.###Combinez force et technique : rotation des hanches, transfert de poids et explosion à l'impact. Ces principes, appliqués 3 fois par semaine, produisent des résultats visibles en 8 semaines." },
+  { titre:"Oleksandr Usyk prêt pour 2026 : 'Je veux tout unifier'",
+    categorie:"INTERVIEW", emoji:"🏆", source:"L'Équipe", temps:"Il y a 1h", isReal:false,
+    img:"https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80",
+    resume:"Le champion unifié parle de ses ambitions pour 2026 et de son prochain combat.",
+    contenu:"Oleksandr Usyk a accordé une interview exclusive à L'Équipe depuis son camp d'entraînement en Ukraine. Le champion incontesté des poids lourds se dit en pleine forme et affirme vouloir défendre ses quatre ceintures avant la fin de l'année 2026.###'Je suis né pour être champion. Chaque combat, chaque entraînement, chaque sacrifice m'a mené ici. Je ne m'arrêterai pas tant que j'aurai des adversaires dignes de ce nom' a-t-il déclaré. Son équipe confirme des négociations en cours avec plusieurs prétendants de premier plan." },
+  { titre:"Canelo vs Benavidez : Le combat le plus attendu de 2026 officialisé",
+    categorie:"ÉVÉNEMENT", emoji:"🥊", source:"RMC Sport", temps:"Il y a 3h", isReal:false,
+    img:"https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80",
+    resume:"Le choc entre le champion mexicain et l'Américain invaincu est enfin confirmé.",
+    contenu:"Après des mois de négociations, le combat Canelo Alvarez vs David Benavidez est officiellement signé. L'affrontement aura lieu le 12 juillet 2026 au T-Mobile Arena de Las Vegas, diffusé sur DAZN en exclusivité mondiale.###Benavidez, 29-0 avec 24 KO, a toujours clamé être le seul adversaire que Canelo refusait d'affronter. Ce combat générera selon les estimations plus de 120 millions de dollars de revenus, un record pour la catégorie super-moyens." },
+  { titre:"Terence Crawford domine 2026 : analyse de son style unique",
+    categorie:"ANALYSE", emoji:"📊", source:"ESPN", temps:"Il y a 5h", isReal:false,
+    img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+    resume:"Comment Crawford est devenu le boxeur le plus complet de sa génération.",
+    contenu:"En 2026, Terence Crawford s'impose comme le boxeur livre pour livre numéro un mondial selon l'ensemble des médias spécialisés. Sa capacité à boxer des deux mains, à lire ses adversaires et à adapter son style en cours de combat en font une anomalie dans l'histoire de la boxe.###Les analystes d'ESPN ont décortiqué ses 10 derniers combats : Crawford utilise en moyenne 47 combinaisons différentes par round, contre 12 pour un boxeur de haut niveau standard. Une intelligence tactique qui le place au-dessus de tous ses contemporains." },
+  { titre:"Gervonta Davis KO au 6e round — résultat complet",
+    categorie:"RÉSULTATS", emoji:"⚡", source:"Sky Sports", temps:"Il y a 7h", isReal:false,
+    img:"https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80",
+    resume:"Tank Davis conserve sa ceinture WBA avec une victoire expéditive.",
+    contenu:"Gervonta 'Tank' Davis a une nouvelle fois impressionné samedi soir au Barclays Center de Brooklyn. Face au challenger Frank Martin, il a décroché un KO dévastateur au 6e round d'un direct du gauche qui a mis fin aux débats.###Avec 28 KO en 31 victoires, Davis confirme qu'il est le puncheur le plus efficace de sa catégorie. 'Je suis le meilleur, et ce soir tout le monde a pu le voir' a-t-il déclaré après le combat. Son prochain adversaire sera désigné dans les prochaines semaines." },
+  { titre:"Ryan Garcia : 'Je reviendrai plus fort en 2026'",
+    categorie:"INTERVIEW", emoji:"🎤", source:"Eurosport", temps:"Il y a 9h", isReal:false,
+    img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+    resume:"Le combattant américain annonce son retour après plusieurs mois de préparation.",
+    contenu:"Ryan Garcia sort d'une période de retraite forcée et se confie sur ses projets pour 2026. Après avoir revu sa préparation mentale et physique avec une nouvelle équipe, il assure être prêt à rivaliser avec les meilleurs légers du monde.###'J'ai fait des erreurs, j'ai appris. Le Ryan Garcia de 2026 est différent, plus mature, plus dangereux' a-t-il déclaré dans une vidéo publiée sur ses réseaux sociaux. Une revanche contre Davis reste son objectif prioritaire." },
+  { titre:"Programme d'entraînement 8 semaines : niveau champion",
+    categorie:"ENTRAÎNEMENT", emoji:"💪", source:"Boxing News", temps:"Il y a 11h", isReal:false,
+    img:"https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80",
+    resume:"Le programme complet utilisé par les pros pour atteindre leur pic de forme.",
+    contenu:"Les entraîneurs des plus grands clubs professionnels partagent leur programme type sur 8 semaines. Semaines 1-2 : construction aérobie (corde, course, shadow boxing). Semaines 3-4 : travail technique intensif sur les pattes et le sac. Semaines 5-6 : sparring progressif 4 puis 6 rounds. Semaines 7-8 : affûtage, travail de vitesse et gestion du poids.###La clé est la progression : augmenter l'intensité de 10% chaque semaine maximum pour éviter les blessures et le surmenage. Associez ce programme à une nutrition adaptée pour des résultats optimaux en 2 mois." },
 ];
 
 const STATIC_TIPS = {
@@ -625,6 +640,69 @@ function safeJSON(txt) {
 }
 
 // ════════════════════════════════════════════════════════════════
+// GEMINI IMAGE GENERATION
+// ════════════════════════════════════════════════════════════════
+const imgCache = {}; // cache pour ne pas regénérer la même image
+
+async function generateImage(prompt) {
+  const key = GEMINI_API_KEY || localStorage.getItem('gemini_key');
+  if (!key) return null;
+  // Vérifier le cache
+  if (imgCache[prompt]) return imgCache[prompt];
+  try {
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${key}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt: `Professional boxing photo, ${prompt}, dramatic lighting, sports photography, high quality, cinematic` }],
+          parameters: { sampleCount: 1, aspectRatio: '16:9', safetySetting: 'block_only_high' }
+        })
+      }
+    );
+    if (!r.ok) throw new Error('Gemini ' + r.status);
+    const d = await r.json();
+    const b64 = d.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) throw new Error('No image returned');
+    const dataUrl = `data:image/png;base64,${b64}`;
+    imgCache[prompt] = dataUrl;
+    return dataUrl;
+  } catch(e) {
+    console.info('Gemini image error:', e.message);
+    return null;
+  }
+}
+
+// Générer les images pour tous les articles en parallèle
+async function enrichArticlesWithImages(arts) {
+  const prompts = arts.map(a => {
+    // Prompt spécifique selon le titre/catégorie
+    const title = a.titre || '';
+    if (title.includes('Usyk')) return 'boxer Oleksandr Usyk champion heavyweight, professional boxing match';
+    if (title.includes('Canelo')) return 'boxer Canelo Alvarez super middleweight champion, boxing ring';
+    if (title.includes('Crawford')) return 'boxer Terence Crawford welterweight champion, boxing match action';
+    if (title.includes('Davis') || title.includes('Tank')) return 'boxer Gervonta Davis lightweight champion, knockout punch';
+    if (title.includes('Garcia')) return 'boxer Ryan Garcia lightweight, boxing training';
+    if (title.includes('Fury')) return 'boxer Tyson Fury heavyweight champion, boxing ring dramatic';
+    if (title.includes('Joshua')) return 'boxer Anthony Joshua heavyweight, boxing arena';
+    if (title.includes('Benavidez')) return 'boxer David Benavidez super middleweight, boxing action';
+    if (a.categorie === 'ENTRAÎNEMENT') return 'boxer training heavy bag punching, gym professional';
+    if (a.categorie === 'ANALYSE') return 'boxing match tactical analysis, two boxers ring action';
+    if (a.categorie === 'RÉSULTATS') return 'boxing match knockout celebration, winner raises fist';
+    if (a.categorie === 'INTERVIEW') return 'boxer press conference microphone, professional sports';
+    return 'professional boxing match arena crowd, dramatic sports photography';
+  });
+
+  // Générer toutes les images en parallèle
+  const images = await Promise.all(prompts.map(p => generateImage(p)));
+  return arts.map((a, i) => ({
+    ...a,
+    img: images[i] || a.img || null
+  }));
+}
+
+// ════════════════════════════════════════════════════════════════
 // PROXY /api/news — silencieux si absent
 // ════════════════════════════════════════════════════════════════
 async function fetchProxy() {
@@ -650,8 +728,17 @@ async function loadNews() {
     updateHero(articles[0]);
     updateSidebar(articles.slice(1,5));
     updateTicker(articles);
-    setStatus('yellow', '🤖 Chargement des vraies actualités...', '');
+    setStatus('yellow', '🤖 Chargement des actualités...', '');
     observeAll();
+    // Générer illustrations Gemini pour les articles statiques en arrière-plan
+    if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
+      enrichArticlesWithImages([...STATIC_ARTICLES]).then(enriched => {
+        articles = enriched;
+        renderNews(articles);
+        updateHero(articles[0]);
+        updateSidebar(articles.slice(1,5));
+      }).catch(() => {});
+    }
   }
 
   // ÉTAPE 2 — Vraies news via proxy Vercel
@@ -700,11 +787,25 @@ async function loadNews() {
         final = [...live, ...aiArts.slice(0, 3)];
       }
 
+      // Afficher d'abord sans images Gemini
       articles = final;
       renderNews(articles);
       updateHero(articles[0]);
       updateSidebar(articles.slice(1,5));
       updateTicker(articles);
+
+      // Enrichir avec images Gemini en arrière-plan si clé disponible
+      if (GEMINI_API_KEY || localStorage.getItem('gemini_key')) {
+        setStatus('yellow', '🎨 Génération des illustrations IA en cours...', '');
+        enrichArticlesWithImages(final).then(enriched => {
+          articles = enriched;
+          renderNews(articles);
+          updateHero(articles[0]);
+          updateSidebar(articles.slice(1,5));
+          setStatus('green', '🟢 Actualités + Illustrations IA Gemini — Tout est à jour', '');
+        }).catch(() => {});
+      }
+
       aiLoaded = true;
       lastUpdate = new Date();
 
@@ -746,11 +847,21 @@ function timeAgo(str) {
 // RENDER
 // ════════════════════════════════════════════════════════════════
 function renderNews(list) {
-  document.getElementById('news-grid').innerHTML = list.map((a, i) => `
+  document.getElementById('news-grid').innerHTML = list.map((a, i) => {
+    // Choisir une image Unsplash boxing si pas d'image disponible
+    const BOXING_IMGS = [
+      "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80",
+      "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80",
+      "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+      "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80",
+      "https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80",
+    ];
+    const imgSrc = a.img || BOXING_IMGS[i % BOXING_IMGS.length];
+    return `
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
       <div class="news-card-img">
-        ${a.img ? `<img src="${a.img}" alt="" onerror="this.style.display='none'">` : ''}
-        <div class="fallback">${a.emoji || '🥊'}</div>
+        <img src="${imgSrc}" alt="${a.titre}" onerror="this.src='https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80'">
         ${a.isReal ? '<div class="badge-real">LIVE</div>' : '<div class="badge-ai">IA</div>'}
       </div>
       <div class="news-card-body">
@@ -763,7 +874,8 @@ function renderNews(list) {
           <a href="#" class="read-link" onclick="event.stopPropagation();openArt(${i})">LIRE →</a>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function updateHero(a) {
@@ -774,6 +886,17 @@ function updateHero(a) {
     '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
+  // Image hero
+  const heroImgs = [
+    "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85",
+    "https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=1200&q=85",
+    "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1200&q=85",
+  ];
+  const heroImg = a.img || heroImgs[Math.floor(Math.random() * heroImgs.length)];
+  const heroMain = document.querySelector('.hero-main');
+  heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
+  heroMain.style.backgroundSize = 'cover';
+  heroMain.style.backgroundPosition = 'center';
   if (a.isReal) document.getElementById('hero-live-badge').style.display = 'inline-flex';
   document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
 }
@@ -807,7 +930,7 @@ function openArt(i) {
       : '<span style="background:var(--smoke);color:var(--gold);border:1px solid var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">🤖 IA CLAUDE</span>') +
     '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
-    (a.img ? '<img src="' + a.img + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">' : '') +
+    '<img src="' + (a.img || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80') + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'"> ' +
     paras.map(p => '<p>' + p + '</p>').join('') +
     (a.url ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
     '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
@@ -959,6 +1082,29 @@ function observeAll() {
 // ════════════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════
+// CONFIG GEMINI UI
+// ════════════════════════════════════════════════════════════════
+function configGemini() {
+  const current = localStorage.getItem('gemini_key') || '';
+  const key = prompt(
+    '🎨 Clé API Google Gemini (Imagen 3)\n\n' +
+    'Obtenez votre clé gratuite sur : aistudio.google.com\n' +
+    '(Imagen 3 est gratuit avec quota généreux)\n\n' +
+    'Clé actuelle : ' + (current ? current.slice(0,8) + '...' : 'non configurée'),
+    current
+  );
+  if (key === null) return; // annulé
+  if (key.trim().length > 10) {
+    localStorage.setItem('gemini_key', key.trim());
+    alert('✅ Clé Gemini enregistrée ! Les illustrations IA vont se générer automatiquement.');
+    loadNews(); // recharger avec images
+  } else if (key.trim() === '') {
+    localStorage.removeItem('gemini_key');
+    alert('Clé Gemini supprimée.');
+  }
+}
+
 async function init() {
   setStatus('yellow', '🔄 Connexion au serveur d\'actualités...', '');
   renderFights('upcoming');
