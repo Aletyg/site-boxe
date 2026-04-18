@@ -590,11 +590,12 @@ async function claude(prompt, system) {
 // NEWS API — tentative fetch
 async function fetchNewsAPI() {
     try {
-        const r = await fetch('/api/news'); // On appelle ton tunnel Vercel, pas NewsAPI directement
+        const r = await fetch('/api/news'); 
         if (!r.ok) return 'CORS';
         const d = await r.json();
         return d.articles || [];
     } catch(e) {
+        console.error("Erreur de connexion au proxy:", e);
         return 'CORS';
     }
 }
