@@ -617,10 +617,13 @@ async function callGemini(prompt) {
     clearTimeout(timeout);
     if (!r.ok) {
       const e = await r.json().catch(() => ({}));
-      throw new Error('Proxy Gemini ' + r.status + ': ' + (e.error || ''));
+      const msg = 'Proxy Gemini ' + r.status + ': ' + (e.error || JSON.stringify(e));
+      console.warn('[KO MAG]', msg);
+      throw new Error(msg);
     }
     const d = await r.json();
-    if (d.error) throw new Error(d.error);
+    if (d.error) { console.warn('[KO MAG] Gemini error:', d.error); throw new Error(d.error); }
+    console.info('[KO MAG] Gemini OK - articles reçus');
     return safeJSON(d.result);
   } catch(e) {
     clearTimeout(timeout);
@@ -815,7 +818,7 @@ CAHIER DES CHARGES STRICT :
         articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
     }
   } catch(e) {
-    console.info('IA non disponible :', e.message);
+    console.warn('[KO MAG] Rédaction indisponible :', e.message);
     if (!aiLoaded) {
       setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
       document.getElementById('news-info').innerHTML =
@@ -1093,7 +1096,7 @@ async function init() {
   document.getElementById('loader').classList.add('hidden');
 
   // Charger les vraies actualités en arrière-plan (sans bloquer)
-  loadNews().catch(e => console.info('loadNews:', e.message));
+  loadNews().catch(e => console.warn('loadNews error:', e.message));
   loadTips('technique').catch(() => {});
 
   setInterval(loadNews, REFRESH_MS);
