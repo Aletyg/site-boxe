@@ -764,21 +764,27 @@ async function loadNews() {
     : '';
 
   try {
-    const d = await callGemini(
-      `Rédacteur en chef KO MAG. Date: ${today}.
-${ctx ? 'Actualités: ' + ctx : ''}
-
-Génère 6 articles boxe. JSON strict, PAS de caractères spéciaux, PAS d'apostrophes dans les strings (utilise des guillemets ou remplace par l'équivalent):
+    // Générer 3 articles à la fois pour éviter la troncature JSON
+    const makePrompt = (batch, ctx) => `KO MAG rédacteur. ${new Date().toLocaleDateString('fr-FR')}.
+${ctx || ''}
+Génère exactement ${batch} articles de boxe. JSON valide uniquement, sans apostrophes dans les valeurs:
 {"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","source":"..."}]}
+- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
+- temps: "Il y a Xh"
+- source: LEquipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
+- resume: max 10 mots
+- contenu: 2 paragraphes de 60 mots chacun, séparés par ###
+- Boxeurs: Usyk, Fury, Canelo, Crawford, Davis, Garcia`;
 
-IMPORTANT: Le JSON doit etre complet et valide. Utilise \" pour les guillemets dans le texte.
-- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS  
-- temps: "Il y a 2h" (entre 1h et 8h)
-- source: L Equipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
-- resume: max 12 mots
-- contenu: 2 paragraphes courts separes par ###, max 150 mots par article au total
-- Citer: Usyk, Fury, Canelo, Crawford, Davis ou Garcia`
-    );
+    const [d1, d2] = await Promise.all([
+      callGemini(makePrompt(3, ctx)),
+      callGemini(makePrompt(3, ''))
+    ]);
+
+    const arts1 = d1?.articles || [];
+    const arts2 = d2?.articles || [];
+    const allArts = [...arts1, ...arts2];
+    const d = { articles: allArts };
 
     if (d && d.articles && d.articles.length > 0) {
       let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
