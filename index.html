@@ -606,7 +606,7 @@ function setStatus(color, text, time) {
 async function callGemini(prompt) {
   // Timeout 20s — si Gemini ne répond pas, on garde les articles statiques
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 45000);
   try {
     const r = await fetch('/api/gemini', {
       method: 'POST',
@@ -736,31 +736,20 @@ async function loadNews() {
 
   try {
     const d = await callGemini(
-      `Tu es rédacteur en chef de KO MAG. Nous sommes le ${today}.
+      `Rédacteur en chef KO MAG. Date: ${today}.
+${ctx ? 'Actualités réelles: ' + ctx : ''}
 
-ACTUALITÉS DU JOUR DISPONIBLES (utilise-les pour contextualiser tes articles) :
-${ctx || 'Pas de fil AFP disponible ce jour.'}
-
-Rédige 6 articles de boxe complets, professionnels, comme pour un grand magazine sportif.
-
-Réponds avec ce JSON :
+Génère 6 articles boxe professionnels. JSON uniquement:
 {"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","source":"..."}]}
 
-CAHIER DES CHARGES STRICT :
-- 6 articles exactement
-- categorie : RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
-- temps : varie de "Il y a 30 min" à "Il y a 10h"
-- source : L'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
-- resume : accroche courte et percutante, max 15 mots, style presse sportive
-- contenu : article LONG et COMPLET, minimum 400 mots, 4 à 5 paragraphes séparés par ###
-  * Paragraphe 1 : ouverture percutante avec le fait principal
-  * Paragraphe 2 : contexte, historique, enjeux
-  * Paragraphe 3 : détails, chiffres, déclarations
-  * Paragraphe 4 : réactions, analyse d'experts
-  * Paragraphe 5 : perspectives, suite des événements
-- Cite des boxeurs réels (Usyk, Fury, Canelo, Crawford, Davis, Garcia, Joshua, Dubois, Benavidez...)
-- Intègre les vraies actualités fournies ci-dessus dans au moins 3 des 6 articles
-- Style : professionnel, dynamique, expert — jamais générique`
+Règles:
+- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
+- temps: "Il y a Xh" (varier 1h-10h)
+- source: L'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport  
+- resume: 1 phrase accrocheuse max 15 mots
+- contenu: 3 paragraphes séparés par ###, style magazine sportif professionnel, 200 mots min par article
+- Boxeurs: Usyk, Fury, Canelo, Crawford, Davis, Garcia, Joshua, Dubois, Benavidez
+- Intègre les actualités réelles fournies`
     );
 
     if (d && d.articles && d.articles.length > 0) {
