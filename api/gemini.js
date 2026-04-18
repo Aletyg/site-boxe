@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   if (task === 'image') {
     try {
       const r = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-001:predict?key=${GEMINI_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_KEY}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -32,17 +32,17 @@ export default async function handler(req, res) {
       res.setHeader('Cache-Control', 's-maxage=3600');
       return res.status(200).json({ image: `data:image/png;base64,${b64}` });
     } catch(err) {
+      console.error('[KO MAG] Image error:', err.message);
       return res.status(502).json({ error: err.message });
     }
   }
 
-  // Modèles disponibles en 2026, dans l'ordre de préférence
+  // Modèles stables disponibles en avril 2026
   const MODELS = [
+    'gemini-2.5-flash',
+    'gemini-2.5-flash-lite',
     'gemini-2.0-flash-lite',
-    'gemini-2.0-flash-001',
     'gemini-1.5-flash',
-    'gemini-1.5-flash-latest',
-    'gemini-1.5-flash-8b',
   ];
 
   let lastError = null;
