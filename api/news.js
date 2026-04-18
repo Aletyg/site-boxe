@@ -1,4 +1,4 @@
-// api/news.js — Proxy NewsAPI pour KO MAG
+// api/news.js — Proxy NewsAPI pour KO MAG — filtre articles boxe uniquement
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -7,11 +7,27 @@ export default async function handler(req, res) {
   const API_KEY = process.env.NEWS_API_KEY;
   if (!API_KEY) return res.status(500).json({ error: 'NEWS_API_KEY manquante' });
 
-  const queries = ['boxing', 'boxing champion fight', 'boxe combat'];
+  // Requêtes ciblées boxe uniquement
+  const queries = [
+    'boxing fight champion',
+    'boxe combat titre mondial',
+    'knockout boxing match'
+  ];
+
+  // Mots-clés boxe pour filtrer
+  const BOXING_KEYWORDS = ['box', 'fight', 'knock', 'punch', 'champion', 'bout', 
+    'ring', 'heavyweight', 'welter', 'lightweight', 'middleweight', 'title', 
+    'combat', 'boxe', 'pugiliste', 'usyk', 'fury', 'canelo', 'crawford', 
+    'davis', 'garcia', 'joshua', 'dubois', 'benavidez'];
+
+  const isBoxing = (article) => {
+    const txt = ((article.title || '') + ' ' + (article.description || '')).toLowerCase();
+    return BOXING_KEYWORDS.some(k => txt.includes(k));
+  };
 
   try {
     const fetches = queries.map(q =>
-      fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&sortBy=publishedAt&pageSize=5&apiKey=${API_KEY}`)
+      fetch(`https://newsapi.org/v2/everything?q=${encodeURIComponent(q)}&sortBy=publishedAt&pageSize=8&apiKey=${API_KEY}`)
         .then(r => r.json())
         .catch(() => ({ articles: [] }))
     );
@@ -23,6 +39,7 @@ export default async function handler(req, res) {
       .flatMap(r => r.articles || [])
       .filter(a => {
         if (!a.title || a.title === '[Removed]' || seen.has(a.title)) return false;
+        if (!isBoxing(a)) return false; // Filtrer les non-boxe
         seen.add(a.title);
         return true;
       })
