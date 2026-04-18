@@ -633,7 +633,10 @@ async function callGemini(prompt) {
 }
 
 function safeJSON(txt) {
+  // Nettoyage préalable
+  txt = txt.replace(/```json|```/g, '').trim();
   try { return JSON.parse(txt); } catch(e) {
+    // Tentative 1 : couper au dernier objet complet
     let depth = 0, lastClose = -1, inStr = false, esc = false;
     for (let i = 0; i < txt.length; i++) {
       const c = txt[i];
@@ -644,8 +647,34 @@ function safeJSON(txt) {
       if (c === '{' || c === '[') depth++;
       if (c === '}' || c === ']') { depth--; if (depth === 0) lastClose = i; }
     }
-    if (lastClose > 0) return JSON.parse(txt.slice(0, lastClose + 1));
-    throw e;
+    if (lastClose > 0) {
+      try { return JSON.parse(txt.slice(0, lastClose + 1)); } catch(e2) {}
+    }
+    // Tentative 2 : fermer le JSON manuellement
+    try {
+      // Compter les accolades/crochets ouverts non fermés
+      let opens = 0, closes = 0, inS = false, es = false;
+      for (let i = 0; i < txt.length; i++) {
+        const c = txt[i];
+        if (es) { es = false; continue; }
+        if (c === '\\') { es = true; continue; }
+        if (c === '"') { inS = !inS; continue; }
+        if (inS) continue;
+        if (c === '{' || c === '[') opens++;
+        if (c === '}' || c === ']') closes++;
+      }
+      // Couper la dernière entrée incomplète (avant la dernière virgule)
+      let fixed = txt.trim();
+      if (fixed.endsWith(',')) fixed = fixed.slice(0, -1);
+      // Fermer les structures
+      const diff = opens - closes;
+      for (let i = 0; i < diff; i++) {
+        fixed += (fixed.lastIndexOf('[') > fixed.lastIndexOf('{')) ? ']' : '}';
+      }
+      return JSON.parse(fixed);
+    } catch(e3) {
+      throw new Error('JSON invalide même après réparation: ' + e.message);
+    }
   }
 }
 
@@ -737,19 +766,18 @@ async function loadNews() {
   try {
     const d = await callGemini(
       `Rédacteur en chef KO MAG. Date: ${today}.
-${ctx ? 'Actualités réelles: ' + ctx : ''}
+${ctx ? 'Actualités: ' + ctx : ''}
 
-Génère 6 articles boxe professionnels. JSON uniquement:
+Génère 6 articles boxe. JSON strict, PAS de caractères spéciaux, PAS d'apostrophes dans les strings (utilise des guillemets ou remplace par l'équivalent):
 {"articles":[{"titre":"...","categorie":"...","resume":"...","contenu":"...","temps":"...","source":"..."}]}
 
-Règles:
-- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS
-- temps: "Il y a Xh" (varier 1h-10h)
-- source: L'Équipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport  
-- resume: 1 phrase accrocheuse max 15 mots
-- contenu: 3 paragraphes séparés par ###, style magazine sportif professionnel, 200 mots min par article
-- Boxeurs: Usyk, Fury, Canelo, Crawford, Davis, Garcia, Joshua, Dubois, Benavidez
-- Intègre les actualités réelles fournies`
+IMPORTANT: Le JSON doit etre complet et valide. Utilise \" pour les guillemets dans le texte.
+- categorie: RÉSULTATS, ANALYSE, INTERVIEW, ENTRAÎNEMENT, ÉVÉNEMENT ou TRANSFERTS  
+- temps: "Il y a 2h" (entre 1h et 8h)
+- source: L Equipe, RMC Sport, Eurosport, ESPN, Sky Sports ou BBC Sport
+- resume: max 12 mots
+- contenu: 2 paragraphes courts separes par ###, max 150 mots par article au total
+- Citer: Usyk, Fury, Canelo, Crawford, Davis ou Garcia`
     );
 
     if (d && d.articles && d.articles.length > 0) {
