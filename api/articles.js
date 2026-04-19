@@ -19,6 +19,33 @@ const UNSPLASH = {
 
 const BAD_IMG = ['soccer','football','basket','tennis','golf','rugby','swim','cricket','baseball','hockey','nfl','nba','volleyball'];
 
+// ── Wikimedia Commons : photo réelle du boxeur par nom ──────────────────────
+const wikiImgCache = {};
+const BOXER_NAMES = ['Usyk','Fury','Canelo','Crawford','Davis','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Tank','Beterbiev','Bivol','Inoue','Navarrete','Estrada'];
+
+async function fetchWikimediaImage(name) {
+  if (!name) return null;
+  if (wikiImgCache[name]) return wikiImgCache[name];
+  try {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name)}&prop=pageimages&pithumbsize=800&format=json&origin=*`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(4000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const pages = d?.query?.pages || {};
+    const page = Object.values(pages)[0];
+    const img = page?.thumbnail?.source || null;
+    if (img) wikiImgCache[name] = img;
+    return img;
+  } catch(e) {
+    return null;
+  }
+}
+
+function detectBoxerName(titre) {
+  if (!titre) return null;
+  return BOXER_NAMES.find(n => titre.toLowerCase().includes(n.toLowerCase())) || null;
+}
+
 function getBestImg(titre, categorie, sport, originalImg) {
   // Garder l'image originale si elle semble pertinente
   if (originalImg && originalImg.length > 10 && !BAD_IMG.some(k => originalImg.toLowerCase().includes(k))) {
@@ -198,13 +225,22 @@ CONSIGNES:
   });
 
   const results = await Promise.all(promises);
-  return results
+  const rawArticles = results
     .filter(r => r?.articles?.length > 0)
-    .flatMap(r => r.articles)
-    .map(a => ({
-      ...a,
-      img: getBestImg(a.titre, a.categorie, a.sport, a.img)
-    }));
+    .flatMap(r => r.articles);
+
+  // Enrichissement Wikimedia Commons : photo réelle si boxeur détecté dans le titre
+  const enriched = await Promise.all(rawArticles.map(async a => {
+    let img = getBestImg(a.titre, a.categorie, a.sport, a.img);
+    const boxerName = detectBoxerName(a.titre);
+    if (boxerName) {
+      const wikiImg = await fetchWikimediaImage(boxerName).catch(() => null);
+      if (wikiImg) img = wikiImg;
+    }
+    return { ...a, img };
+  }));
+
+  return enriched;
 }
 
 export default async function handler(req, res) {
