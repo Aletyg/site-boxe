@@ -1,11 +1,13 @@
 {
   "version": 2,
   "crons": [
-    { "path": "/api/scraper", "schedule": "0 * * * *" }
+    { "path": "/api/scraper", "schedule": "0 * * * *" },
+    { "path": "/api/global",  "schedule": "15 * * * *" }
   ],
   "routes": [
     { "src": "/api/articles",  "dest": "/api/articles.js" },
     { "src": "/api/scraper",   "dest": "/api/scraper.js" },
+    { "src": "/api/global",    "dest": "/api/global.js" },
     { "src": "/api/debug",     "dest": "/api/debug.js" },
     { "src": "/api/news",      "dest": "/api/news.js" },
     { "src": "/api/gemini",    "dest": "/api/gemini.js" },
