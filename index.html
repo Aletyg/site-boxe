@@ -1155,7 +1155,66 @@ async function fetchWikimediaImageFE(name) {
   } catch(e) { return null; }
 }
 
-// ── oEmbed : embed Instagram / X posts dans les modals ───────────────────────
+// ── YouTube oEmbed : embed vidéos dans les modals ────────────────────────────
+// YouTube oEmbed est 100% gratuit, sans clé API
+
+function isYoutubeUrl(url) {
+  if (!url) return false;
+  return url.includes('youtube.com/watch') || url.includes('youtu.be/');
+}
+
+function extractYoutubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+// Chercher une vidéo YouTube liée au titre de l'article via l'API oEmbed YouTube
+// On construit une URL de recherche YouTube et on tente d'en obtenir l'embed
+async function findYoutubeVideo(titre) {
+  if (!titre) return null;
+  try {
+    // Construire une requête de recherche YouTube pertinente
+    const query = encodeURIComponent(titre + ' boxing highlights');
+    // YouTube Data API v3 nécessite une clé — on utilise plutôt le flux RSS YouTube
+    // qui ne nécessite pas de clé et retourne des vidéos publiques
+    const rssUrl = `https://www.youtube.com/feeds/videos.xml?search_term=${query}`;
+    // RSS YouTube ne supporte pas CORS depuis le navigateur, on passe par un proxy
+    const r = await fetch(`/api/youtube?q=${encodeURIComponent(titre)}`, {
+      signal: AbortSignal.timeout(6000)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.videoId || null;
+  } catch(e) { return null; }
+}
+
+async function fetchYoutubeOembed(videoId) {
+  if (!videoId) return null;
+  try {
+    const url = `https://www.youtube.com/watch?v=${videoId}`;
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`, {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.html || null;
+  } catch(e) { return null; }
+}
+
+function buildYoutubeEmbed(videoId) {
+  return `<iframe 
+    width="100%" 
+    height="315" 
+    src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen
+    style="border-radius:2px;display:block;">
+  </iframe>`;
+}
+
+// oEmbed Instagram / X (conservé pour compatibilité)
 const OEMBED_PROVIDERS = [
   { host: 'instagram.com', endpoint: 'https://graph.facebook.com/v18.0/instagram_oembed?url=' },
   { host: 'twitter.com',   endpoint: 'https://publish.twitter.com/oembed?url=' },
@@ -1270,20 +1329,8 @@ async function openArt(i) {
   document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
   const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
 
-  // Récupérer la meilleure image pour la modal (Wikimedia en priorité)
+  // Afficher la modal immédiatement avec skeleton vidéo pendant le chargement
   const modalImg = await getBoxingImg(a, i);
-
-  // Vérifier si l'URL source est oEmbeddable (Instagram / X)
-  let oembedBlock = '';
-  if (a.url && getOembedEndpoint(a.url)) {
-    const html = await fetchOembed(a.url).catch(() => null);
-    if (html) {
-      oembedBlock = `<div style="margin:18px 0;border:1px solid var(--grey);border-left:3px solid var(--gold);padding:12px;background:var(--smoke);">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📲 POST OFFICIEL</div>
-        ${html}
-      </div>`;
-    }
-  }
 
   document.getElementById('modal-body').innerHTML =
     '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
@@ -1291,12 +1338,45 @@ async function openArt(i) {
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
     '<img src="' + modalImg + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">' +
     paras.map(p => '<p>' + p + '</p>').join('') +
-    oembedBlock +
-    (a.url && !getOembedEndpoint(a.url) ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    // Zone YouTube — skeleton pendant la recherche
+    '<div id="yt-block" style="margin:22px 0;">' +
+    '<div style="width:100%;height:180px;background:var(--smoke);border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;gap:12px;">' +
+    '<span style="font-size:1.4rem;">▶️</span>' +
+    '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.8rem;color:var(--muted);letter-spacing:.1em;">Recherche vidéo highlights...</span>' +
+    '</div></div>' +
+    (a.url && !getOembedEndpoint(a.url) && !isYoutubeUrl(a.url) ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
     '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
     '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
     '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
+
   document.getElementById('modal').classList.add('open');
+
+  // Chercher une vidéo YouTube en arrière-plan
+  const ytBlock = document.getElementById('yt-block');
+  if (!ytBlock) return;
+
+  try {
+    // 1. Si l'article a déjà une URL YouTube, l'utiliser directement
+    let videoId = null;
+    if (isYoutubeUrl(a.url)) {
+      videoId = extractYoutubeId(a.url);
+    } else {
+      // 2. Chercher via notre proxy /api/youtube
+      videoId = await findYoutubeVideo(a.titre);
+    }
+
+    if (videoId) {
+      ytBlock.innerHTML =
+        '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;">' +
+        '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO HIGHLIGHTS</div>' +
+        buildYoutubeEmbed(videoId) +
+        '</div>';
+    } else {
+      ytBlock.innerHTML = ''; // Pas de vidéo trouvée → on masque le bloc
+    }
+  } catch(e) {
+    ytBlock.innerHTML = '';
+  }
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
