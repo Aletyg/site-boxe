@@ -1197,15 +1197,22 @@ async function fetchOembed(url) {
 }
 
 async function getBoxingImg(article, index) {
-  // 1. Tenter Wikimedia si un boxeur est mentionné dans le titre
-  const boxerName = detectBoxerInTitle(article.titre);
-  if (boxerName) {
-    const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
-    if (wikiImg) return wikiImg;
+  // 1. Image de source réelle (scraper) — toujours prioritaire
+  if (article.isReal && article.img && isGoodImage(article.img)) return article.img;
+
+  // 2. Wikimedia seulement pour les articles sans image ou générés par IA
+  if (!article.isReal || !article.img || !isGoodImage(article.img)) {
+    const boxerName = detectBoxerInTitle(article.titre);
+    if (boxerName) {
+      const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
+      if (wikiImg) return wikiImg;
+    }
   }
-  // 2. Vraie image de l'article si cohérente
+
+  // 3. Image de l'article si disponible (même sans isReal)
   if (article.img && isGoodImage(article.img)) return article.img;
-  // 3. Fallback Unsplash selon le sport détecté
+
+  // 4. Fallback Unsplash selon sport/catégorie
   const sport = (article.sport||'boxing').toLowerCase();
   const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
     : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
@@ -1244,15 +1251,15 @@ function renderNews(list) {
     </div>`;
   }).join('');
 
-  // Enrichissement Wikimedia en arrière-plan — met à jour chaque image sans re-render
+  // Enrichissement Wikimedia en arrière-plan — SEULEMENT si pas d'image de source réelle
   list.forEach(async (a, i) => {
+    if (a.isReal && a.img && isGoodImage(a.img)) return; // image source → on ne touche pas
     const boxerName = detectBoxerInTitle(a.titre);
     if (!boxerName) return;
     const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
     if (!wikiImg) return;
     const imgEl = document.getElementById('card-img-' + i);
     if (imgEl) imgEl.src = wikiImg;
-    // Mémoriser l'image Wikimedia dans l'article pour la modal
     articles[i] = { ...articles[i], img: wikiImg };
   });
 }
@@ -1266,14 +1273,16 @@ async function updateHero(a) {
     '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
-  // Image hero — Wikimedia en priorité si boxeur détecté
+  // Image hero — source réelle prioritaire, Wikimedia seulement si pas d'image
   let heroImg = (a.img && isGoodImage(a.img))
     ? a.img
     : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
-  const boxerName = detectBoxerInTitle(a.titre);
-  if (boxerName) {
-    const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
-    if (wikiImg) heroImg = wikiImg;
+  if (!a.isReal || !a.img || !isGoodImage(a.img)) {
+    const boxerName = detectBoxerInTitle(a.titre);
+    if (boxerName) {
+      const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
+      if (wikiImg) heroImg = wikiImg;
+    }
   }
   const heroMain = document.querySelector('.hero-main');
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
