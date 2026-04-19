@@ -23,18 +23,47 @@ const BAD_IMG = ['soccer','football','basket','tennis','golf','rugby','swim','cr
 const wikiImgCache = {};
 const BOXER_NAMES = ['Usyk','Fury','Canelo','Crawford','Davis','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Tank','Beterbiev','Bivol','Inoue','Navarrete','Estrada'];
 
+const WIKI_TITLES = {
+  'usyk':       'Oleksandr Usyk',
+  'fury':       'Tyson Fury',
+  'canelo':     'Saúl Álvarez',
+  'crawford':   'Terence Crawford',
+  'davis':      'Gervonta Davis',
+  'tank':       'Gervonta Davis',
+  'garcia':     'Ryan Garcia',
+  'benavidez':  'David Benavidez',
+  'joshua':     'Anthony Joshua',
+  'wilder':     'Deontay Wilder',
+  'lomachenko': 'Vasyl Lomachenko',
+  'haney':      'Devin Haney',
+  'beterbiev':  'Artur Beterbiev',
+  'bivol':      'Dmitry Bivol',
+  'inoue':      'Naoya Inoue',
+  'navarrete':  'Emanuel Navarrete',
+  'estrada':    'Juan Francisco Estrada',
+  'plant':      'Caleb Plant',
+  'charlo':     'Jermell Charlo',
+  'spence':     'Errol Spence Jr.',
+  'loma':       'Vasyl Lomachenko',
+};
+
 async function fetchWikimediaImage(name) {
   if (!name) return null;
-  if (wikiImgCache[name]) return wikiImgCache[name];
+  const key = name.toLowerCase();
+  if (wikiImgCache[key]) return wikiImgCache[key];
+  const title = WIKI_TITLES[key] || name;
   try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name)}&prop=pageimages&pithumbsize=800&format=json&origin=*`;
-    const r = await fetch(url, { signal: AbortSignal.timeout(4000) });
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=800&format=json`;
+    const r = await fetch(url, {
+      headers: { 'User-Agent': 'KO-MAG/1.0 (https://komag.fr)' },
+      signal: AbortSignal.timeout(5000)
+    });
     if (!r.ok) return null;
     const d = await r.json();
     const pages = d?.query?.pages || {};
     const page = Object.values(pages)[0];
     const img = page?.thumbnail?.source || null;
-    if (img) wikiImgCache[name] = img;
+    if (img) wikiImgCache[key] = img;
     return img;
   } catch(e) {
     return null;
