@@ -3,13 +3,13 @@
 
 const GEMINI_KEY = () => process.env.GEMINI_API_KEY;
 
-const SOURCES = [
+// Sources directes (WordPress → RSS fiable)
+const SOURCES_DIRECT = [
   {
     name: 'BoxeMag',
     url: 'https://boxemag.ouest-france.fr',
     rss: [
       'https://boxemag.ouest-france.fr/feed/',
-      'https://boxemag.ouest-france.fr/feed/rss/',
       'https://boxemag.ouest-france.fr/?feed=rss2',
     ],
   },
@@ -19,25 +19,27 @@ const SOURCES = [
     rss: [
       'https://www.boxenet.fr/feed/',
       'https://www.boxenet.fr/?feed=rss2',
-      'https://www.boxenet.fr/feed/rss2/',
     ],
+  },
+];
+
+// Sources via Google News RSS (contourne les blocages de RMC / L'Equipe)
+// Google News agrège les articles et ne bloque pas les crawlers
+const SOURCES_GOOGLE = [
+  {
+    name: "L'Equipe",
+    url: 'https://www.lequipe.fr/Boxe/',
+    rss: 'https://news.google.com/rss/search?q=site:lequipe.fr+boxe&hl=fr&gl=FR&ceid=FR:fr',
   },
   {
     name: 'RMC Sport',
     url: 'https://rmcsport.bfmtv.com',
-    rss: [
-      'https://rmcsport.bfmtv.com/rss/sports-de-combat.xml',
-      'https://rmcsport.bfmtv.com/rss/boxe.xml',
-      'https://www.bfmtv.com/rss/sport/sports-de-combat/',
-    ],
+    rss: 'https://news.google.com/rss/search?q=site:rmcsport.bfmtv.com+boxe+MMA&hl=fr&gl=FR&ceid=FR:fr',
   },
   {
-    name: "L'Equipe",
-    url: 'https://www.lequipe.fr/Boxe/',
-    rss: [
-      'https://www.lequipe.fr/rss/actu_rss_Boxe.xml',
-      'https://www.lequipe.fr/rss/actu_rss_MMA.xml',
-    ],
+    name: 'Boxenet',
+    url: 'https://www.boxenet.fr',
+    rss: 'https://news.google.com/rss/search?q=site:boxenet.fr&hl=fr&gl=FR&ceid=FR:fr',
   },
 ];
 
@@ -354,7 +356,27 @@ export default async function handler(req, res) {
       return [];
     }
 
-    const feeds = await Promise.all(SOURCES.map(fetchRSS));
+    // Fetch sources directes + Google News en parallèle
+    const [directFeeds, googleFeeds] = await Promise.all([
+      Promise.all(SOURCES_DIRECT.map(fetchRSS)),
+      Promise.all(SOURCES_GOOGLE.map(async src => {
+        try {
+          const r = await fetch(src.rss, {
+            headers: RSS_HEADERS,
+            signal: AbortSignal.timeout(10000),
+          });
+          if (!r.ok) { console.warn(`[scraper] GNews ${src.name}: HTTP ${r.status}`); return []; }
+          const xml = await r.text();
+          const items = parseRSS(xml, src.name, src.url);
+          console.log(`[scraper] GNews ${src.name}: ${items.length} articles`);
+          return items;
+        } catch(e) {
+          console.warn(`[scraper] GNews ${src.name}: ${e.message}`);
+          return [];
+        }
+      })),
+    ]);
+    const feeds = [...directFeeds, ...googleFeeds];
 
     // 2. Agréger, dédupliquer, trier
     const allRaw = feeds.flat()
@@ -365,35 +387,22 @@ export default async function handler(req, res) {
     console.log(`[scraper] ${allRaw.length} articles bruts`);
     if (allRaw.length === 0) return res.status(200).json({ articles: [], cached: false });
 
-    // 3. Pour chaque article : chercher YouTube via 3 méthodes en parallèle
+    // 3. Fetcher chaque page source pour og:image + YouTube intégré dans la page
+    // youtubeId = UNIQUEMENT pour l'embed dans la modal (pas pour l'image de carte)
+    // og:image = image officielle du site (BoxeMag y met déjà la miniature YouTube)
     const enrichedRaw = await Promise.all(
       allRaw.map(async article => {
-        // Méthode A : YouTube déjà dans le RSS (le plus rapide)
-        if (article.ytInRss) {
-          console.log(`[scraper] YT via RSS: ${article.title.slice(0,40)}`);
-          return { ...article, youtubeId: article.ytInRss };
-        }
-
-        // Méthode B + C en parallèle : fetch page source ET chercher dans les chaînes YT
-        const [pageData, ytFromChannels] = await Promise.all([
-          fetchArticlePage(article.link),
-          findYoutubeVideoForArticle(article.title),
-        ]);
-
-        const youtubeId = pageData.youtubeId || ytFromChannels || null;
+        const pageData = await fetchArticlePage(article.link);
+        const youtubeId = article.ytInRss || pageData.youtubeId || null;
         const img = pageData.ogImage || article.img || '';
-
-        if (youtubeId) {
-          const src = pageData.youtubeId ? 'page' : 'channels';
-          console.log(`[scraper] YT via ${src}: ${article.title.slice(0,40)} → ${youtubeId}`);
-        }
-
+        console.log(`[scraper] "${article.title.slice(0,35)}" | img:${img?'OK':'AUCUNE'} | yt:${youtubeId?'OUI':'NON'}`);
         return { ...article, youtubeId, img };
       })
     );
 
     const withVideo = enrichedRaw.filter(a => a.youtubeId).length;
-    console.log(`[scraper] ${withVideo}/${enrichedRaw.length} articles avec video YouTube`);
+    const withImg   = enrichedRaw.filter(a => a.img).length;
+    console.log(`[scraper] ${withImg}/${enrichedRaw.length} avec image | ${withVideo}/${enrichedRaw.length} avec vidéo`);
 
     // 4. Résumer avec Gemini (6 max)
     const summarized = await Promise.all(
