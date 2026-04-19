@@ -1,13 +1,11 @@
 {
   "version": 2,
   "crons": [
-    {
-      "path": "/api/articles",
-      "schedule": "0 * * * *"
-    }
+    { "path": "/api/scraper", "schedule": "0 * * * *" }
   ],
   "routes": [
     { "src": "/api/articles",  "dest": "/api/articles.js" },
+    { "src": "/api/scraper",   "dest": "/api/scraper.js" },
     { "src": "/api/news",      "dest": "/api/news.js" },
     { "src": "/api/gemini",    "dest": "/api/gemini.js" },
     { "src": "/api/wikimedia", "dest": "/api/wikimedia.js" },
