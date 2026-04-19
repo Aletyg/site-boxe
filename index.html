@@ -1150,7 +1150,7 @@ function updateHero(a) {
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
   // Image hero
-  const heroImg = (a.img && isBoxingImage(a.img)) 
+  const heroImg = (a.img && isGoodImage(a.img)) 
     ? a.img 
     : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
   const heroMain = document.querySelector('.hero-main');
