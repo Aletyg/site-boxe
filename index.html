@@ -1,155 +1,1546 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>KO MAG - Boxe & MMA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #000;
-      color: #fff;
-    }
+<!-- SEO PRIMAIRE -->
+<title>KO MAG — Sports de Combat en Direct | Boxe, MMA, Kick-Boxing, Muay-Thai</title>
+<meta name="description" content="KO MAG, le magazine de sports de combat de référence. Boxe, MMA, Kick-Boxing, Muay-Thai. Actualités en temps réel, résultats, classements et équipement.">
+<meta name="keywords" content="boxe actualité, MMA, kick-boxing, muay thai, UFC, résultats combat, classement boxe, Usyk, Fury, Canelo, Crawford, équipement sport de combat">
+<meta name="author" content="KO MAG">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://komag.fr/">
 
-    .hero {
-      height: 80vh;
-      background: url('https://images.unsplash.com/photo-1549719386-74dfcbf7dbed') center/cover;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+<!-- OPEN GRAPH (Facebook, WhatsApp) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="KO MAG">
+<meta property="og:title" content="KO MAG — Actualité Boxe en Direct">
+<meta property="og:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
+<meta property="og:url" content="https://komag.fr/">
+<meta property="og:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
+<meta property="og:locale" content="fr_FR">
 
-    .hero h1 {
-      font-size: 3rem;
-    }
+<!-- TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="KO MAG — Actualité Boxe en Direct">
+<meta name="twitter:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
 
-    .hero span {
-      color: red;
-    }
+<!-- SCHEMA.ORG — Organisation -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsMediaOrganization",
+  "name": "KO MAG",
+  "url": "https://komag.fr",
+  "logo": "https://komag.fr/logo.png",
+  "description": "Magazine de boxe de référence en France. Actualités, résultats, classements et équipement.",
+  "sameAs": [],
+  "publishingPrinciples": "https://komag.fr",
+  "foundingDate": "2025",
+  "areaServed": "FR",
+  "inLanguage": "fr"
+}
+</script>
 
-    .section {
-      padding: 40px 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
+<!-- SCHEMA.ORG — WebSite avec SearchAction -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "KO MAG",
+  "url": "https://komag.fr",
+  "description": "Magazine de boxe — Actualités, résultats et équipement",
+  "inLanguage": "fr",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://komag.fr/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
 
-    .grid {
-      display: grid;
-      gap: 20px;
-    }
+<!-- PERFORMANCE -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://images.unsplash.com">
+<link rel="dns-prefetch" href="https://generativelanguage.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--red:#E8001A;--gold:#F5B800;--dark:#0A0A0B;--charcoal:#141416;--smoke:#1E1E22;--grey:#2E2E35;--muted:#6B6B78;--light:#E8E8EC;--white:#FAFAFA}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--dark);color:var(--light);font-family:'Barlow',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.3}
+h1,h2,h3,h4{font-family:'Bebas Neue',sans-serif;letter-spacing:.04em}
 
-    .grid-3 {
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(10,10,11,.96);backdrop-filter:blur(12px);border-bottom:2px solid var(--red)}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:64px;max-width:1400px;margin:0 auto}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:var(--white);text-decoration:none;letter-spacing:.08em;display:flex;align-items:center;gap:8px}
+.logo span{color:var(--red)}
+.logo-badge{background:var(--red);color:white;font-size:.5rem;font-family:'Barlow Condensed',sans-serif;padding:2px 6px;letter-spacing:.2em;text-transform:uppercase;align-self:flex-start;margin-top:10px}
+nav{display:flex;gap:2px}
+nav a{color:var(--muted);text-decoration:none;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase;padding:6px 14px;border-radius:2px;transition:all .2s}
+nav a:hover{color:var(--white);background:var(--grey)}
+nav a.active{color:var(--red)}
+.header-cta{background:var(--red);color:white;border:none;padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.header-cta:hover{background:#c00015}
 
-    .card {
-      background: #111;
-      padding: 15px;
-      border-radius: 12px;
-      transition: 0.3s;
-    }
+/* API BANNER */
 
-    .card:hover {
-      transform: scale(1.03);
-    }
+/* STATUS */
+.status-wrap{background:var(--smoke);border-bottom:1px solid var(--grey)}
+.status-bar{display:flex;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto;padding:5px 24px}
+.status-badge{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot.green{background:#22C55E;animation:pulse 1.5s ease-in-out infinite}
+.dot.yellow{background:var(--gold)}
+.dot.red{background:var(--red)}
+.status-time{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;color:var(--muted)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
 
-    .card img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
+/* TICKER */
+.ticker-wrap{background:var(--red);overflow:hidden;height:34px;display:flex;align-items:center}
+.ticker-label{background:var(--dark);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;padding:0 16px;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-track{display:flex;white-space:nowrap;animation:ticker 60s linear infinite;font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:.85rem;color:white}
+.tki{padding:0 36px;display:flex;align-items:center;gap:10px}
+.tkd{width:5px;height:5px;background:var(--gold);border-radius:50%;flex-shrink:0}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-    .btn {
-      background: red;
-      padding: 10px 20px;
-      border-radius: 10px;
-      display: inline-block;
-      margin-top: 10px;
-      text-decoration: none;
-      color: white;
-    }
+/* HERO */
+.hero{position:relative;background:var(--charcoal);min-height:500px;display:grid;grid-template-columns:1fr 370px;max-width:1400px;margin:0 auto;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(232,0,26,.1) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(245,184,0,.05) 0%,transparent 50%);pointer-events:none}
+.hero-main{padding:40px;display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;padding:4px 12px;margin-bottom:14px;width:fit-content}
+.hero-live-badge{display:none;align-items:center;gap:6px;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.4);color:#22C55E;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;margin-bottom:12px;width:fit-content}
+.hero-title{font-size:clamp(2rem,4vw,3.6rem);line-height:1;color:var(--white);margin-bottom:12px}
+.hero-excerpt{font-size:.98rem;color:#aaa;max-width:520px;margin-bottom:22px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hero-meta{display:flex;align-items:center;gap:12px;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px;flex-wrap:wrap}
+.hero-meta-src{color:var(--gold);font-weight:700}
+.btn-read{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:white;text-decoration:none;padding:12px 26px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;width:fit-content}
+.btn-read:hover{background:#c00015;gap:16px}
+.hero-sidebar{background:var(--smoke);border-left:1px solid var(--grey);display:flex;flex-direction:column}
+.hero-sidebar-hd{padding:14px 20px;border-bottom:1px solid var(--grey);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px}
+.sb-live-dot{width:7px;height:7px;background:#22C55E;border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+.sb-item{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .2s;text-decoration:none;display:block;color:inherit}
+.sb-item:hover{background:rgba(232,0,26,.06)}
+.sb-item-src{font-family:'Barlow Condensed',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#22C55E;margin-bottom:4px}
+.sb-item-title{font-family:'Barlow Condensed',sans-serif;font-size:.92rem;font-weight:700;line-height:1.25;color:var(--white);margin-bottom:5px}
+.sb-item-time{font-size:.7rem;color:var(--muted);font-family:'Barlow Condensed',sans-serif}
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: gray;
-    }
-  </style>
+/* LAYOUT */
+.section-hd{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:26px;padding-bottom:12px;border-bottom:3px solid var(--red);flex-wrap:wrap;gap:10px}
+.section-title{font-size:1.9rem;color:var(--white)}
+.section-title span{color:var(--red)}
+.section-link{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .2s}
+.section-link:hover{color:var(--red)}
+.container{max-width:1400px;margin:0 auto;padding:0 24px}
+section{padding:50px 0}
+
+/* NEWS GRID */
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.news-card{background:var(--charcoal);border:1px solid var(--grey);overflow:hidden;transition:all .25s;cursor:pointer;display:flex;flex-direction:column}
+.news-card:hover{border-color:var(--red);transform:translateY(-4px);box-shadow:0 20px 60px rgba(232,0,26,.12)}
+.news-card-img{width:100%;aspect-ratio:16/9;background:var(--smoke);display:flex;align-items:center;justify-content:center;font-size:2.5rem;color:var(--grey);flex-shrink:0;position:relative;overflow:hidden}
+.news-card-img img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.news-card-img .fallback{font-size:2.5rem;z-index:1;position:relative}
+.badge-live{position:absolute;top:8px;left:8px;background:var(--red);color:white;font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;z-index:2}
+
+.news-card-body{padding:18px;flex:1;display:flex;flex-direction:column}
+.news-card-src{font-family:'Barlow Condensed',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#22C55E;margin-bottom:5px}
+.news-card-cat{font-family:'Barlow Condensed',sans-serif;font-size:.63rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin-bottom:8px}
+.news-card-title{font-family:'Barlow Condensed',sans-serif;font-size:1.12rem;font-weight:700;line-height:1.25;color:var(--white);margin-bottom:8px}
+.news-card-excerpt{font-size:.83rem;color:var(--muted);line-height:1.5;flex:1;margin-bottom:13px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.news-card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:11px;border-top:1px solid var(--grey)}
+.news-card-time{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;color:var(--muted)}
+.read-link{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--red);text-decoration:none}
+.read-link:hover{color:var(--gold)}
+
+/* SKELETON */
+.sk{background:linear-gradient(90deg,var(--smoke) 25%,var(--grey) 50%,var(--smoke) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:2px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* EQUIPMENT */
+.equipment-section{background:var(--charcoal)}
+.equip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.equip-card{background:var(--smoke);border:1px solid var(--grey);padding:20px;transition:all .25s;position:relative;overflow:hidden}
+.equip-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.equip-card:hover::before{transform:scaleX(1)}
+.equip-card:hover{border-color:rgba(232,0,26,.4);transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.equip-badge{position:absolute;top:12px;right:12px;background:var(--gold);color:var(--dark);font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:2px 8px}
+.equip-emoji{font-size:2.2rem;margin-bottom:12px;display:block}
+.equip-cat{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.equip-name{font-family:'Barlow Condensed',sans-serif;font-size:1.08rem;font-weight:700;color:var(--white);margin-bottom:6px;line-height:1.2}
+.equip-desc{font-size:.78rem;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.equip-price{font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--gold);margin-bottom:12px}
+.equip-price small{font-family:'Barlow',sans-serif;font-size:.73rem;color:var(--muted);font-weight:400}
+.btn-aff{display:block;width:100%;background:var(--red);color:white;text-decoration:none;text-align:center;padding:9px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;transition:all .2s}
+.btn-aff:hover{background:#c00015}
+.btn-aff-out{display:block;width:100%;background:transparent;color:var(--red);text-decoration:none;text-align:center;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--red);transition:all .2s;margin-top:8px}
+.btn-aff-out:hover{background:var(--red);color:white}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.tip-card{background:var(--charcoal);border:1px solid var(--grey);padding:26px;position:relative;overflow:hidden;transition:background .25s}
+.tip-card:hover{background:var(--smoke)}
+.tip-num{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:rgba(232,0,26,.12);position:absolute;top:8px;right:20px;line-height:1}
+.tip-icon{font-size:1.6rem;margin-bottom:12px}
+.tip-title{font-family:'Barlow Condensed',sans-serif;font-size:1.22rem;font-weight:700;color:var(--white);margin-bottom:10px;letter-spacing:.03em}
+.tip-body{font-size:.875rem;color:#999;line-height:1.65;margin-bottom:14px}
+.tip-tag{display:inline-flex;align-items:center;background:rgba(232,0,26,.1);border:1px solid rgba(232,0,26,.3);color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px}
+
+/* FIGHTERS */
+.fighters-section{background:var(--smoke)}
+.ranking-table{width:100%;border-collapse:collapse}
+.ranking-table th{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:10px 16px;text-align:left;border-bottom:2px solid var(--grey)}
+.ranking-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);font-family:'Barlow Condensed',sans-serif}
+.ranking-table tr:hover td{background:rgba(232,0,26,.04)}
+.rank-num{font-size:1.4rem;font-weight:700;color:var(--muted)}
+.rank-num.gold{color:var(--gold)}
+.rank-num.silver{color:#B0B8C1}
+.rank-num.bronze{color:#CD7F32}
+.fighter-name{font-size:1.02rem;font-weight:700;color:var(--white)}
+.fighter-country{font-size:.8rem;color:var(--muted)}
+.fighter-record{font-size:.92rem;color:var(--gold);font-weight:700}
+.fighter-org{font-size:.75rem;color:var(--red);font-weight:700;letter-spacing:.1em}
+.trend-up{color:#22C55E;font-size:.85rem}
+.trend-down{color:var(--red);font-size:.85rem}
+.trend-same{color:var(--muted);font-size:.85rem}
+
+/* FIGHTS */
+.fights-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.fight-card{background:var(--charcoal);border:1px solid var(--grey);overflow:hidden;transition:all .25s}
+.fight-card:hover{border-color:var(--gold);transform:translateY(-3px)}
+.fight-header{background:var(--dark);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.fight-date{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.fight-badge{background:var(--smoke);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;padding:2px 8px;border:1px solid var(--gold)}
+.fight-body{padding:18px}
+.fight-vs{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.fight-fighter{text-align:center;flex:1}
+.fight-fighter-name{font-family:'Bebas Neue',sans-serif;font-size:1.22rem;color:var(--white);letter-spacing:.05em}
+.fight-fighter-rec{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;color:var(--muted)}
+.vs-badge{font-family:'Bebas Neue',sans-serif;font-size:1.65rem;color:var(--red);padding:0 14px}
+.fight-title-small{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:11px}
+.fight-footer{border-top:1px solid var(--grey);padding:10px 16px;display:flex;justify-content:center}
+.btn-watch{font-family:'Barlow Condensed',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s}
+.btn-watch:hover{color:white}
+
+/* TABS */
+.tabs{display:flex;border-bottom:2px solid var(--grey);margin-bottom:24px;flex-wrap:wrap}
+.tab-btn{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.86rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:none;padding:9px 18px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab-btn.active{color:var(--white);border-bottom-color:var(--red)}
+.tab-btn:hover:not(.active){color:var(--light)}
+
+/* NEWSLETTER */
+.newsletter{background:linear-gradient(135deg,var(--red) 0%,#8B0010 100%);position:relative;overflow:hidden}
+.newsletter::before{content:'KO';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:15rem;color:rgba(255,255,255,.04);pointer-events:none}
+.newsletter-inner{display:flex;align-items:center;justify-content:space-between;gap:40px}
+.newsletter-text h2{font-size:2rem;color:white;margin-bottom:8px}
+.newsletter-text p{color:rgba(255,255,255,.75);font-size:.9rem}
+.newsletter-form{display:flex;flex-shrink:0}
+.newsletter-form input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-right:none;color:white;padding:11px 18px;font-family:'Barlow',sans-serif;font-size:.86rem;width:260px;outline:none}
+.newsletter-form input::placeholder{color:rgba(255,255,255,.4)}
+.newsletter-form button{background:var(--dark);color:white;border:none;padding:11px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s}
+.newsletter-form button:hover{background:#111}
+
+/* FOOTER */
+footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:34px}
+.footer-brand h3{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--white);margin-bottom:10px}
+.footer-brand h3 span{color:var(--red)}
+.footer-brand p{font-size:.83rem;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.footer-socials{display:flex;gap:8px}
+.social-btn{width:34px;height:34px;background:var(--grey);display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:.85rem;transition:background .2s}
+.social-btn:hover{background:var(--red)}
+.footer-col h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:13px}
+.footer-col ul{list-style:none}
+.footer-col ul li{margin-bottom:7px}
+.footer-col ul li a{color:var(--muted);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col ul li a:hover{color:var(--white)}
+.footer-bottom{border-top:1px solid var(--grey);padding-top:20px;display:flex;align-items:center;justify-content:space-between;font-size:.76rem;color:var(--muted);flex-wrap:wrap;gap:10px}
+.aff-disclosure{background:rgba(245,184,0,.07);border:1px solid rgba(245,184,0,.2);border-left:3px solid var(--gold);padding:12px 16px;margin-top:16px;font-size:.75rem;color:#888;line-height:1.5}
+.aff-disclosure strong{color:var(--gold)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:9000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:20px}
+.modal-overlay.open{opacity:1;visibility:visible}
+.modal{background:var(--charcoal);border:1px solid var(--grey);border-top:3px solid var(--red);max-width:760px;width:100%;max-height:82vh;overflow-y:auto;transform:translateY(20px);transition:transform .3s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{padding:22px 26px;border-bottom:1px solid var(--grey);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:1.42rem;font-weight:700;color:var(--white);line-height:1.2;padding-right:18px}
+.modal-close{background:var(--grey);border:none;color:var(--light);width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0;transition:background .2s}
+.modal-close:hover{background:var(--red)}
+.modal-body{padding:26px}
+.modal-body p{color:#aaa;line-height:1.72;margin-bottom:14px;font-size:.9rem}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--dark);z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .5s,visibility .5s}
+#loader.hidden{opacity:0;visibility:hidden}
+.loader-logo{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--white);letter-spacing:.1em}
+.loader-logo span{color:var(--red)}
+.loader-bar{width:200px;height:3px;background:var(--grey);position:relative;overflow:hidden}
+.loader-bar::after{content:'';position:absolute;inset:0;background:var(--red);animation:load 1.8s ease forwards;transform-origin:left}
+.loader-text{font-family:'Barlow Condensed',sans-serif;font-size:.76rem;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+@keyframes load{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* REFRESH BTN */
+.refresh-btn{display:inline-flex;align-items:center;gap:7px;background:none;border:1px solid var(--grey);color:var(--muted);padding:5px 12px;font-family:'Barlow Condensed',sans-serif;font-size:.74rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.refresh-btn:hover{border-color:var(--red);color:var(--red)}
+.refresh-btn.loading svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* INFO BOX */
+.info-box{background:rgba(245,184,0,.08);border:1px solid rgba(245,184,0,.25);border-left:3px solid var(--gold);padding:14px 18px;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;color:#ccc;line-height:1.55;margin-bottom:20px}
+.info-box strong{color:var(--gold);display:block;margin-bottom:5px}
+
+/* FADE */
+.fade-up{opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.fade-up.visible{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE TABLETTE */
+@media(max-width:1000px){
+  .news-grid{grid-template-columns:1fr 1fr}
+  .equip-grid{grid-template-columns:1fr 1fr}
+  .hero{grid-template-columns:1fr}
+  .hero-sidebar{display:none}
+  nav{display:none}
+  .fights-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .newsletter-inner{flex-direction:column}
+}
+
+/* RESPONSIVE MOBILE */
+@media(max-width:640px){
+  /* Layout */
+  .news-grid{grid-template-columns:1fr}
+  .tips-grid{grid-template-columns:1fr}
+  .equip-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .fights-grid{grid-template-columns:1fr}
+
+  /* Header mobile */
+  .header-top{padding:0 16px;height:54px}
+  .logo{font-size:1.8rem}
+  .header-cta{display:none}
+
+  /* Hero mobile */
+  .hero-main{padding:24px 16px 80px}
+  .hero-title{font-size:1.9rem !important}
+  .hero-excerpt{font-size:.88rem;-webkit-line-clamp:2}
+
+  /* Sections */
+  .container{padding:0 14px}
+  section{padding:32px 0}
+  .section-hd{margin-bottom:18px}
+  .section-title{font-size:1.5rem}
+
+  /* Cards */
+  .news-card-title{font-size:1rem}
+  .equip-grid{gap:12px}
+  .equip-card{padding:16px}
+
+  /* Tabs scroll horizontal */
+  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab-btn{white-space:nowrap;padding:8px 14px;font-size:.78rem}
+
+  /* Ticker */
+  .ticker-label{font-size:.65rem;padding:0 10px}
+
+  /* Newsletter */
+  .newsletter-form{flex-direction:column;width:100%}
+  .newsletter-form input{width:100%;border-right:1px solid rgba(255,255,255,.3);border-bottom:none}
+  .newsletter-form button{width:100%}
+  .newsletter-text h2{font-size:1.5rem}
+
+  /* Footer */
+  footer{padding:32px 0 100px}
+  .footer-bottom{flex-direction:column;gap:6px;font-size:.7rem}
+
+  /* Ranking table mobile */
+  .ranking-table th:nth-child(3),
+  .ranking-table td:nth-child(3){display:none}
+  .ranking-table th:nth-child(5),
+  .ranking-table td:nth-child(5){display:none}
+
+  /* Bottom nav padding */
+  body{padding-bottom:64px}
+
+  /* Status bar */
+  .status-bar{padding:4px 14px}
+  #s-text{font-size:.65rem}
+}
+
+/* BOTTOM NAVIGATION MOBILE */
+.mobile-nav{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:rgba(10,10,11,.97);
+  backdrop-filter:blur(16px);
+  border-top:2px solid var(--red);
+  z-index:200;
+  padding:0;
+  height:60px;
+}
+
+.mobile-nav-inner{
+  display:flex;
+  align-items:stretch;
+  height:100%;
+  max-width:600px;
+  margin:0 auto;
+}
+
+.mobile-nav-btn{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  background:none;
+  border:none;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all .2s;
+  text-decoration:none;
+  padding:6px 4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.58rem;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+
+.mobile-nav-btn:hover,
+.mobile-nav-btn.active{color:var(--red)}
+
+.mobile-nav-btn svg{
+  width:20px;height:20px;
+  stroke:currentColor;
+  fill:none;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.mobile-nav-btn.active svg{stroke:var(--red)}
+
+@media(max-width:640px){
+  .mobile-nav{display:flex}
+}
+
+/* PULL TO REFRESH indicator */
+.ptr-indicator{
+  display:none;
+  position:fixed;
+  top:60px;left:50%;
+  transform:translateX(-50%);
+  background:var(--red);
+  color:white;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:.75rem;
+  font-weight:700;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  padding:6px 18px;
+  border-radius:0 0 20px 20px;
+  z-index:150;
+  transition:all .3s;
+}
+@media(max-width:640px){.ptr-indicator{display:block;opacity:0}}
+.ptr-indicator.show{opacity:1}
+</style>
 </head>
-
 <body>
 
-  <!-- HERO -->
+<div id="loader">
+  <div class="loader-logo">KO <span>MAG</span></div>
+  <div class="loader-bar"></div>
+  <div class="loader-text" id="loader-text">Connexion aux sources d'actualités...</div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target.id==='modal')closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<header>
+  <div class="header-top">
+    <a href="#" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
+    <nav>
+      <a href="#actualites" class="active">Actualités</a>
+      <a href="#combats">Combats</a>
+      <a href="#conseils">Conseils</a>
+      <a href="#classement">Classement</a>
+      <a href="#equipement">Équipement</a>
+    </nav>
+    <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
+
+  </div>
+</header>
+
+<div class="status-wrap">
+  <div class="status-bar">
+    <div class="status-badge"><div class="dot yellow" id="s-dot"></div><span id="s-text">Initialisation...</span></div>
+    <div class="status-time" id="s-time"></div>
+  </div>
+</div>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">⚡ LIVE</div>
+  <div class="ticker-track" id="ticker">
+    <span class="tki"><span class="tkd"></span>🥊 Chargement des actualités en cours...</span>
+    <span class="tki"><span class="tkd"></span>🏆 KO MAG — L'actualité boxe en temps réel</span>
+    <span class="tki"><span class="tkd"></span>🥊 Chargement des actualités en cours...</span>
+    <span class="tki"><span class="tkd"></span>🏆 KO MAG — L'actualité boxe en temps réel</span>
+  </div>
+</div>
+
+<div class="container">
   <div class="hero">
-    <div>
-      <h1>🥊 KO MAG<br><span>Comprends les combats</span></h1>
-      <p>Analyses, prédictions et actus boxe & MMA</p>
-      <a href="#" class="btn">Voir les analyses</a>
+    <div class="hero-main">
+      <div class="hero-eyebrow"><div class="sb-live-dot"></div><span>À LA UNE</span></div>
+      
+      <h1 class="hero-title" id="hero-title">Actualités en cours de chargement...</h1>
+      <p class="hero-excerpt" id="hero-excerpt">Connexion aux sources d'actualités internationales de boxe.</p>
+      <div class="hero-meta" id="hero-meta"></div>
+      <a href="#" class="btn-read" id="hero-btn">Lire l'article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
     </div>
+    <aside class="hero-sidebar">
+      <div class="hero-sidebar-hd"><div class="sb-live-dot"></div>DERNIÈRES NOUVELLES</div>
+      <div id="sidebar-news"><div style="padding:20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:.85rem;">Chargement...</div></div>
+    </aside>
   </div>
+</div>
 
-  <!-- A LA UNE -->
-  <div class="section">
-    <h2>🔥 À la une</h2>
-    <div class="card">
-      <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b">
-      <h3>Ce que tout le monde a raté dans Fury vs Usyk</h3>
-      <p>Analyse complète du combat et des moments clés.</p>
+<section id="combats">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">COM<span>BATS</span></h2>
+      <a href="#" class="section-link">Planning complet →</a>
     </div>
-  </div>
-
-  <!-- TENDANCE -->
-  <div class="section">
-    <h2>🔥 Tendance</h2>
-    <div class="grid grid-3">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74">
-        <p>Pourquoi Usyk est intouchable</p>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc">
-        <p>Le KO qui choque le monde</p>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1521412644187-c49fa049e84d">
-        <p>Top 5 des boxeurs dangereux</p>
-      </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
+      <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
+      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
     </div>
+    <div class="fights-grid" id="fights-grid"></div>
   </div>
+</section>
 
-  <!-- ANALYSES -->
-  <div class="section">
-    <h2>📊 Analyses & Prédictions</h2>
-    <div class="grid grid-3">
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b">
-        <p>Analyse Fury vs Usyk</p>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74">
-        <p>Combat historique expliqué</p>
-      </div>
-      <div class="card">
-        <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc">
-        <p>Notre prédiction</p>
+<section id="actualites">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">ACTUA<span>LITÉS</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="refresh-btn" id="refresh-btn" onclick="loadNews()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Actualiser
+        </button>
+        <a href="#" class="section-link">Voir tout →</a>
       </div>
     </div>
+    <div id="news-info" style="margin-bottom:14px;"></div>
+    <div class="news-grid" id="news-grid"></div>
   </div>
+</section>
 
-  <!-- NEWSLETTER -->
-  <div class="section" style="text-align:center;">
-    <h2>🔥 Reçois les infos combats</h2>
-    <p>Analyses + actus directement dans ta boîte mail</p>
-    <a href="#" class="btn">S’inscrire</a>
+
+
+<section id="conseils">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">CON<span>SEILS</span></h2>
+      <button class="refresh-btn" id="tips-btn" onclick="loadTips(currentTipTab)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Nouveaux conseils IA
+      </button>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTip('technique',this)">Technique</button>
+      <button class="tab-btn" onclick="switchTip('entrainement',this)">Entraînement</button>
+      <button class="tab-btn" onclick="switchTip('nutrition',this)">Nutrition</button>
+      <button class="tab-btn" onclick="switchTip('mental',this)">Mental</button>
+    </div>
+    <div class="tips-grid" id="tips-grid"></div>
   </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    © 2026 KO MAG
-  </footer>
+<section id="classement" class="fighters-section">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">CLASS<span>EMENT</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="refresh-btn" id="ranks-btn" onclick="loadRanks(currentWeightClass)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Actualiser
+      </button>
+      <div class="tabs" style="border:none;margin:0;">
+        <button class="tab-btn active" onclick="switchWeight('heavyweight',this)">Lourds</button>
+        <button class="tab-btn" onclick="switchWeight('super-middleweight',this)">S-Moyens</button>
+        <button class="tab-btn" onclick="switchWeight('welterweight',this)">Welters</button>
+        <button class="tab-btn" onclick="switchWeight('lightweight',this)">Légers</button>
+      </div>
+      </div>
+    </div>
+    <table class="ranking-table" id="ranking-table"></table>
+  </div>
+</section>
 
+<section id="equipement" class="equipment-section">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">ÉQUIPE<span>MENT</span></h2>
+      <a href="#" class="section-link">Voir tout →</a>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchEquip('all',this)">Tout</button>
+      <button class="tab-btn" onclick="switchEquip('gants',this)">Gants</button>
+      <button class="tab-btn" onclick="switchEquip('protections',this)">Protections</button>
+      <button class="tab-btn" onclick="switchEquip('sacs',this)">Sacs de frappe</button>
+      <button class="tab-btn" onclick="switchEquip('vetements',this)">Vêtements</button>
+    </div>
+    <div class="equip-grid" id="equip-grid"></div>
+    <div class="aff-disclosure">
+      <strong>⚠ Disclosure affilié :</strong> Certains liens sur cette page sont des liens affiliés Amazon. En achetant via ces liens, KO MAG perçoit une commission sans coût supplémentaire pour vous. Cela finance le site et le maintient entièrement gratuit.
+    </div>
+  </div>
+</section>
+
+<section id="newsletter" class="newsletter">
+  <div class="container">
+    <div class="newsletter-inner">
+      <div class="newsletter-text">
+        <h2>RESTEZ AU CŒUR DU RING</h2>
+        <p>Actualités exclusives, analyses de combats, conseils pros et deals équipement — directement dans votre boîte mail.</p>
+      </div>
+      <div class="newsletter-form">
+        <input type="email" placeholder="votre@email.com" id="email-input">
+        <button onclick="subscribe()">S'abonner — Gratuit</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>KO <span>MAG</span></h3>
+        <p>Le magazine de référence sur les sports de combat. Boxe, MMA, Kick-Boxing, Muay-Thai — actualités, résultats et équipement.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li><a href="#combats">Combats</a></li><li><a href="#conseils">Conseils</a></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
+      <div class="footer-col"><h4>Disciplines</h4><ul><li><a href="#">Boxe anglaise</a></li><li><a href="#">Boxe française</a></li><li><a href="#">MMA</a></li><li><a href="#">Kick-boxing</a></li><li><a href="#">Muay-Thai</a></li></ul></div>
+      <div class="footer-col"><h4>Légal</h4><ul><li><a href="#">Mentions légales</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Politique affilié</a></li><li><a href="#">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 KO MAG — Tous droits réservés</span>
+      <span>Actualités en temps réel · Mise à jour automatique · KO MAG</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════════════════════════════
+const AMAZON_TAG = 'komag-21';
+// Gemini via proxy Vercel — clé cachée côté serveur
+const REFRESH_MS = 15 * 60 * 1000;
+
+const AFF = {
+  g_everlast:`https://www.amazon.fr/s?k=gants+boxe+everlast&tag=${AMAZON_TAG}`,
+  g_venum:`https://www.amazon.fr/s?k=gants+boxe+venum&tag=${AMAZON_TAG}`,
+  g_cleto:`https://www.amazon.fr/s?k=gants+cleto+reyes&tag=${AMAZON_TAG}`,
+  g_title:`https://www.amazon.fr/s?k=gants+title+boxing&tag=${AMAZON_TAG}`,
+  casque:`https://www.amazon.fr/s?k=casque+boxe+sparring&tag=${AMAZON_TAG}`,
+  bandages:`https://www.amazon.fr/s?k=bandages+boxe&tag=${AMAZON_TAG}`,
+  pdents:`https://www.amazon.fr/s?k=protege+dents+boxe&tag=${AMAZON_TAG}`,
+  coquille:`https://www.amazon.fr/s?k=coquille+protection+boxe&tag=${AMAZON_TAG}`,
+  sac:`https://www.amazon.fr/s?k=sac+frappe+lourd+boxe&tag=${AMAZON_TAG}`,
+  poire:`https://www.amazon.fr/s?k=poire+vitesse+boxe&tag=${AMAZON_TAG}`,
+  short:`https://www.amazon.fr/s?k=short+boxe+professionnel&tag=${AMAZON_TAG}`,
+  corde:`https://www.amazon.fr/s?k=corde+sauter+boxe&tag=${AMAZON_TAG}`,
+};
+
+// ════════════════════════════════════════════════════════════════
+// ARTICLES STATIQUES — toujours affichés instantanément
+// ════════════════════════════════════════════════════════════════
+const STATIC_ARTICLES = [
+  { titre:"Oleksandr Usyk prêt pour 2026 : 'Je veux tout unifier'",
+    categorie:"INTERVIEW", emoji:"🏆", source:"L'Équipe", temps:"Il y a 1h", isReal:false,
+    img:"https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80",
+    resume:"Le champion unifié parle de ses ambitions pour 2026 et de son prochain combat.",
+    contenu:"Oleksandr Usyk a accordé une interview exclusive à L'Équipe depuis son camp d'entraînement en Ukraine. Le champion incontesté des poids lourds se dit en pleine forme et affirme vouloir défendre ses quatre ceintures avant la fin de l'année 2026.###'Je suis né pour être champion. Chaque combat, chaque entraînement, chaque sacrifice m'a mené ici. Je ne m'arrêterai pas tant que j'aurai des adversaires dignes de ce nom' a-t-il déclaré. Son équipe confirme des négociations en cours avec plusieurs prétendants de premier plan." },
+  { titre:"Canelo vs Benavidez : Le combat le plus attendu de 2026 officialisé",
+    categorie:"ÉVÉNEMENT", emoji:"🥊", source:"RMC Sport", temps:"Il y a 3h", isReal:false,
+    img:"https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80",
+    resume:"Le choc entre le champion mexicain et l'Américain invaincu est enfin confirmé.",
+    contenu:"Après des mois de négociations, le combat Canelo Alvarez vs David Benavidez est officiellement signé. L'affrontement aura lieu le 12 juillet 2026 au T-Mobile Arena de Las Vegas, diffusé sur DAZN en exclusivité mondiale.###Benavidez, 29-0 avec 24 KO, a toujours clamé être le seul adversaire que Canelo refusait d'affronter. Ce combat générera selon les estimations plus de 120 millions de dollars de revenus, un record pour la catégorie super-moyens." },
+  { titre:"Terence Crawford domine 2026 : analyse de son style unique",
+    categorie:"ANALYSE", emoji:"📊", source:"ESPN", temps:"Il y a 5h", isReal:false,
+    img:"https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80",
+    resume:"Comment Crawford est devenu le boxeur le plus complet de sa génération.",
+    contenu:"En 2026, Terence Crawford s'impose comme le boxeur livre pour livre numéro un mondial selon l'ensemble des médias spécialisés. Sa capacité à boxer des deux mains, à lire ses adversaires et à adapter son style en cours de combat en font une anomalie dans l'histoire de la boxe.###Les analystes d'ESPN ont décortiqué ses 10 derniers combats : Crawford utilise en moyenne 47 combinaisons différentes par round, contre 12 pour un boxeur de haut niveau standard. Une intelligence tactique qui le place au-dessus de tous ses contemporains." },
+  { titre:"Gervonta Davis KO au 6e round — résultat complet",
+    categorie:"RÉSULTATS", emoji:"⚡", source:"Sky Sports", temps:"Il y a 7h", isReal:false,
+    img:"https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80",
+    resume:"Tank Davis conserve sa ceinture WBA avec une victoire expéditive.",
+    contenu:"Gervonta 'Tank' Davis a une nouvelle fois impressionné samedi soir au Barclays Center de Brooklyn. Face au challenger Frank Martin, il a décroché un KO dévastateur au 6e round d'un direct du gauche qui a mis fin aux débats.###Avec 28 KO en 31 victoires, Davis confirme qu'il est le puncheur le plus efficace de sa catégorie. 'Je suis le meilleur, et ce soir tout le monde a pu le voir' a-t-il déclaré après le combat. Son prochain adversaire sera désigné dans les prochaines semaines." },
+  { titre:"Ryan Garcia : 'Je reviendrai plus fort en 2026'",
+    categorie:"INTERVIEW", emoji:"🎤", source:"Eurosport", temps:"Il y a 9h", isReal:false,
+    img:"https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80",
+    resume:"Le combattant américain annonce son retour après plusieurs mois de préparation.",
+    contenu:"Ryan Garcia sort d'une période de retraite forcée et se confie sur ses projets pour 2026. Après avoir revu sa préparation mentale et physique avec une nouvelle équipe, il assure être prêt à rivaliser avec les meilleurs légers du monde.###'J'ai fait des erreurs, j'ai appris. Le Ryan Garcia de 2026 est différent, plus mature, plus dangereux' a-t-il déclaré dans une vidéo publiée sur ses réseaux sociaux. Une revanche contre Davis reste son objectif prioritaire." },
+  { titre:"Programme d'entraînement 8 semaines : niveau champion",
+    categorie:"ENTRAÎNEMENT", emoji:"💪", source:"Boxing News", temps:"Il y a 11h", isReal:false,
+    img:"https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80",
+    resume:"Le programme complet utilisé par les pros pour atteindre leur pic de forme.",
+    contenu:"Les entraîneurs des plus grands clubs professionnels partagent leur programme type sur 8 semaines. Semaines 1-2 : construction aérobie (corde, course, shadow boxing). Semaines 3-4 : travail technique intensif sur les pattes et le sac. Semaines 5-6 : sparring progressif 4 puis 6 rounds. Semaines 7-8 : affûtage, travail de vitesse et gestion du poids.###La clé est la progression : augmenter l'intensité de 10% chaque semaine maximum pour éviter les blessures et le surmenage. Associez ce programme à une nutrition adaptée pour des résultats optimaux en 2 mois." },
+];
+
+const STATIC_TIPS = {
+  technique:[
+    {numero:'01',emoji:'👊',titre:'Le jab parfait en 3 points',contenu:"Partez de la garde, tendez le bras complètement en faisant pivoter le poing à 90° à l'impact, puis ramenez immédiatement. Le jab doit partir et revenir sur le même trajet. Travaillez-le 100 fois chaque séance — c'est votre arme principale.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'💥',titre:'Direct du droit : la puissance vient des hanches',contenu:"Pivotez l'épaule droite vers l'avant en poussant sur la jambe arrière. Transférez le poids du pied droit vers le gauche. Cette rotation peut tripler votre puissance par rapport à un bras seul. Pratiquez devant un miroir pour corriger la mécanique.",tag:'INTERMÉDIAIRE'},
+    {numero:'03',emoji:'🔄',titre:'Le crochet : timing et précision',contenu:"Le crochet se déclenche à 90° du coude, jamais en balançant. Explosez latéralement avec la rotation de l'épaule. Combinez-le toujours après un jab (1-2-3) pour surprendre. Travaillez ce combo sur les pattes 200 fois par session.",tag:'AVANCÉ'},
+    {numero:'04',emoji:'🛡️',titre:'Défense : slip et roll',contenu:"Le slip déplace la tête de côté pour esquiver un direct. Le roll évite les crochets en baissant le buste en arc de cercle. Ces deux mouvements combinés forment la défense offensive — esquiver sans reculer, comme Muhammad Ali.",tag:'INTERMÉDIAIRE'},
+  ],
+  entrainement:[
+    {numero:'01',emoji:'⏱️',titre:'Structurer ses rounds',contenu:"Un round dure 3 minutes, 1 minute de repos. Basez tout votre entraînement sur ce rythme : 3 min d'effort intense, 1 min de récupération active. 6 à 12 rounds par session selon votre niveau pour développer l'endurance spécifique boxe.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'🏃',titre:'La corde : secret des champions',contenu:"30 minutes de corde par jour minimum. Alternez : 2 min vitesse normale, 30 sec sprint maximal. La corde améliore la coordination, le cardio et la vitesse des jambes. Floyd Mayweather en faisait 45 minutes chaque matin sans exception.",tag:'AVANCÉ'},
+    {numero:'03',emoji:'💪',titre:'Renforcement fonctionnel',contenu:"Pompes (100/jour), tractions (50/jour), burpees (30/jour), gainage (3x2 min). Ces exercices développent la force explosive et la stabilité du tronc essentielles pour encaisser et frapper. Oubliez les machines, misez sur le poids de corps.",tag:'INTERMÉDIAIRE'},
+    {numero:'04',emoji:'🛌',titre:"La récupération : l'entraînement invisible",contenu:"Les muscles se construisent pendant le repos. 8h de sommeil minimum, 3L d'eau par jour, 1-2 jours de récupération active par semaine. Un boxeur sous-récupéré plafonne ou se blesse. La récupération est aussi importante que l'effort.",tag:'ESSENTIEL'},
+  ],
+  nutrition:[
+    {numero:'01',emoji:'🥩',titre:'Protéines : la brique musculaire',contenu:"Visez 2g de protéines par kg de poids de corps par jour. Sources optimales : poulet, thon, oeufs, fromage blanc 0%, légumineuses. Répartissez sur 4-5 repas. Un boxeur de 75kg a besoin d'au moins 150g de protéines quotidiennement.",tag:'ESSENTIEL'},
+    {numero:'02',emoji:'⚡',titre:'Glucides : carburant du combattant',contenu:"Riz, avoine, patate douce, pâtes complètes — votre carburant principal. Chargez 3h avant l'entraînement. Après l'effort, fenêtre anabolique de 30 minutes : glucides rapides + protéines pour optimiser la récupération musculaire.",tag:'INTERMÉDIAIRE'},
+    {numero:'03',emoji:'💧',titre:'Hydratation : performance et sécurité',contenu:"Une déshydratation de 2% diminue les performances de 20%. Buvez 500ml d'eau 2h avant l'effort, puis 200ml toutes les 15 minutes pendant l'entraînement. Pour les séances de plus de 60 min, ajoutez des électrolytes.",tag:'ESSENTIEL'},
+    {numero:'04',emoji:'🌿',titre:'Compléments validés par la science',contenu:"Créatine monohydrate (3-5g/jour pour la puissance), bêta-alanine (3,2g/jour pour l'endurance), caféine (3-6mg/kg avant l'effort). Évitez les pré-workouts aux formules douteuses. La base reste toujours l'alimentation complète.",tag:'AVANCÉ'},
+  ],
+  mental:[
+    {numero:'01',emoji:'🧠',titre:'La visualisation : entraînement mental',contenu:"15 minutes par jour : visualisez vos combos, vos déplacements, vos victoires. Les études montrent que la visualisation active les mêmes circuits neuronaux que l'entraînement physique. Muhammad Ali pratiquait cette technique chaque jour.",tag:'PRO'},
+    {numero:'02',emoji:'😤',titre:'Gérer le stress avant le combat',contenu:"Respiration en boîte : 4 sec inhaler, 4 tenir, 4 exhaler, 4 tenir. Répétez 5 fois. Cette méthode active le système parasympathique et réduit le cortisol en quelques minutes. Technique utilisée par les forces spéciales et les sportifs de haut niveau.",tag:'ESSENTIEL'},
+    {numero:'03',emoji:'🎯',titre:'Concentration pendant le round',contenu:"Définissez 2-3 objectifs tactiques simples avant chaque round. Ne pensez pas au score — concentrez-vous sur votre plan de jeu. La simplicité cognitive sous pression est la marque des grands champions. Trop d'infos = paralysie de l'action.",tag:'AVANCÉ'},
+    {numero:'04',emoji:'🏆',titre:'Construire une mentalité de champion',contenu:"Tyson Fury a traversé une dépression sévère avant ses plus grands triomphes. La résilience se construit dans les défaites et les difficultés. Analysez chaque échec comme un cours magistral gratuit sur la voie du progrès.",tag:'PRO'},
+  ],
+};
+
+const EQUIP = [
+  {cat:'gants',emoji:'🥊',badge:'BEST-SELLER',name:'Everlast Pro Style Elite',desc:"Mousse multi-couches. Référence du marché depuis 1910. Idéal débutants et confirmés.",price:'À partir de 39€',link:AFF.g_everlast},
+  {cat:'gants',emoji:'🥊',badge:'CHAMPION',name:'Cleto Reyes Extra Padding',desc:'Le choix des champions du monde. Cuir véritable, protection et maintien maximaux.',price:'À partir de 189€',link:AFF.g_cleto},
+  {cat:'gants',emoji:'🥊',badge:'RAPPORT/QUALITÉ',name:'Venum Contender 2.0',desc:'Triple densité mousse, triple Velcro. Meilleur rapport qualité/prix du marché.',price:'À partir de 55€',link:AFF.g_venum},
+  {cat:'gants',emoji:'🥊',badge:'TRAINING',name:'Title Boxing Classic',desc:'Gants durables pour les séances intenses. Grip intégré, poignet renforcé.',price:'À partir de 65€',link:AFF.g_title},
+  {cat:'protections',emoji:'⛑️',badge:'SÉCURITÉ',name:'Casque Ringside Pro',desc:'Certification professionnelle. Rembourrage triple couche, visière complète disponible.',price:'À partir de 79€',link:AFF.casque},
+  {cat:'protections',emoji:'🦷',badge:'ESSENTIEL',name:'Protège-dents Shock Doctor',desc:"Standard de l'industrie. Moulage personnalisé, protection optimale certifiée.",price:'À partir de 12€',link:AFF.pdents},
+  {cat:'protections',emoji:'🩹',badge:'BASE',name:'Bandages Coton 4,5m',desc:'Lavables, réutilisables. Indispensables pour protéger poignets et articulations.',price:'À partir de 8€',link:AFF.bandages},
+  {cat:'protections',emoji:'🛡️',badge:'SPARRING',name:'Coquille Adidas Pro',desc:'Protection corps ergonomique. Légère, certifiée compétition amateur et pro.',price:'À partir de 25€',link:AFF.coquille},
+  {cat:'sacs',emoji:'💥',badge:'POPULAIRE',name:'Sac de Frappe 40kg',desc:'Sac lourd rembourré pour entraînement intensif. Crochet rotatif robuste inclus.',price:'À partir de 89€',link:AFF.sac},
+  {cat:'sacs',emoji:'⚡',badge:'VITESSE',name:'Poire de Vitesse Everlast',desc:"Améliore rapidité, coordination et timing. Idéale pour l'échauffement.",price:'À partir de 35€',link:AFF.poire},
+  {cat:'vetements',emoji:'🎽',badge:'PRO',name:'Short Boxe Leone 1947',desc:'Satin premium, coupe boxeur classique. Référence des clubs professionnels.',price:'À partir de 45€',link:AFF.short},
+  {cat:'vetements',emoji:'🔄',badge:'CARDIO',name:'Corde à Sauter Lestée',desc:'Améliore cardio, rythme et coordination. Incontournable pour tout boxeur sérieux.',price:'À partir de 18€',link:AFF.corde},
+];
+
+const RANKS = {
+  heavyweight:[
+    {name:'Oleksandr Usyk',flag:'🇺🇦',country:'Ukraine',record:'23-0 (14 KO)',org:'WBA·WBO·IBF·IBO',trend:'—'},
+    {name:'Tyson Fury',flag:'🇬🇧',country:'Angleterre',record:'34-1-1 (24 KO)',org:'WBC',trend:'↓'},
+    {name:'Daniel Dubois',flag:'🇬🇧',country:'Angleterre',record:'21-2 (20 KO)',org:'IBF',trend:'↑'},
+    {name:'Anthony Joshua',flag:'🇬🇧',country:'Angleterre',record:'27-4 (24 KO)',org:'Ex-Champion',trend:'↑'},
+    {name:'Zhilei Zhang',flag:'🇨🇳',country:'Chine',record:'27-1-1 (22 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Deontay Wilder',flag:'🇺🇸',country:'États-Unis',record:'43-3-1 (42 KO)',org:'Ex-WBC',trend:'—'},
+  ],
+  'super-middleweight':[
+    {name:'Canelo Alvarez',flag:'🇲🇽',country:'Mexique',record:'61-2-2 (39 KO)',org:'WBA·WBC·WBO·IBF',trend:'—'},
+    {name:'David Benavidez',flag:'🇺🇸',country:'États-Unis',record:'29-0 (24 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Edgar Berlanga',flag:'🇵🇷',country:'Porto Rico',record:'22-0 (17 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Chris Eubank Jr',flag:'🇬🇧',country:'Angleterre',record:'33-3 (24 KO)',org:'WBO #3',trend:'—'},
+    {name:'Carlos Adames',flag:'🇩🇴',country:'Rép. Dominicaine',record:'24-1 (18 KO)',org:'WBC #4',trend:'↑'},
+  ],
+  welterweight:[
+    {name:'Terence Crawford',flag:'🇺🇸',country:'États-Unis',record:'40-0 (31 KO)',org:'WBA·WBO·IBF',trend:'—'},
+    {name:'Jaron Ennis',flag:'🇺🇸',country:'États-Unis',record:'31-0 (28 KO)',org:'IBF',trend:'↑'},
+    {name:'Vergil Ortiz Jr',flag:'🇺🇸',country:'États-Unis',record:'22-0 (22 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Sebastian Fundora',flag:'🇺🇸',country:'États-Unis',record:'21-1-1 (13 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Errol Spence Jr',flag:'🇺🇸',country:'États-Unis',record:'29-1 (22 KO)',org:'Ex-WBC',trend:'↓'},
+  ],
+  lightweight:[
+    {name:'Gervonta Davis',flag:'🇺🇸',country:'États-Unis',record:'31-0 (28 KO)',org:'WBA',trend:'—'},
+    {name:'Devin Haney',flag:'🇺🇸',country:'États-Unis',record:'31-1 (15 KO)',org:'WBC·WBO',trend:'↓'},
+    {name:'William Zepeda',flag:'🇲🇽',country:'Mexique',record:'31-0 (27 KO)',org:'WBC #1',trend:'↑'},
+    {name:'Ryan Garcia',flag:'🇺🇸',country:'États-Unis',record:'24-1 (20 KO)',org:'WBO #2',trend:'↑'},
+    {name:'Vasyl Lomachenko',flag:'🇺🇦',country:'Ukraine',record:'17-3 (11 KO)',org:'WBO',trend:'—'},
+  ],
+};
+
+const FIGHTS = {
+  upcoming:[
+    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Unification Poids Lourds',date:'2025 TBD',extra:null,link:'https://www.dazn.com'},
+    {f1:'Canelo',r1:'61-2-2',f2:'Berlanga',r2:'22-0',title:'Défense Titres Super-Moyens',date:'SEPT 2025',extra:null,link:'https://www.dazn.com'},
+    {f1:'Crawford',r1:'40-0',f2:'Ennis',r2:'31-0',title:'Choc des invaincus Welters',date:'TBD 2025',extra:null,link:'https://www.espn.com'},
+  ],
+  results:[
+    {f1:'Crawford',r1:'40-0',f2:'Madrimov',r2:'9-1',title:'Champion Unifié WBA/WBC/WBO S-Welters',date:'03 AOÛT 2024',extra:'🏆 Crawford KO9',link:'#'},
+    {f1:'Davis',r1:'31-0',f2:'Martin',r2:'26-0',title:'Championnat WBA Poids Légers',date:'10 JUIN 2024',extra:'🏆 Davis KO8',link:'#'},
+    {f1:'Dubois',r1:'21-1',f2:'Parker',r2:'34-3',title:'Championnat IBF Poids Lourds',date:'28 SEPT 2024',extra:'🏆 Dubois UD12',link:'#'},
+  ],
+  predictions:[
+    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Pronostic — Poids Lourds',date:'PRONOSTIC',extra:'Usyk UD12 — Favori',link:'#'},
+    {f1:'Garcia',r1:'24-1',f2:'Haney',r2:'31-1',title:'Revanche potentielle 2026',date:'PRONOSTIC',extra:'Garcia KO6 — Légèrement favori',link:'#'},
+    {f1:'Davis',r1:'31-0',f2:'Garcia',r2:'24-1',title:'Duel rêvé Poids Légers',date:'PRONOSTIC',extra:'Davis UD12 — Favori',link:'#'},
+  ],
+};
+
+// ════════════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════════════
+let articles = [...STATIC_ARTICLES];
+let currentTipTab = 'technique';
+let lastUpdate = null;
+let aiLoaded = false;
+
+// ════════════════════════════════════════════════════════════════
+// STATUS
+// ════════════════════════════════════════════════════════════════
+function setStatus(color, text, time) {
+  document.getElementById('s-dot').className = 'dot ' + color;
+  document.getElementById('s-text').textContent = text;
+  if (time) document.getElementById('s-time').textContent = time;
+}
+
+// ════════════════════════════════════════════════════════════════
+// GEMINI — RÉDACTEUR EN CHEF (via proxy Vercel, clé cachée serveur)
+// ════════════════════════════════════════════════════════════════
+async function callGemini(prompt) {
+  // Timeout 20s — si Gemini ne répond pas, on garde les articles statiques
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 45000);
+  try {
+    const r = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt, task: 'text' }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      const msg = 'Proxy Gemini ' + r.status + ': ' + (e.error || JSON.stringify(e));
+      console.warn('[KO MAG]', msg);
+      throw new Error(msg);
+    }
+    const d = await r.json();
+    if (d.error) { console.warn('[KO MAG] Gemini error:', d.error); throw new Error(d.error); }
+    console.info('[KO MAG] Gemini OK - articles reçus');
+    return safeJSON(d.result);
+  } catch(e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('Timeout Gemini');
+    throw e;
+  }
+}
+
+function safeJSON(txt) {
+  // Nettoyage préalable
+  txt = txt.replace(/```json|```/g, '').trim();
+  try { return JSON.parse(txt); } catch(e) {
+    // Tentative 1 : couper au dernier objet complet
+    let depth = 0, lastClose = -1, inStr = false, esc = false;
+    for (let i = 0; i < txt.length; i++) {
+      const c = txt[i];
+      if (esc) { esc = false; continue; }
+      if (c === '\\') { esc = true; continue; }
+      if (c === '"') { inStr = !inStr; continue; }
+      if (inStr) continue;
+      if (c === '{' || c === '[') depth++;
+      if (c === '}' || c === ']') { depth--; if (depth === 0) lastClose = i; }
+    }
+    if (lastClose > 0) {
+      try { return JSON.parse(txt.slice(0, lastClose + 1)); } catch(e2) {}
+    }
+    // Tentative 2 : fermer le JSON manuellement
+    try {
+      // Compter les accolades/crochets ouverts non fermés
+      let opens = 0, closes = 0, inS = false, es = false;
+      for (let i = 0; i < txt.length; i++) {
+        const c = txt[i];
+        if (es) { es = false; continue; }
+        if (c === '\\') { es = true; continue; }
+        if (c === '"') { inS = !inS; continue; }
+        if (inS) continue;
+        if (c === '{' || c === '[') opens++;
+        if (c === '}' || c === ']') closes++;
+      }
+      // Couper la dernière entrée incomplète (avant la dernière virgule)
+      let fixed = txt.trim();
+      if (fixed.endsWith(',')) fixed = fixed.slice(0, -1);
+      // Fermer les structures
+      const diff = opens - closes;
+      for (let i = 0; i < diff; i++) {
+        fixed += (fixed.lastIndexOf('[') > fixed.lastIndexOf('{')) ? ']' : '}';
+      }
+      return JSON.parse(fixed);
+    } catch(e3) {
+      throw new Error('JSON invalide même après réparation: ' + e.message);
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════════════════
+// GEMINI IMAGE GENERATION
+// ════════════════════════════════════════════════════════════════
+const imgCache = {}; // cache pour ne pas regénérer la même image
+
+async function generateImage(prompt) {
+  if (imgCache[prompt]) return imgCache[prompt];
+  try {
+    const fullPrompt = `Professional boxing photo, ${prompt}, dramatic lighting, sports photography, high quality, cinematic`;
+    const r = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: fullPrompt, task: 'image' })
+    });
+    if (!r.ok) throw new Error('Proxy image ' + r.status);
+    const d = await r.json();
+    if (!d.image) throw new Error("Pas d'image");
+    imgCache[prompt] = d.image;
+    return d.image;
+  } catch(e) {
+    console.info('Image generation skipped:', e.message);
+    return null;
+  }
+}
+
+// Générer les images pour tous les articles en parallèle
+async function enrichArticlesWithImages(arts) {
+  const prompts = arts.map(a => {
+    // Prompt spécifique selon le titre/catégorie
+    const title = a.titre || '';
+    if (title.includes('Usyk')) return 'boxer Oleksandr Usyk champion heavyweight, professional boxing match';
+    if (title.includes('Canelo')) return 'boxer Canelo Alvarez super middleweight champion, boxing ring';
+    if (title.includes('Crawford')) return 'boxer Terence Crawford welterweight champion, boxing match action';
+    if (title.includes('Davis') || title.includes('Tank')) return 'boxer Gervonta Davis lightweight champion, knockout punch';
+    if (title.includes('Garcia')) return 'boxer Ryan Garcia lightweight, boxing training';
+    if (title.includes('Fury')) return 'boxer Tyson Fury heavyweight champion, boxing ring dramatic';
+    if (title.includes('Joshua')) return 'boxer Anthony Joshua heavyweight, boxing arena';
+    if (title.includes('Benavidez')) return 'boxer David Benavidez super middleweight, boxing action';
+    if (a.categorie === 'ENTRAÎNEMENT') return 'boxer training heavy bag punching, gym professional';
+    if (a.categorie === 'ANALYSE') return 'boxing match tactical analysis, two boxers ring action';
+    if (a.categorie === 'RÉSULTATS') return 'boxing match knockout celebration, winner raises fist';
+    if (a.categorie === 'INTERVIEW') return 'boxer press conference microphone, professional sports';
+    return 'professional boxing match arena crowd, dramatic sports photography';
+  });
+
+  // Générer toutes les images en parallèle
+  const images = await Promise.all(prompts.map(p => generateImage(p)));
+  return arts.map((a, i) => ({
+    ...a,
+    img: images[i] || a.img || null
+  }));
+}
+
+// ════════════════════════════════════════════════════════════════
+// PROXY /api/news — silencieux si absent
+// ════════════════════════════════════════════════════════════════
+async function fetchProxy() {
+  try {
+    const controller = new AbortController();
+    setTimeout(() => controller.abort(), 5000); // timeout 5s
+    const r = await fetch('/api/news', { cache: 'no-store', signal: controller.signal });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.articles?.length ? d.articles : null;
+  } catch(e) { return null; }
+}
+
+// ════════════════════════════════════════════════════════════════
+// LOAD NEWS
+// ════════════════════════════════════════════════════════════════
+async function loadNews() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('loading');
+
+  // Statique déjà affiché par init() — on passe directement aux vraies news
+
+  // ÉTAPE 2 — Vraies news via proxy Vercel
+  const realNews = await fetchProxy();
+
+  // ÉTAPE 3 — Rédaction et enrichissement
+  const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  // Préparer les vraies news avec URL pour traduction
+  const realNewsForGemini = realNews ? realNews.slice(0, 6).map(a => ({
+    titre: a.title,
+    resume: (a.description || '').slice(0, 200),
+    url: a.url,
+    source: a.source?.name || 'Source',
+    date: a.publishedAt
+  })) : [];
+  const ctx = realNewsForGemini.length > 0
+    ? realNewsForGemini.map((a, i) => `[${i}] "${a.titre}" — ${a.resume} (source: ${a.source}, url: ${a.url})`).join('\n')
+    : '';
+
+  try {
+    // Appel au cache serveur — articles déjà générés et mis en cache 1h
+    let d = { articles: [] };
+    try {
+      const cacheResp = await fetch('/api/articles', { cache: 'no-store' });
+      if (cacheResp.ok) {
+        const cacheData = await cacheResp.json();
+        d = { articles: cacheData.articles || [] };
+        const wasCached = cacheData.cached;
+        console.info('[KO MAG] Articles:', wasCached ? 'servis depuis le cache ⚡' : 'fraîchement générés 🔄');
+      }
+    } catch(e) {
+      console.warn('[KO MAG] /api/articles indisponible, fallback IA directe');
+      // Fallback : générer directement si le cache est indisponible
+      const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
+      const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
+      const results = await Promise.all(cats.map((cat, i) =>
+        callGemini(`KO MAG. JSON: {"articles":[{"titre":"...","categorie":"${cat}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}","url":""}]} 1 article boxe. resume 10 mots. contenu 2x80 mots separes ###.`).catch(() => null)
+      ));
+      d = { articles: results.filter(r => r?.articles?.length > 0).flatMap(r => r.articles) };
+    }
+
+    if (d && d.articles && d.articles.length > 0) {
+      let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
+      let final = aiArts;
+
+      // Les vraies news sont déjà traduites par Gemini dans aiArts
+      // On garde juste les images des vraies news si disponibles
+      if (realNews && realNews.length > 0) {
+        aiArts = aiArts.map((art, i) => ({
+          ...art,
+          img: art.img || (realNews[i] ? realNews[i].urlToImage : null),
+          isReal: !!art.url,
+        }));
+      }
+      final = aiArts;
+
+      // Afficher d'abord sans images Gemini
+      articles = final;
+      renderNews(articles);
+      updateHero(articles[0]);
+      updateSidebar(articles.slice(1,5));
+      updateTicker(articles);
+
+      // Pas d'illustrations Imagen (non disponible) — afficher directement
+
+      aiLoaded = true;
+      lastUpdate = new Date();
+
+      const mode = (realNews && realNews.length > 0) ? 'real+ai' : 'ai';
+      setStatus('green',
+        mode === 'real+ai'
+          ? '🟢 Actualités en direct — Mise à jour automatique'
+          : '🟢 Actualités — Mise à jour automatique toutes les 15 min',
+        '');
+      document.getElementById('news-info').innerHTML =
+        '<span style="color:' + (mode==='real+ai'?'#22C55E':'var(--gold)') + ';font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">' +
+        (mode==='real+ai' ? '🟢 EN DIRECT' : '📰 RÉDACTION KO MAG') +
+        '</span><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
+        articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
+    }
+  } catch(e) {
+    console.warn('[KO MAG] Rédaction indisponible :', e.message);
+    if (!aiLoaded) {
+      setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
+      document.getElementById('news-info').innerHTML =
+        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 RÉDACTION KO MAG</span>' +
+        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence </span>';
+    }
+  }
+
+  btn.classList.remove('loading');
+  observeAll();
+}
+
+function timeAgo(str) {
+  if (!str) return 'Récemment';
+  const diff = Math.floor((Date.now() - new Date(str)) / 60000);
+  if (diff < 60) return 'Il y a ' + diff + ' min';
+  if (diff < 1440) return 'Il y a ' + Math.floor(diff/60) + 'h';
+  return 'Il y a ' + Math.floor(diff/1440) + 'j';
+}
+
+// ════════════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════════════
+// Images Unsplash sports de combat par catégorie et sport
+const COMBAT_IMGS = {
+  boxing: {
+    'RÉSULTATS': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=85',
+    'ANALYSE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+    'INTERVIEW': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=85',
+    'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=85',
+    'ÉVÉNEMENT': 'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=85',
+    'TRANSFERTS': 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=85',
+    'LIVE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+    'default': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+  },
+  mma: {
+    'RÉSULTATS': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=85',
+    'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=85',
+    'default': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=85',
+  },
+  kickboxing: {
+    'default': 'https://images.unsplash.com/photo-1616699002947-dc3e5a7a6fb3?w=800&q=85',
+  }
+};
+
+const BAD_IMG_KW = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast'];
+
+function isGoodImage(url) {
+  if (!url || url.length < 15) return false;
+  const u = url.toLowerCase();
+  return !BAD_IMG_KW.some(k => u.includes(k));
+}
+
+function getBoxingImg(article, index) {
+  // 1. Vraie image de l'article si elle est cohérente
+  if (article.img && isGoodImage(article.img)) return article.img;
+  // 2. Image Unsplash selon le sport détecté
+  const sport = (article.sport||'boxing').toLowerCase();
+  const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
+    : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
+    : COMBAT_IMGS.boxing;
+  return sportImgs[article.categorie] || sportImgs['default'] || COMBAT_IMGS.boxing.default;
+}
+
+function renderNews(list) {
+  document.getElementById('news-grid').innerHTML = list.map((a, i) => {
+    const imgSrc = getBoxingImg(a, i);
+    return `
+    <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
+      <div class="news-card-img">
+        <img src="${imgSrc}" alt="${a.titre}" onerror="this.src='https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80'">
+        ${a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
+      </div>
+      <div class="news-card-body">
+        <div class="news-card-src">${a.source || 'KO MAG'}</div>
+        <div class="news-card-cat">${a.categorie}</div>
+        <div class="news-card-title">${a.titre}</div>
+        <div class="news-card-excerpt">${a.resume || ''}</div>
+        <div class="news-card-footer">
+          <span class="news-card-time">${a.temps}</span>
+          <a href="#" class="read-link" onclick="event.stopPropagation();openArt(${i})">LIRE →</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateHero(a) {
+  if (!a) return;
+  updateSEOMeta(a);
+  document.getElementById('hero-title').textContent = a.titre;
+  document.getElementById('hero-excerpt').textContent = a.resume || '';
+  document.getElementById('hero-meta').innerHTML =
+    '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
+    '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
+    '<span>' + a.temps + '</span>';
+  // Image hero
+  const heroImg = (a.img && isGoodImage(a.img)) 
+    ? a.img 
+    : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
+  const heroMain = document.querySelector('.hero-main');
+  heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
+  heroMain.style.backgroundSize = 'cover';
+  heroMain.style.backgroundPosition = 'center';
+  // badge live masqué — pas de distinction source
+  document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
+}
+
+function updateSidebar(list) {
+  document.getElementById('sidebar-news').innerHTML = list.map((a, i) => `
+    <a class="sb-item" href="#" onclick="event.preventDefault();openArt(${i+1})">
+      <div class="sb-item-src">${a.source || 'KO MAG'}</div>
+      <div class="sb-item-title">${a.emoji || '🥊'} ${a.titre}</div>
+      <div class="sb-item-time">${a.temps}</div>
+    </a>`).join('');
+}
+
+function updateTicker(list) {
+  const t = document.getElementById('ticker');
+  const items = list.map(a => `<span class="tki"><span class="tkd"></span>${a.emoji || '🥊'} ${a.titre}</span>`);
+  t.innerHTML = [...items, ...items].join('');
+}
+
+// ════════════════════════════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════════════════════════════
+function openArt(i) {
+  const a = articles[i]; if (!a) return;
+  document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
+  const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
+  document.getElementById('modal-body').innerHTML =
+    '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
+    '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
+    '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
+    '<img src="' + (a.img || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80') + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'"> ' +
+    paras.map(p => '<p>' + p + '</p>').join('') +
+    (a.url ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
+    '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
+    '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ════════════════════════════════════════════════════════════════
+// TIPS
+// ════════════════════════════════════════════════════════════════
+function renderTipsStatic(tab) {
+  const tips = STATIC_TIPS[tab] || STATIC_TIPS.technique;
+  document.getElementById('tips-grid').innerHTML = tips.map((c, i) => `
+    <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
+      <div class="tip-num">${c.numero}</div>
+      <div class="tip-icon">${c.emoji}</div>
+      <div class="tip-title">${c.titre}</div>
+      <div class="tip-body">${c.contenu}</div>
+      <div class="tip-tag">${c.tag}</div>
+    </div>`).join('');
+  observeAll();
+}
+
+async function loadTips(tab) {
+  currentTipTab = tab;
+  document.getElementById('tips-btn').classList.add('loading');
+  renderTipsStatic(tab);
+  try {
+    const d = await callGemini(
+      `Rédige 4 conseils d'expert de boxe sur le thème "${tab}" pour KO MAG.
+JSON : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}
+- numero : 01 à 04
+- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL
+- emoji : 1 seul emoji pertinent
+- contenu : conseil détaillé et actionnable, minimum 80 mots, avec chiffres précis, noms de techniques, références à des champions réels qui utilisent cette méthode`
+    );
+    if (d && d.conseils && d.conseils.length > 0) {
+      document.getElementById('tips-grid').innerHTML = d.conseils.map((c, i) => `
+        <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
+          <div class="tip-num">${c.numero || String(i+1).padStart(2,'0')}</div>
+          <div class="tip-icon">${c.emoji}</div>
+          <div class="tip-title">${c.titre}</div>
+          <div class="tip-body">${c.contenu}</div>
+          <div class="tip-tag">${c.tag}</div>
+        </div>`).join('');
+      observeAll();
+    }
+  } catch(e) { /* garder statique silencieusement */ }
+  document.getElementById('tips-btn').classList.remove('loading');
+}
+
+function switchTip(t, el) {
+  document.querySelectorAll('#conseils .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); loadTips(t);
+}
+
+// ════════════════════════════════════════════════════════════════
+// FIGHTS / RANKINGS / EQUIPMENT
+// ════════════════════════════════════════════════════════════════
+function renderFights(tab) {
+  document.getElementById('fights-grid').innerHTML = FIGHTS[tab].map(f => `
+    <div class="fight-card fade-up">
+      <div class="fight-header">
+        <div class="fight-date">${f.date}</div>
+        <div class="fight-badge">${tab==='results'?'✅ RÉSULTAT':tab==='predictions'?'🎯 PRONOSTIC':'📅 À VENIR'}</div>
+      </div>
+      <div class="fight-body">
+        <div class="fight-vs">
+          <div class="fight-fighter"><div class="fight-fighter-name">${f.f1}</div><div class="fight-fighter-rec">${f.r1}</div></div>
+          <div class="vs-badge">VS</div>
+          <div class="fight-fighter"><div class="fight-fighter-name">${f.f2}</div><div class="fight-fighter-rec">${f.r2}</div></div>
+        </div>
+        <div class="fight-title-small">${f.title}</div>
+        ${f.extra ? '<div style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;color:' + (tab==='results'?'#22C55E':'var(--gold)') + ';font-size:.86rem;letter-spacing:.08em;">' + f.extra + '</div>' : ''}
+      </div>
+      <div class="fight-footer">
+        <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">
+          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🎯 Voir le pronostic →':'📺 Revoir →'}
+        </a>
+      </div>
+    </div>`).join('');
+  observeAll();
+}
+function switchFight(t, el) {
+  document.querySelectorAll('#combats .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (FIGHTS_LOADED[t]) {
+    renderFights(t);
+  } else {
+    loadFights(t);
+  }
+}
+
+const FIGHTS_LOADED = {};
+
+async function loadFights(tab) {
+  document.getElementById('fights-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Chargement des combats...</div>';
+  try {
+    const tabNames = { upcoming: 'à venir prochainement en 2026', results: 'résultats récents 2025-2026', predictions: 'pronostics et analyses 2026' };
+    const d = await callGemini(
+      `Combats de boxe et sports de combat ${tabNames[tab]||tab}. Date: 19 avril 2026.
+JSON: {"fights":[{"f1":"...","r1":"...","f2":"...","r2":"...","title":"...","date":"...","extra":"...","link":"https://www.dazn.com"}]}
+- 3 combats max
+- f1/f2: noms courts (max 12 caracteres)
+- r1/r2: bilan format X-Y
+- title: categorie et enjeu court
+- date: format "DD MMM YYYY" ou "TBD 2026"
+- extra: ${tab==='results'?'resultat ex: Crawford KO9':tab==='predictions'?'pronostic ex: Favori: Canelo':'null'}
+- Vrais combats reels 2026 uniquement`
+    );
+    if (d && d.fights && d.fights.length > 0) {
+      FIGHTS[tab] = d.fights.map(f => ({...f, extra: f.extra==='null'?null:f.extra}));
+      FIGHTS_LOADED[tab] = true;
+    }
+  } catch(e) { console.info('Combats: fallback statique'); }
+  renderFights(tab);
+}
+
+function renderRanks(wc) {
+  const medals = ['gold','silver','bronze'];
+  document.getElementById('ranking-table').innerHTML =
+    '<thead><tr><th>#</th><th>Boxeur</th><th style="text-align:center">Pays</th><th>Bilan</th><th>Titre / Rang</th><th>↕</th></tr></thead><tbody>' +
+    (RANKS[wc]||[]).map((f,i) =>
+      '<tr><td><div class="rank-num ' + (medals[i]||'') + '">' + (i+1) + '</div></td>' +
+      '<td><div class="fighter-name">' + f.name + '</div></td>' +
+      '<td style="text-align:center">' +
+        '<span style="font-size:1.4rem;line-height:1" title="' + f.country + '">' + (f.flag||'') + '</span>' +
+        '<div style="font-size:.65rem;color:var(--muted);font-family:Barlow Condensed,sans-serif;letter-spacing:.05em;">' + f.country + '</div>' +
+      '</td>' +
+      '<td class="fighter-record">' + f.record + '</td>' +
+      '<td class="fighter-org">' + f.org + '</td>' +
+      '<td class="' + (f.trend==='↑'?'trend-up':f.trend==='↓'?'trend-down':'trend-same') + '">' + f.trend + '</td></tr>'
+    ).join('') + '</tbody>';
+}
+let currentWeightClass = 'heavyweight';
+
+function switchWeight(wc, el) {
+  document.querySelectorAll('#classement .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentWeightClass = wc;
+  renderRanks(wc);
+}
+
+async function loadRanks(wc) {
+  const btn = document.getElementById('ranks-btn');
+  if (btn) btn.classList.add('loading');
+  try {
+    const weightNames = {
+      'heavyweight': 'poids lourds',
+      'super-middleweight': 'super-moyens',
+      'welterweight': 'welters',
+      'lightweight': 'poids légers'
+    };
+    const d = await callGemini(
+      `Donne le classement mondial actuel ${weightNames[wc]||wc} en boxe (avril 2026).
+JSON: {"fighters":[{"name":"...","flag":"...","country":"...","record":"...","org":"...","trend":"..."}]}
+- 5 boxeurs maximum
+- flag: emoji drapeau du pays
+- country: nom du pays en francais
+- record: format "X-Y (Z KO)"
+- org: organisation(s) WBA WBC WBO IBF ou rang comme WBC #1
+- trend: uniquement ↑ ↓ ou —
+- Basé sur les vrais classements actuels 2026`
+    );
+    if (d && d.fighters && d.fighters.length > 0) {
+      RANKS[wc] = d.fighters;
+      renderRanks(wc);
+    }
+  } catch(e) {
+    console.info('Classement: fallback statique');
+  }
+  if (btn) btn.classList.remove('loading');
+}
+
+function renderEquip(tab) {
+  const list = tab === 'all' ? EQUIP : EQUIP.filter(e => e.cat === tab);
+  document.getElementById('equip-grid').innerHTML = list.map(e => `
+    <div class="equip-card fade-up">
+      ${e.badge ? '<div class="equip-badge">' + e.badge + '</div>' : ''}
+      <span class="equip-emoji">${e.emoji}</span>
+      <div class="equip-cat">${e.cat}</div>
+      <div class="equip-name">${e.name}</div>
+      <div class="equip-desc">${e.desc}</div>
+      <div class="equip-price">${e.price} <small>sur Amazon</small></div>
+      <a href="${e.link}" target="_blank" rel="noopener sponsored" class="btn-aff">🛒 Voir sur Amazon</a>
+      <a href="${e.link}" target="_blank" rel="noopener sponsored" class="btn-aff-out">Comparer les prix</a>
+    </div>`).join('');
+  observeAll();
+}
+function switchEquip(t, el) {
+  document.querySelectorAll('#equipement .tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active'); renderEquip(t);
+}
+
+// ════════════════════════════════════════════════════════════════
+// NEWSLETTER
+// ════════════════════════════════════════════════════════════════
+function subscribe() {
+  const inp = document.getElementById('email-input');
+  if (!inp.value.includes('@')) { inp.style.border = '1px solid #f55'; return; }
+  inp.style.border = '';
+  const b = event.target;
+  b.textContent = '✓ Abonné(e) !'; b.style.background = '#22C55E'; inp.value = '';
+  setTimeout(() => { b.textContent = "S'abonner — Gratuit"; b.style.background = ''; }, 3000);
+}
+
+// ════════════════════════════════════════════════════════════════
+// ANIMATIONS
+// ════════════════════════════════════════════════════════════════
+function observeAll() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: .08 });
+  document.querySelectorAll('.fade-up:not(.visible)').forEach(el => obs.observe(el));
+}
+
+// ════════════════════════════════════════════════════════════════
+// INIT
+
+async function init() {
+  // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
+  renderFights('upcoming');
+  loadFights('upcoming'); // Mise à jour Gemini en arrière-plan
+  renderRanks('heavyweight'); // Classement statique - bouton Actualiser pour mise à jour
+  renderEquip('all');
+  renderTipsStatic('technique');
+  articles = [...STATIC_ARTICLES];
+  renderNews(articles);
+  updateHero(articles[0]);
+  updateSidebar(articles.slice(1,5));
+  updateTicker(articles);
+  setStatus('yellow', '🔄 Chargement des dernières actualités...', '');
+  observeAll();
+
+  // Cacher le loader immédiatement — le contenu est déjà visible
+  document.getElementById('loader').classList.add('hidden');
+
+  // Charger les vraies actualités en arrière-plan (sans bloquer)
+  loadNews().catch(e => console.warn('loadNews error:', e.message));
+  loadTips('technique').catch(() => {});
+
+  setInterval(loadNews, REFRESH_MS);
+  setInterval(() => {
+    if (lastUpdate) document.getElementById('s-time').textContent =
+      'Mise à jour : ' + lastUpdate.toLocaleTimeString('fr-FR') +
+      ' (il y a ' + Math.floor((Date.now() - lastUpdate) / 60000) + ' min)';
+  }, 30000);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+
+// SEO — Mettre à jour les meta dynamiquement avec le premier article
+function updateSEOMeta(article) {
+  if (!article) return;
+  // Title
+  document.title = article.titre + ' — KO MAG';
+  // Description
+  const desc = document.querySelector('meta[name="description"]');
+  if (desc) desc.content = article.resume || article.titre;
+  // OG
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.content = article.titre + ' — KO MAG';
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.content = article.resume || article.titre;
+  const ogImg = document.querySelector('meta[property="og:image"]');
+  if (ogImg && article.img) ogImg.content = article.img;
+  // Twitter
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.content = article.titre + ' — KO MAG';
+  // Schema Article
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": article.titre,
+    "description": article.resume,
+    "image": article.img || "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200",
+    "datePublished": new Date().toISOString(),
+    "publisher": {
+      "@type": "Organization",
+      "name": "KO MAG",
+      "url": "https://komag.fr"
+    },
+    "inLanguage": "fr",
+    "url": "https://komag.fr"
+  };
+  let schemaEl = document.getElementById('schema-article');
+  if (!schemaEl) {
+    schemaEl = document.createElement('script');
+    schemaEl.type = 'application/ld+json';
+    schemaEl.id = 'schema-article';
+    document.head.appendChild(schemaEl);
+  }
+  schemaEl.textContent = JSON.stringify(schema);
+}
+</script>
+<!-- BOTTOM NAVIGATION MOBILE -->
+<nav class="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="#actualites" class="mobile-nav-btn active" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Accueil
+    </a>
+    <a href="#actualites" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M4 11h12"/><path d="M4 16h8"/><path d="M2 7h6v6H2z"/></svg>
+      Actus
+    </a>
+    <a href="#combats" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Combats
+    </a>
+    <a href="#equipement" class="mobile-nav-btn" onclick="setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+      Shop
+    </a>
+    <button class="mobile-nav-btn" onclick="loadNews();setMobileNav(this)">
+      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Refresh
+    </button>
+  </div>
+</nav>
+
+<div class="ptr-indicator" id="ptr">↓ Actualiser</div>
+
+<script>
+function setMobileNav(el) {
+  document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Pull to refresh
+let startY = 0, pulling = false;
+document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, {passive:true});
+document.addEventListener('touchmove', e => {
+  if (window.scrollY === 0 && e.touches[0].clientY - startY > 60) {
+    pulling = true;
+    document.getElementById('ptr').classList.add('show');
+    document.getElementById('ptr').textContent = '↓ Relâchez pour actualiser';
+  }
+}, {passive:true});
+document.addEventListener('touchend', () => {
+  if (pulling) {
+    pulling = false;
+    const ptr = document.getElementById('ptr');
+    ptr.textContent = '🔄 Actualisation...';
+    loadNews().finally(() => {
+      ptr.classList.remove('show');
+      ptr.textContent = '↓ Actualiser';
+    });
+  }
+});
+</script>
 </body>
 </html>
