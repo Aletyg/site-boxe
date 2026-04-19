@@ -1,45 +1,70 @@
 // api/scraper.js — Scrape les 4 sites boxe + résumé Gemini pour KO MAG
-// Pas de clé NewsAPI nécessaire — scraping direct des sites sources
+// Extrait la vidéo YouTube embarquée dans la page source si disponible
 
 const GEMINI_KEY = () => process.env.GEMINI_API_KEY;
 
-// ── Sources ──────────────────────────────────────────────────────────────────
 const SOURCES = [
-  {
-    name: 'Boxenet',
-    url: 'https://www.boxenet.fr',
-    rss: 'https://www.boxenet.fr/feed/',
-    color: '#E8001A',
-  },
-  {
-    name: 'BoxeMag',
-    url: 'https://boxemag.ouest-france.fr',
-    rss: 'https://boxemag.ouest-france.fr/feed/',
-    color: '#F5B800',
-  },
-  {
-    name: 'RMC Sport',
-    url: 'https://rmcsport.bfmtv.com/sports-de-combat/boxe/',
-    rss: 'https://rmcsport.bfmtv.com/rss/sports-de-combat.xml',
-    color: '#0066CC',
-  },
-  {
-    name: "L'Équipe",
-    url: 'https://www.lequipe.fr/Boxe/',
-    rss: 'https://www.lequipe.fr/rss/actu_rss_Boxe.xml',
-    color: '#FFCD00',
-  },
+  { name: 'BoxeMag',   url: 'https://boxemag.ouest-france.fr', rss: 'https://boxemag.ouest-france.fr/feed/' },
+  { name: 'Boxenet',   url: 'https://www.boxenet.fr',          rss: 'https://www.boxenet.fr/feed/' },
+  { name: 'RMC Sport', url: 'https://rmcsport.bfmtv.com',      rss: 'https://rmcsport.bfmtv.com/rss/sports-de-combat.xml' },
+  { name: "L'Equipe",  url: 'https://www.lequipe.fr/Boxe/',    rss: 'https://www.lequipe.fr/rss/actu_rss_Boxe.xml' },
 ];
 
-// Mots-clés pour filtrer uniquement les articles boxe/combat
-const COMBAT_KW = ['box','fight','ko','knock','champion','bout','ring','mma','ufc','kick','muay','combat','titre','ceinture','heavyweight','welter','lightweight','poids','gant','round','arbitre','puncheur'];
+const COMBAT_KW = ['box','fight','ko','knock','champion','bout','ring','mma','ufc','kick','muay','combat','titre','ceinture','heavyweight','welter','lightweight','poids','gant','round','arbitre'];
 
 function isBoxingArticle(title, desc) {
   const txt = ((title||'')+(desc||'')).toLowerCase();
   return COMBAT_KW.some(k => txt.includes(k));
 }
 
-// ── Parser RSS/Atom simple (regex, pas de DOM côté serverless) ───────────────
+// Extraire l'ID YouTube depuis n'importe quel HTML
+function extractYoutubeId(html) {
+  if (!html) return null;
+  const patterns = [
+    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
+    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+    /"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
+    /data-videoid="([a-zA-Z0-9_-]{11})"/,
+    /"video_id"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
+  ];
+  for (const re of patterns) {
+    const m = html.match(re);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+// Extraire og:image depuis le HTML de la page
+function extractOgImage(html) {
+  if (!html) return null;
+  const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+  return m ? m[1] : null;
+}
+
+// Fetcher la page article pour extraire YouTube + og:image
+async function fetchArticlePage(url) {
+  try {
+    const r = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; KO-MAG/1.0; +https://komag.fr)',
+        'Accept': 'text/html',
+        'Accept-Language': 'fr-FR,fr;q=0.9',
+      },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return { youtubeId: null, ogImage: null };
+    const html = await r.text();
+    return {
+      youtubeId: extractYoutubeId(html),
+      ogImage: extractOgImage(html),
+    };
+  } catch(e) {
+    return { youtubeId: null, ogImage: null };
+  }
+}
+
 function parseRSS(xml, sourceName, sourceUrl) {
   const items = [];
   const itemRe = /<item>([\s\S]*?)<\/item>/g;
@@ -55,23 +80,26 @@ function parseRSS(xml, sourceName, sourceUrl) {
       return m ? m[1] : '';
     };
 
-    const title = decodeXML(get('title'));
-    const desc  = decodeXML(get('description') || get('summary') || get('content:encoded'));
-    const link  = get('link') || getAttr('link', 'href');
+    const title   = decodeXML(get('title'));
+    const rawDesc = get('description') || get('summary') || get('content:encoded') || '';
+    const desc    = decodeXML(rawDesc);
+    const link    = get('link') || getAttr('link', 'href');
     const pubDate = get('pubDate') || get('published') || get('dc:date') || '';
-    // Image : enclosure, media:content, ou img dans la description
+
     let img = getAttr('enclosure', 'url') || getAttr('media:content', 'url') || getAttr('media:thumbnail', 'url');
     if (!img) {
-      const imgM = desc.match(/<img[^>]+src=["']([^"']+)["']/);
-      if (imgM) img = imgM[1];
+      const imgM = rawDesc.match(/<img[^>]+src=["']([^"']+)["']/);
+      if (imgM) img = decodeXML(imgM[1]);
     }
-    // Nettoyer la description HTML
+
+    // YouTube dans le RSS directement ?
+    const ytInRss = extractYoutubeId(rawDesc);
     const cleanDesc = desc.replace(/<[^>]+>/g, '').replace(/\s+/g,' ').trim().slice(0, 400);
 
     if (!title || !link) return null;
     if (!isBoxingArticle(title, cleanDesc)) return null;
 
-    return { title, link, img: img||'', desc: cleanDesc, pubDate, source: sourceName, sourceUrl };
+    return { title, link, img: img||'', desc: cleanDesc, pubDate, source: sourceName, sourceUrl, ytInRss };
   };
 
   let m;
@@ -93,38 +121,34 @@ function decodeXML(str) {
   return str
     .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>')
     .replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&nbsp;/g,' ')
-    .replace(/&#(\d+);/g, (_,n) => String.fromCharCode(n));
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(n));
 }
 
-// ── Résumé Gemini d'un article ────────────────────────────────────────────────
 async function summarizeArticle(article) {
   const key = GEMINI_KEY();
   if (!key) return null;
-
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
-  const prompt = `Tu es rédacteur senior de KO MAG, magazine de sports de combat.
-Résume et enrichis cet article de boxe en français professionnel.
+  const prompt = `Tu es redacteur senior de KO MAG, magazine de sports de combat.
+Resume et enrichis cet article en francais professionnel.
 
 Titre original: "${article.title}"
-Source: ${article.source} (${article.sourceUrl})
+Source: ${article.source}
 Description: "${article.desc}"
 
-Réponds UNIQUEMENT en JSON valide (pas d'apostrophe dans les valeurs, utilise des guillemets ou remplace par ""):
+Reponds UNIQUEMENT en JSON valide (pas apostrophe dans les valeurs, utilise guillemets ou supprime):
 {
   "titre": "...",
-  "categorie": "RÉSULTATS|ANALYSE|INTERVIEW|ENTRAÎNEMENT|ÉVÉNEMENT|TRANSFERTS",
+  "categorie": "RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS",
   "resume": "...",
   "contenu": "...",
   "sport": "boxing|mma|kickboxing|muaythai"
 }
 
 CONSIGNES:
-- titre: accrocheur en français, max 10 mots
+- titre: accrocheur en francais, max 10 mots
 - resume: 1 phrase impactante max 15 mots
-- contenu: résumé enrichi 150-200 mots, 2 paragraphes séparés par ###
-  * Para 1: faits principaux avec contexte (80-100 mots)
-  * Para 2: analyse et perspectives (70-100 mots)
+- contenu: 150-200 mots, 2 paragraphes separes par ###
 - Pas apostrophe dans les valeurs JSON`;
 
   for (const model of MODELS) {
@@ -133,11 +157,11 @@ CONSIGNES:
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,
         {
           method: 'POST',
-          headers: {'Content-Type':'application/json'},
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [{parts:[{text: prompt}]}],
+            contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.6, maxOutputTokens: 800, responseMimeType: 'application/json' },
-            systemInstruction: { parts: [{text: 'Tu es rédacteur KO MAG. JSON valide uniquement. Pas apostrophe dans valeurs JSON.'}] }
+            systemInstruction: { parts: [{ text: 'Tu es redacteur KO MAG. JSON valide uniquement. Pas apostrophe dans valeurs JSON.' }] }
           })
         }
       );
@@ -149,6 +173,7 @@ CONSIGNES:
         ...parsed,
         url: article.link,
         img: article.img || '',
+        youtubeId: article.youtubeId || null,
         temps: timeAgo(article.pubDate),
         source: article.source,
         sourceUrl: article.sourceUrl,
@@ -162,18 +187,16 @@ CONSIGNES:
 }
 
 function timeAgo(str) {
-  if (!str) return 'Récemment';
+  if (!str) return 'Recemment';
   const diff = Math.floor((Date.now() - new Date(str)) / 60000);
-  if (isNaN(diff) || diff < 0) return 'Récemment';
+  if (isNaN(diff) || diff < 0) return 'Recemment';
   if (diff < 60) return `Il y a ${diff}min`;
   if (diff < 1440) return `Il y a ${Math.floor(diff/60)}h`;
   return `Il y a ${Math.floor(diff/1440)}j`;
 }
 
-// ── Cache serveur (1h) ────────────────────────────────────────────────────────
 let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
-// ── Handler principal ─────────────────────────────────────────────────────────
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -186,41 +209,56 @@ export default async function handler(req, res) {
     return res.status(200).json({ articles: cache.articles, cached: true });
   }
 
-  console.log('[scraper] Fetch RSS sources...');
+  console.log('[scraper] Fetch RSS...');
   try {
-    // 1. Scraper les 4 flux RSS en parallèle
+    // 1. Lire les 4 flux RSS
     const feeds = await Promise.all(
       SOURCES.map(src =>
         fetch(src.rss, {
-          headers: { 'User-Agent': 'KO-MAG/1.0 (https://komag.fr; contact@komag.fr)' },
-          signal: AbortSignal.timeout(8000)
+          headers: { 'User-Agent': 'KO-MAG/1.0 (https://komag.fr)' },
+          signal: AbortSignal.timeout(8000),
         })
         .then(r => r.ok ? r.text() : '')
         .then(xml => parseRSS(xml, src.name, src.url))
-        .catch(e => { console.error('[scraper] RSS error', src.name, e.message); return []; })
+        .catch(e => { console.error('[scraper] RSS', src.name, e.message); return []; })
       )
     );
 
-    // 2. Agréger et trier par date
+    // 2. Agréger, dédupliquer, trier
     const allRaw = feeds.flat()
-      .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i) // déduplication
+      .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)
       .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
-      .slice(0, 12); // max 12 articles à résumer
+      .slice(0, 9);
 
-    console.log(`[scraper] ${allRaw.length} articles bruts récupérés`);
+    console.log(`[scraper] ${allRaw.length} articles bruts`);
+    if (allRaw.length === 0) return res.status(200).json({ articles: [], cached: false });
 
-    if (allRaw.length === 0) {
-      return res.status(200).json({ articles: [], cached: false, error: 'Aucun article RSS récupéré' });
-    }
+    // 3. Fetcher chaque page pour YouTube + og:image (en parallèle, max 9 requêtes)
+    const enrichedRaw = await Promise.all(
+      allRaw.map(async article => {
+        // YouTube déjà dans le RSS ? Pas besoin de fetcher la page
+        if (article.ytInRss) {
+          return { ...article, youtubeId: article.ytInRss };
+        }
+        const { youtubeId, ogImage } = await fetchArticlePage(article.link);
+        return {
+          ...article,
+          youtubeId: youtubeId || null,
+          img: ogImage || article.img || '',
+        };
+      })
+    );
 
-    // 3. Résumer avec Gemini en parallèle (max 6 pour ne pas saturer l'API)
-    const toSummarize = allRaw.slice(0, 6);
+    const withVideo = enrichedRaw.filter(a => a.youtubeId).length;
+    console.log(`[scraper] ${withVideo}/${enrichedRaw.length} articles avec video YouTube`);
+
+    // 4. Résumer avec Gemini (6 en parallèle max)
     const summarized = await Promise.all(
-      toSummarize.map(a => summarizeArticle(a).catch(() => null))
+      enrichedRaw.slice(0, 6).map(a => summarizeArticle(a).catch(() => null))
     );
 
     const articles = summarized.filter(Boolean);
-    console.log(`[scraper] ${articles.length} articles résumés OK`);
+    console.log(`[scraper] ${articles.length} articles finaux OK`);
 
     if (articles.length > 0) {
       cache.articles = articles;
@@ -232,7 +270,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ articles, cached: false });
 
   } catch(err) {
-    console.error('[scraper] Erreur globale:', err.message);
+    console.error('[scraper] Erreur:', err.message);
     if (cache.articles) return res.status(200).json({ articles: cache.articles, cached: true, stale: true });
     return res.status(502).json({ error: err.message });
   }
