@@ -1106,10 +1106,65 @@ function isGoodImage(url) {
   return !BAD_IMG_KW.some(k => u.includes(k));
 }
 
-function getBoxingImg(article, index) {
-  // 1. Vraie image de l'article si elle est cohérente
+// ── Wikimedia Commons : photo réelle du boxeur ───────────────────────────────
+const wikiImgCache = {};
+const BOXER_NAMES_FE = ['Usyk','Fury','Canelo','Crawford','Davis','Tank','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Beterbiev','Bivol','Inoue'];
+
+function detectBoxerInTitle(titre) {
+  if (!titre) return null;
+  return BOXER_NAMES_FE.find(n => titre.toLowerCase().includes(n.toLowerCase())) || null;
+}
+
+async function fetchWikimediaImageFE(name) {
+  if (!name) return null;
+  if (wikiImgCache[name]) return wikiImgCache[name];
+  try {
+    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name + ' boxer')}&prop=pageimages&pithumbsize=800&format=json&origin=*`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const pages = d?.query?.pages || {};
+    const page = Object.values(pages)[0];
+    const img = page?.thumbnail?.source || null;
+    if (img) wikiImgCache[name] = img;
+    return img;
+  } catch(e) { return null; }
+}
+
+// ── oEmbed : embed Instagram / X posts dans les modals ───────────────────────
+const OEMBED_PROVIDERS = [
+  { host: 'instagram.com', endpoint: 'https://graph.facebook.com/v18.0/instagram_oembed?url=' },
+  { host: 'twitter.com',   endpoint: 'https://publish.twitter.com/oembed?url=' },
+  { host: 'x.com',         endpoint: 'https://publish.twitter.com/oembed?url=' },
+];
+
+function getOembedEndpoint(url) {
+  if (!url) return null;
+  const provider = OEMBED_PROVIDERS.find(p => url.includes(p.host));
+  return provider ? provider.endpoint + encodeURIComponent(url) : null;
+}
+
+async function fetchOembed(url) {
+  const endpoint = getOembedEndpoint(url);
+  if (!endpoint) return null;
+  try {
+    const r = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.html || null;
+  } catch(e) { return null; }
+}
+
+async function getBoxingImg(article, index) {
+  // 1. Tenter Wikimedia si un boxeur est mentionné dans le titre
+  const boxerName = detectBoxerInTitle(article.titre);
+  if (boxerName) {
+    const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
+    if (wikiImg) return wikiImg;
+  }
+  // 2. Vraie image de l'article si cohérente
   if (article.img && isGoodImage(article.img)) return article.img;
-  // 2. Image Unsplash selon le sport détecté
+  // 3. Fallback Unsplash selon le sport détecté
   const sport = (article.sport||'boxing').toLowerCase();
   const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
     : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
@@ -1117,9 +1172,11 @@ function getBoxingImg(article, index) {
   return sportImgs[article.categorie] || sportImgs['default'] || COMBAT_IMGS.boxing.default;
 }
 
-function renderNews(list) {
+async function renderNews(list) {
+  // Pré-charger les images Wikimedia en parallèle
+  const imgSrcs = await Promise.all(list.map((a, i) => getBoxingImg(a, i)));
   document.getElementById('news-grid').innerHTML = list.map((a, i) => {
-    const imgSrc = getBoxingImg(a, i);
+    const imgSrc = imgSrcs[i];
     return `
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
       <div class="news-card-img">
@@ -1140,7 +1197,7 @@ function renderNews(list) {
   }).join('');
 }
 
-function updateHero(a) {
+async function updateHero(a) {
   if (!a) return;
   updateSEOMeta(a);
   document.getElementById('hero-title').textContent = a.titre;
@@ -1149,10 +1206,15 @@ function updateHero(a) {
     '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
-  // Image hero
-  const heroImg = (a.img && isGoodImage(a.img)) 
-    ? a.img 
+  // Image hero — Wikimedia en priorité si boxeur détecté
+  let heroImg = (a.img && isGoodImage(a.img))
+    ? a.img
     : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
+  const boxerName = detectBoxerInTitle(a.titre);
+  if (boxerName) {
+    const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
+    if (wikiImg) heroImg = wikiImg;
+  }
   const heroMain = document.querySelector('.hero-main');
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
   heroMain.style.backgroundSize = 'cover';
@@ -1179,17 +1241,34 @@ function updateTicker(list) {
 // ════════════════════════════════════════════════════════════════
 // MODAL
 // ════════════════════════════════════════════════════════════════
-function openArt(i) {
+async function openArt(i) {
   const a = articles[i]; if (!a) return;
   document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
   const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
+
+  // Récupérer la meilleure image pour la modal (Wikimedia en priorité)
+  const modalImg = await getBoxingImg(a, i);
+
+  // Vérifier si l'URL source est oEmbeddable (Instagram / X)
+  let oembedBlock = '';
+  if (a.url && getOembedEndpoint(a.url)) {
+    const html = await fetchOembed(a.url).catch(() => null);
+    if (html) {
+      oembedBlock = `<div style="margin:18px 0;border:1px solid var(--grey);border-left:3px solid var(--gold);padding:12px;background:var(--smoke);">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📲 POST OFFICIEL</div>
+        ${html}
+      </div>`;
+    }
+  }
+
   document.getElementById('modal-body').innerHTML =
     '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
     '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
-    '<img src="' + (a.img || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80') + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'"> ' +
+    '<img src="' + modalImg + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">' +
     paras.map(p => '<p>' + p + '</p>').join('') +
-    (a.url ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    oembedBlock +
+    (a.url && !getOembedEndpoint(a.url) ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
     '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
     '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
     '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
