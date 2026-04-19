@@ -485,7 +485,6 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <nav>
       <a href="#actualites" class="active">Actualités</a>
       <a href="#archives" onclick="openArchives()">Archives</a>
-      <a href="#combats">Combats</a>
       <a href="#conseils">Conseils</a>
       <a href="#classement">Classement</a>
       <a href="#equipement">Équipement</a>
@@ -528,21 +527,6 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     </aside>
   </div>
 </div>
-
-<section id="combats">
-  <div class="container">
-    <div class="section-hd">
-      <h2 class="section-title">COM<span>BATS</span></h2>
-      <a href="#" class="section-link">Planning complet →</a>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
-      <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
-      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
-    </div>
-    <div class="fights-grid" id="fights-grid"></div>
-  </div>
-</section>
 
 <section id="actualites">
   <div class="container">
@@ -667,7 +651,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
           <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
         </div>
       </div>
-      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li><a href="#combats">Combats</a></li><li><a href="#conseils">Conseils</a></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
+      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li><a href="#conseils">Conseils</a></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
       <div class="footer-col"><h4>Disciplines</h4><ul><li><a href="#">Boxe anglaise</a></li><li><a href="#">Boxe française</a></li><li><a href="#">MMA</a></li><li><a href="#">Kick-boxing</a></li><li><a href="#">Muay-Thai</a></li></ul></div>
       <div class="footer-col"><h4>Légal</h4><ul><li><a href="#">Mentions légales</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Politique affilié</a></li><li><a href="#">Contact</a></li></ul></div>
     </div>
@@ -811,23 +795,6 @@ const RANKS = {
   ],
 };
 
-const FIGHTS = {
-  upcoming:[
-    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Unification Poids Lourds',date:'2025 TBD',extra:null,link:'https://www.dazn.com'},
-    {f1:'Canelo',r1:'61-2-2',f2:'Berlanga',r2:'22-0',title:'Défense Titres Super-Moyens',date:'SEPT 2025',extra:null,link:'https://www.dazn.com'},
-    {f1:'Crawford',r1:'40-0',f2:'Ennis',r2:'31-0',title:'Choc des invaincus Welters',date:'TBD 2025',extra:null,link:'https://www.espn.com'},
-  ],
-  results:[
-    {f1:'Crawford',r1:'40-0',f2:'Madrimov',r2:'9-1',title:'Champion Unifié WBA/WBC/WBO S-Welters',date:'03 AOÛT 2024',extra:'🏆 Crawford KO9',link:'#'},
-    {f1:'Davis',r1:'31-0',f2:'Martin',r2:'26-0',title:'Championnat WBA Poids Légers',date:'10 JUIN 2024',extra:'🏆 Davis KO8',link:'#'},
-    {f1:'Dubois',r1:'21-1',f2:'Parker',r2:'34-3',title:'Championnat IBF Poids Lourds',date:'28 SEPT 2024',extra:'🏆 Dubois UD12',link:'#'},
-  ],
-  predictions:[
-    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Pronostic — Poids Lourds',date:'PRONOSTIC',extra:'Usyk UD12 — Favori',link:'#'},
-    {f1:'Garcia',r1:'24-1',f2:'Haney',r2:'31-1',title:'Revanche potentielle 2026',date:'PRONOSTIC',extra:'Garcia KO6 — Légèrement favori',link:'#'},
-    {f1:'Davis',r1:'31-0',f2:'Garcia',r2:'24-1',title:'Duel rêvé Poids Légers',date:'PRONOSTIC',extra:'Davis UD12 — Favori',link:'#'},
-  ],
-};
 
 // ════════════════════════════════════════════════════════════════
 // STATE
@@ -992,107 +959,69 @@ async function fetchProxy() {
 }
 
 // ════════════════════════════════════════════════════════════════
-// LOAD NEWS
+// LOAD NEWS — Sources réelles : Boxenet, BoxeMag, RMC, L'Équipe
 // ════════════════════════════════════════════════════════════════
 async function loadNews() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('loading');
 
-  // Statique déjà affiché par init() — on passe directement aux vraies news
-
-  // ÉTAPE 2 — Vraies news via proxy Vercel
-  const realNews = await fetchProxy();
-
-  // ÉTAPE 3 — Rédaction et enrichissement
-  const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  // Préparer les vraies news avec URL pour traduction
-  const realNewsForGemini = realNews ? realNews.slice(0, 6).map(a => ({
-    titre: a.title,
-    resume: (a.description || '').slice(0, 200),
-    url: a.url,
-    source: a.source?.name || 'Source',
-    date: a.publishedAt
-  })) : [];
-  const ctx = realNewsForGemini.length > 0
-    ? realNewsForGemini.map((a, i) => `[${i}] "${a.titre}" — ${a.resume} (source: ${a.source}, url: ${a.url})`).join('\n')
-    : '';
-
   try {
-    // Appel au cache serveur — articles déjà générés et mis en cache 1h
-    let d = { articles: [] };
+    // ÉTAPE 1 — Scraper + résumé Gemini des 4 sites sources
+    let scraped = [];
     try {
-      const cacheResp = await fetch('/api/articles?t=' + Math.floor(Date.now()/3600000), { cache: 'no-store' });
-      if (cacheResp.ok) {
-        const cacheData = await cacheResp.json();
-        d = { articles: cacheData.articles || [] };
-        const wasCached = cacheData.cached;
-        console.info('[KO MAG] Articles:', wasCached ? 'servis depuis le cache ⚡' : 'fraîchement générés 🔄');
+      const r = await fetch('/api/scraper?t=' + Math.floor(Date.now()/3600000), {
+        cache: 'no-store',
+        signal: AbortSignal.timeout(30000)
+      });
+      if (r.ok) {
+        const d = await r.json();
+        scraped = d.articles || [];
+        console.info('[KO MAG] Scraper:', scraped.length, 'articles depuis les sources réelles', d.cached ? '(cache)' : '(frais)');
       }
     } catch(e) {
-      console.warn('[KO MAG] /api/articles indisponible, fallback IA directe');
-      // Fallback : générer directement si le cache est indisponible
-      const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
-      const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
-      const results = await Promise.all(cats.map((cat, i) =>
-        callGemini(`KO MAG. JSON: {"articles":[{"titre":"...","categorie":"${cat}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}","url":""}]} 1 article boxe. resume 10 mots. contenu 2x80 mots separes ###.`).catch(() => null)
-      ));
-      d = { articles: results.filter(r => r?.articles?.length > 0).flatMap(r => r.articles) };
+      console.warn('[KO MAG] Scraper indisponible:', e.message);
     }
 
-    if (d && d.articles && d.articles.length > 0) {
-      let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
-      let final = aiArts;
+    // ÉTAPE 2 — Fallback sur /api/articles (génération Gemini pure) si scraper vide
+    if (scraped.length === 0) {
+      console.info('[KO MAG] Fallback /api/articles...');
+      try {
+        const r = await fetch('/api/articles?t=' + Math.floor(Date.now()/3600000), { cache: 'no-store' });
+        if (r.ok) {
+          const d = await r.json();
+          scraped = (d.articles || []).map(a => ({ ...a, isReal: false }));
+        }
+      } catch(e) { console.warn('[KO MAG] /api/articles indisponible'); }
+    }
 
-      // Les vraies news sont déjà traduites par Gemini dans aiArts
-      // On garde juste les images des vraies news si disponibles
-      if (realNews && realNews.length > 0) {
-        aiArts = aiArts.map((art, i) => ({
-          ...art,
-          img: art.img || (realNews[i] ? realNews[i].urlToImage : null),
-          isReal: !!art.url,
-        }));
-      }
-      final = aiArts;
-
-      // Afficher d'abord sans images Gemini
-      articles = final;
+    if (scraped.length > 0) {
+      articles = scraped;
       renderNews(articles);
       updateHero(articles[0]);
-      updateSidebar(articles.slice(1,5));
+      updateSidebar(articles.slice(1, 5));
       updateTicker(articles);
-
-      // Pas d'illustrations Imagen (non disponible) — afficher directement
-
-      // Sauvegarder automatiquement en archives
-      saveToArchives(final);
+      saveToArchives(articles);
       aiLoaded = true;
       lastUpdate = new Date();
 
-      const mode = (realNews && realNews.length > 0) ? 'real+ai' : 'ai';
-      setStatus('green',
-        mode === 'real+ai'
-          ? '🟢 Actualités en direct — Mise à jour automatique'
-          : '🟢 Actualités — Mise à jour automatique toutes les 15 min',
-        '');
+      const sources = [...new Set(articles.map(a => a.source).filter(Boolean))].slice(0, 3).join(', ');
+      setStatus('green', '🟢 Actualités en direct — ' + sources, '');
       document.getElementById('news-info').innerHTML =
-        '<span style="color:' + (mode==='real+ai'?'#22C55E':'var(--gold)') + ';font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">' +
-        (mode==='real+ai' ? '🟢 EN DIRECT' : '📰 RÉDACTION KO MAG') +
-        '</span><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
+        '<span style="color:#22C55E;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">🟢 SOURCES RÉELLES</span>' +
+        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
         articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
     }
   } catch(e) {
-    console.warn('[KO MAG] Rédaction indisponible :', e.message);
+    console.warn('[KO MAG] loadNews erreur:', e.message);
     if (!aiLoaded) {
-      setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
-      document.getElementById('news-info').innerHTML =
-        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 RÉDACTION KO MAG</span>' +
-        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence </span>';
+      setStatus('yellow', '📰 Articles de référence — Connexion en cours...', '');
     }
   }
 
   btn.classList.remove('loading');
   observeAll();
 }
+
 
 function timeAgo(str) {
   if (!str) return 'Récemment';
@@ -1392,7 +1321,13 @@ async function openArt(i) {
     '<span style="font-size:1.4rem;">▶️</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.8rem;color:var(--muted);letter-spacing:.1em;">Recherche vidéo highlights...</span>' +
     '</div></div>' +
-    (a.url && !getOembedEndpoint(a.url) && !isYoutubeUrl(a.url) ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    (a.url && !getOembedEndpoint(a.url) && !isYoutubeUrl(a.url) ?
+      '<div style="margin-top:20px;padding:16px;background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--gold);">' +
+      '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📰 SOURCE ORIGINALE</div>' +
+      '<a href="' + a.url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:var(--red);color:white;text-decoration:none;padding:10px 20px;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;">' +
+      '🔗 Lire l\'article complet sur ' + (a.source || 'le site source') + ' →</a>' +
+      '</div>'
+    : '') +
     '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
     '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
     '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
@@ -1481,65 +1416,6 @@ function switchTip(t, el) {
 // ════════════════════════════════════════════════════════════════
 // FIGHTS / RANKINGS / EQUIPMENT
 // ════════════════════════════════════════════════════════════════
-function renderFights(tab) {
-  document.getElementById('fights-grid').innerHTML = FIGHTS[tab].map(f => `
-    <div class="fight-card fade-up">
-      <div class="fight-header">
-        <div class="fight-date">${f.date}</div>
-        <div class="fight-badge">${tab==='results'?'✅ RÉSULTAT':tab==='predictions'?'🎯 PRONOSTIC':'📅 À VENIR'}</div>
-      </div>
-      <div class="fight-body">
-        <div class="fight-vs">
-          <div class="fight-fighter"><div class="fight-fighter-name">${f.f1}</div><div class="fight-fighter-rec">${f.r1}</div></div>
-          <div class="vs-badge">VS</div>
-          <div class="fight-fighter"><div class="fight-fighter-name">${f.f2}</div><div class="fight-fighter-rec">${f.r2}</div></div>
-        </div>
-        <div class="fight-title-small">${f.title}</div>
-        ${f.extra ? '<div style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;color:' + (tab==='results'?'#22C55E':'var(--gold)') + ';font-size:.86rem;letter-spacing:.08em;">' + f.extra + '</div>' : ''}
-      </div>
-      <div class="fight-footer">
-        <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">
-          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🎯 Voir le pronostic →':'📺 Revoir →'}
-        </a>
-      </div>
-    </div>`).join('');
-  observeAll();
-}
-function switchFight(t, el) {
-  document.querySelectorAll('#combats .tab-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  if (FIGHTS_LOADED[t]) {
-    renderFights(t);
-  } else {
-    loadFights(t);
-  }
-}
-
-const FIGHTS_LOADED = {};
-
-async function loadFights(tab) {
-  document.getElementById('fights-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Chargement des combats...</div>';
-  try {
-    const tabNames = { upcoming: 'à venir prochainement en 2026', results: 'résultats récents 2025-2026', predictions: 'pronostics et analyses 2026' };
-    const d = await callGemini(
-      `Combats de boxe et sports de combat ${tabNames[tab]||tab}. Date: 19 avril 2026.
-JSON: {"fights":[{"f1":"...","r1":"...","f2":"...","r2":"...","title":"...","date":"...","extra":"...","link":"https://www.dazn.com"}]}
-- 3 combats max
-- f1/f2: noms courts (max 12 caracteres)
-- r1/r2: bilan format X-Y
-- title: categorie et enjeu court
-- date: format "DD MMM YYYY" ou "TBD 2026"
-- extra: ${tab==='results'?'resultat ex: Crawford KO9':tab==='predictions'?'pronostic ex: Favori: Canelo':'null'}
-- Vrais combats reels 2026 uniquement`
-    );
-    if (d && d.fights && d.fights.length > 0) {
-      FIGHTS[tab] = d.fights.map(f => ({...f, extra: f.extra==='null'?null:f.extra}));
-      FIGHTS_LOADED[tab] = true;
-    }
-  } catch(e) { console.info('Combats: fallback statique'); }
-  renderFights(tab);
-}
-
 function renderRanks(wc) {
   const medals = ['gold','silver','bronze'];
   document.getElementById('ranking-table').innerHTML =
@@ -1759,8 +1635,6 @@ async function init() {
     if (el) el.textContent = archCount;
   } catch(e) {}
   // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
-  renderFights('upcoming');
-  loadFights('upcoming'); // Mise à jour Gemini en arrière-plan
   renderRanks('heavyweight'); // Classement statique - bouton Actualiser pour mise à jour
   renderEquip('all');
   renderTipsStatic('technique');
@@ -1843,10 +1717,6 @@ function updateSEOMeta(article) {
     <a href="#actualites" class="mobile-nav-btn" onclick="setMobileNav(this)">
       <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M4 11h12"/><path d="M4 16h8"/><path d="M2 7h6v6H2z"/></svg>
       Actus
-    </a>
-    <a href="#combats" class="mobile-nav-btn" onclick="setMobileNav(this)">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Combats
     </a>
     <a href="#equipement" class="mobile-nav-btn" onclick="setMobileNav(this)">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
