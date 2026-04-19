@@ -1207,10 +1207,21 @@ async function fetchOembed(url) {
   } catch(e) { return null; }
 }
 
+function getYoutubeThumbnail(videoId) {
+  if (!videoId) return null;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
 function getBoxingImg(article) {
-  // L image vient TOUJOURS de la source — jamais de Wikimedia ou autre
+  // 1. og:image de la source — TOUJOURS prioritaire (c'est l'image choisie par le site)
+  //    Pour BoxeMag : c'est déjà la miniature YouTube officielle de leur article
+  //    Pour ESPN, BBC, etc. : c'est la vraie photo du combat
   if (article.img && isGoodImage(article.img)) return article.img;
-  // Fallback Unsplash uniquement si vraiment aucune image disponible
+
+  // 2. Seulement si pas d'image source : thumbnail YouTube de secours
+  if (article.youtubeId) return getYoutubeThumbnail(article.youtubeId);
+
+  // 3. Fallback Unsplash selon sport/catégorie
   const sport = (article.sport||'boxing').toLowerCase();
   const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
     : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
@@ -1221,12 +1232,15 @@ function getBoxingImg(article) {
 function renderNews(list) {
   const FALLBACK = 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80';
   document.getElementById('news-grid').innerHTML = list.map((a, i) => {
-    // Image = toujours celle de la source, Unsplash en dernier recours
     const initImg = getBoxingImg(a);
+    // Si thumbnail YouTube maxresdefault échoue → hqdefault → og:image → fallback
+    const onerror = a.youtubeId
+      ? `this.src=this.src.includes('maxresdefault')?'https://img.youtube.com/vi/${a.youtubeId}/hqdefault.jpg':'${a.img||FALLBACK}'`
+      : `this.src='${FALLBACK}'`;
     return `
     <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})" id="card-${i}">
       <div class="news-card-img">
-        <img src="${initImg}" alt="${a.titre}" id="card-img-${i}" onerror="this.src='${FALLBACK}'">
+        <img src="${initImg}" alt="${a.titre}" id="card-img-${i}" onerror="${onerror}">
         ${a.isGlobal ? '<div class="badge-live" style="background:#7C3AED;">🌍 MONDE</div>' : a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
       </div>
       <div class="news-card-body">
@@ -1254,13 +1268,12 @@ function updateHero(a) {
     '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
-  // Image hero — toujours depuis la source
-  const heroImg = getBoxingImg(a).replace('w=800', 'w=1200');
+  // Image hero — thumbnail YouTube si dispo, sinon og:image source
+  const heroImg = getBoxingImg(a);
   const heroMain = document.querySelector('.hero-main');
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
   heroMain.style.backgroundSize = 'cover';
   heroMain.style.backgroundPosition = 'center';
-  // badge live masqué — pas de distinction source
   document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
 }
 
