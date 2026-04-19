@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- SEO PRIMAIRE -->
-<title>KO MAG — Actualité Boxe en Direct | Résultats, Analyses, Équipement</title>
-<meta name="description" content="KO MAG, le magazine de boxe de référence. Actualités en temps réel, résultats de combats, classements mondiaux, conseils d'entraînement et équipement de boxe sélectionné par des experts.">
-<meta name="keywords" content="boxe actualité, résultats boxe, classement boxe, Usyk, Fury, Canelo, Crawford, gants de boxe, équipement boxe, magazine boxe">
+<title>KO MAG — Sports de Combat en Direct | Boxe, MMA, Kick-Boxing, Muay-Thai</title>
+<meta name="description" content="KO MAG, le magazine de sports de combat de référence. Boxe, MMA, Kick-Boxing, Muay-Thai. Actualités en temps réel, résultats, classements et équipement.">
+<meta name="keywords" content="boxe actualité, MMA, kick-boxing, muay thai, UFC, résultats combat, classement boxe, Usyk, Fury, Canelo, Crawford, équipement sport de combat">
 <meta name="author" content="KO MAG">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://komag.fr/">
@@ -635,7 +635,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <div class="footer-grid">
       <div class="footer-brand">
         <h3>KO <span>MAG</span></h3>
-        <p>Le magazine de référence sur la boxe. Actualités en temps réel, analyses de combats, classements mondiaux et équipement sélectionné par nos experts.</p>
+        <p>Le magazine de référence sur les sports de combat. Boxe, MMA, Kick-Boxing, Muay-Thai — actualités, résultats et équipement.</p>
         <div class="footer-socials">
           <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
         </div>
@@ -1076,33 +1076,45 @@ function timeAgo(str) {
 // ════════════════════════════════════════════════════════════════
 // RENDER
 // ════════════════════════════════════════════════════════════════
-// Images Unsplash boxing par catégorie
-const BOXING_IMGS = {
-  'RÉSULTATS': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80',
-  'ANALYSE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
-  'INTERVIEW': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
-  'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=80',
-  'ÉVÉNEMENT': 'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=80',
-  'TRANSFERTS': 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=80',
-  'LIVE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
-  'default': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80',
+// Images Unsplash sports de combat par catégorie et sport
+const COMBAT_IMGS = {
+  boxing: {
+    'RÉSULTATS': 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=85',
+    'ANALYSE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+    'INTERVIEW': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=85',
+    'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1517438476312-10d79c077509?w=800&q=85',
+    'ÉVÉNEMENT': 'https://images.unsplash.com/photo-1616279969856-759f316a5ac1?w=800&q=85',
+    'TRANSFERTS': 'https://images.unsplash.com/photo-1607962837359-5e7e89f86776?w=800&q=85',
+    'LIVE': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+    'default': 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=85',
+  },
+  mma: {
+    'RÉSULTATS': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=85',
+    'ENTRAÎNEMENT': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=85',
+    'default': 'https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=85',
+  },
+  kickboxing: {
+    'default': 'https://images.unsplash.com/photo-1616699002947-dc3e5a7a6fb3?w=800&q=85',
+  }
 };
 
-// Mots-clés NON boxing — images à remplacer
-const NON_BOXING_KEYWORDS = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','athlet','cricket','baseball','hockey','nfl','nba','mlb','nhl'];
+const BAD_IMG_KW = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast'];
 
-function isBoxingImage(url) {
-  if (!url) return false;
+function isGoodImage(url) {
+  if (!url || url.length < 15) return false;
   const u = url.toLowerCase();
-  // Vérifier que l'URL ne contient pas de mots-clés non boxing
-  return !NON_BOXING_KEYWORDS.some(k => u.includes(k));
+  return !BAD_IMG_KW.some(k => u.includes(k));
 }
 
 function getBoxingImg(article, index) {
-  // Si l'article a une image ET qu'elle semble liée à la boxe → l'utiliser
-  if (article.img && isBoxingImage(article.img)) return article.img;
-  // Sinon utiliser une photo Unsplash boxing par catégorie
-  return BOXING_IMGS[article.categorie] || BOXING_IMGS.default;
+  // 1. Vraie image de l'article si elle est cohérente
+  if (article.img && isGoodImage(article.img)) return article.img;
+  // 2. Image Unsplash selon le sport détecté
+  const sport = (article.sport||'boxing').toLowerCase();
+  const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
+    : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
+    : COMBAT_IMGS.boxing;
+  return sportImgs[article.categorie] || sportImgs['default'] || COMBAT_IMGS.boxing.default;
 }
 
 function renderNews(list) {
