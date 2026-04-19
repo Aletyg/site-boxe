@@ -1110,6 +1110,30 @@ function isGoodImage(url) {
 const wikiImgCache = {};
 const BOXER_NAMES_FE = ['Usyk','Fury','Canelo','Crawford','Davis','Tank','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Beterbiev','Bivol','Inoue'];
 
+const WIKI_TITLES_FE = {
+  'usyk':       'Oleksandr Usyk',
+  'fury':       'Tyson Fury',
+  'canelo':     'Saúl Álvarez',
+  'crawford':   'Terence Crawford',
+  'davis':      'Gervonta Davis',
+  'tank':       'Gervonta Davis',
+  'garcia':     'Ryan Garcia',
+  'benavidez':  'David Benavidez',
+  'joshua':     'Anthony Joshua',
+  'wilder':     'Deontay Wilder',
+  'lomachenko': 'Vasyl Lomachenko',
+  'haney':      'Devin Haney',
+  'beterbiev':  'Artur Beterbiev',
+  'bivol':      'Dmitry Bivol',
+  'inoue':      'Naoya Inoue',
+  'navarrete':  'Emanuel Navarrete',
+  'estrada':    'Juan Francisco Estrada',
+  'plant':      'Caleb Plant',
+  'charlo':     'Jermell Charlo',
+  'spence':     'Errol Spence Jr.',
+  'loma':       'Vasyl Lomachenko',
+};
+
 function detectBoxerInTitle(titre) {
   if (!titre) return null;
   return BOXER_NAMES_FE.find(n => titre.toLowerCase().includes(n.toLowerCase())) || null;
@@ -1117,16 +1141,16 @@ function detectBoxerInTitle(titre) {
 
 async function fetchWikimediaImageFE(name) {
   if (!name) return null;
-  if (wikiImgCache[name]) return wikiImgCache[name];
+  const key = name.toLowerCase();
+  if (wikiImgCache[key]) return wikiImgCache[key];
   try {
-    const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(name + ' boxer')}&prop=pageimages&pithumbsize=800&format=json&origin=*`;
-    const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const r = await fetch(`/api/wikimedia?name=${encodeURIComponent(key)}`, {
+      signal: AbortSignal.timeout(5000)
+    });
     if (!r.ok) return null;
     const d = await r.json();
-    const pages = d?.query?.pages || {};
-    const page = Object.values(pages)[0];
-    const img = page?.thumbnail?.source || null;
-    if (img) wikiImgCache[name] = img;
+    const img = d.img || null;
+    if (img) wikiImgCache[key] = img;
     return img;
   } catch(e) { return null; }
 }
