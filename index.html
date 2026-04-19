@@ -24,33 +24,34 @@ body, html {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    font-family: 'Barlow Condensed', sans-serif;
 }
 
 .construction-container {
     text-align: center;
     color: var(--white);
-    font-family: 'Barlow Condensed', sans-serif;
     z-index: 10;
+    max-width: 90%;
 }
 
-/* LE LOGO SVG */
+/* LE NOUVEAU LOGO SVG GANT + ÉCLAIRS */
 .logo-svg {
-    width: 180px;
+    width: clamp(150px, 20vw, 250px); /* Adaptatif */
     height: auto;
-    margin-bottom: 20px;
-    filter: drop-shadow(0 0 15px rgba(232, 0, 26, 0.4));
-    animation: pulse 2s infinite ease-in-out;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 0 20px rgba(232, 0, 26, 0.5));
+    animation: impactPulse 2s infinite ease-in-out;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.9; }
+@keyframes impactPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(232, 0, 26, 0.5)); }
+    50% { transform: scale(1.03); filter: drop-shadow(0 0 35px rgba(232, 0, 26, 0.8)); }
 }
 
 h1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3.5rem, 12vw, 6rem);
-    line-height: 0.85;
+    font-size: clamp(4rem, 15vw, 8rem);
+    line-height: 0.8;
     margin: 0;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -62,19 +63,20 @@ h1 span { color: var(--red); }
     display: inline-block;
     background: var(--red);
     color: white;
-    padding: 4px 15px;
-    font-size: 1rem;
-    letter-spacing: 4px;
+    padding: 5px 20px;
+    font-size: 1.2rem;
+    letter-spacing: 5px;
     margin-top: 15px;
     font-weight: bold;
     text-transform: uppercase;
 }
 
 p {
-    margin-top: 20px;
-    font-size: 1.1rem;
-    opacity: 0.6;
-    letter-spacing: 2px;
+    margin-top: 25px;
+    font-size: 1.3rem;
+    opacity: 0.7;
+    letter-spacing: 3px;
+    text-transform: uppercase;
 }
 
 /* Masquage de l'ancien site */
@@ -85,16 +87,29 @@ p {
 
     <div class="construction-container">
         <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="48" fill="none" stroke="#E8001A" stroke-width="2" stroke-dasharray="4 2"/>
-            <path d="M35 45 C35 35 45 30 50 35 C55 30 65 35 65 45 C65 55 55 65 50 65 C45 65 35 55 35 45" fill="#E8001A"/>
-            <rect x="42" y="62" width="16" height="8" rx="2" fill="#FAFAFA"/>
-            <path d="M20 30 L30 40 L25 45" stroke="#FAFAFA" stroke-width="2" fill="none"/>
-            <path d="M80 30 L70 40 L75 45" stroke="#FAFAFA" stroke-width="2" fill="none"/>
+            <defs>
+                <polygon id="lightning" points="0,0 10,0 5,10 15,10 0,25" fill="#FAFAFA"/>
+            </defs>
+
+            <rect x="15" y="70" width="20" height="15" rx="2" fill="#E8001A"/>
+            <path d="M20 75 L30 75 M20 80 L30 80" stroke="#FAFAFA" stroke-width="1"/>
+            
+            <path d="M35 75 
+                     C35 60, 45 45, 60 45 
+                     C80 45, 90 55, 90 70 
+                     C90 85, 80 95, 60 95 
+                     C45 95, 35 85, 35 75 Z" fill="#E8001A"/>
+            
+            <path d="M40 70 C40 60, 50 55, 55 60 C55 65, 50 75, 40 75 Z" fill="#E8001A" stroke="#0A0A0B" stroke-width="1"/>
+
+            <use href="#lightning" x="70" y="20" transform="scale(1.2) rotate(-10 70 20)"/>
+            <use href="#lightning" x="10" y="10" transform="scale(0.8) rotate(15 10 10)"/>
+            <use href="#lightning" x="80" y="60" transform="scale(0.6) rotate(-30 80 60)"/>
         </svg>
 
         <h1>KO <span>MAG</span></h1>
         <div class="status-tag">En Construction</div>
-        <p>RE-PRÉPARATION PHYSIQUE DU SITE</p>
+        <p>PRE-FIGHT PREPARATION</p>
     </div>
 
     <div id="original-site-content">
