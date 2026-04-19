@@ -452,6 +452,13 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 }
 @media(max-width:640px){.ptr-indicator{display:block;opacity:0}}
 .ptr-indicator.show{opacity:1}
+
+/* ARCHIVES */
+.archives-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.arch-tab{background:var(--smoke);border:1px solid var(--grey);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;padding:6px 16px;cursor:pointer;transition:all .2s}
+.arch-tab.active,.arch-tab:hover{background:var(--red);border-color:var(--red);color:white}
+.arch-empty{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:1rem;letter-spacing:.1em}
+.arch-count{display:inline-flex;align-items:center;background:rgba(232,0,26,.15);border:1px solid rgba(232,0,26,.3);color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.15em;padding:2px 8px;margin-left:10px}
 </style>
 </head>
 <body>
@@ -477,6 +484,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <a href="#" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
     <nav>
       <a href="#actualites" class="active">Actualités</a>
+      <a href="#archives" onclick="openArchives()">Archives</a>
       <a href="#combats">Combats</a>
       <a href="#conseils">Conseils</a>
       <a href="#classement">Classement</a>
@@ -554,6 +562,25 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 </section>
 
 
+
+<section id="archives" style="display:none">
+  <div class="container">
+    <div class="section-hd">
+      <h2 class="section-title">ARCH<span>IVES</span><span class="arch-count" id="arch-count">0</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="arch-tab active" onclick="filterArchives('all',this)">Tout</button>
+        <button class="arch-tab" onclick="filterArchives('RÉSULTATS',this)">Résultats</button>
+        <button class="arch-tab" onclick="filterArchives('ANALYSE',this)">Analyses</button>
+        <button class="arch-tab" onclick="filterArchives('INTERVIEW',this)">Interviews</button>
+        <button class="arch-tab" onclick="filterArchives('ÉVÉNEMENT',this)">Événements</button>
+        <button class="arch-tab" onclick="clearArchives()" style="margin-left:auto;background:transparent;border-color:var(--muted);color:var(--muted);">Vider</button>
+      </div>
+    </div>
+    <div class="news-grid" id="archives-grid">
+      <div class="arch-empty">Aucun article archivé. Les articles sont sauvegardés automatiquement à chaque actualisation.</div>
+    </div>
+  </div>
+</section>
 
 <section id="conseils">
   <div class="container">
@@ -994,7 +1021,7 @@ async function loadNews() {
     // Appel au cache serveur — articles déjà générés et mis en cache 1h
     let d = { articles: [] };
     try {
-      const cacheResp = await fetch('/api/articles', { cache: 'no-store' });
+      const cacheResp = await fetch('/api/articles?t=' + Math.floor(Date.now()/3600000), { cache: 'no-store' });
       if (cacheResp.ok) {
         const cacheData = await cacheResp.json();
         d = { articles: cacheData.articles || [] };
@@ -1036,6 +1063,8 @@ async function loadNews() {
 
       // Pas d'illustrations Imagen (non disponible) — afficher directement
 
+      // Sauvegarder automatiquement en archives
+      saveToArchives(final);
       aiLoaded = true;
       lastUpdate = new Date();
 
@@ -1255,15 +1284,22 @@ async function getBoxingImg(article, index) {
   return sportImgs[article.categorie] || sportImgs['default'] || COMBAT_IMGS.boxing.default;
 }
 
-async function renderNews(list) {
-  // Pré-charger les images Wikimedia en parallèle
-  const imgSrcs = await Promise.all(list.map((a, i) => getBoxingImg(a, i)));
+function renderNews(list) {
+  // Rendu immédiat avec image fallback — Wikimedia chargée en arrière-plan
+  const FALLBACK = 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80';
   document.getElementById('news-grid').innerHTML = list.map((a, i) => {
-    const imgSrc = imgSrcs[i];
+    // Image initiale : article.img ou fallback Unsplash selon sport/catégorie
+    const sport = (a.sport||'boxing').toLowerCase();
+    const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
+      : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
+      : COMBAT_IMGS.boxing;
+    const initImg = (a.img && isGoodImage(a.img))
+      ? a.img
+      : (sportImgs[a.categorie] || sportImgs['default'] || FALLBACK);
     return `
-    <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
+    <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})" id="card-${i}">
       <div class="news-card-img">
-        <img src="${imgSrc}" alt="${a.titre}" onerror="this.src='https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80'">
+        <img src="${initImg}" alt="${a.titre}" id="card-img-${i}" onerror="this.src='${FALLBACK}'">
         ${a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
       </div>
       <div class="news-card-body">
@@ -1278,6 +1314,18 @@ async function renderNews(list) {
       </div>
     </div>`;
   }).join('');
+
+  // Enrichissement Wikimedia en arrière-plan — met à jour chaque image sans re-render
+  list.forEach(async (a, i) => {
+    const boxerName = detectBoxerInTitle(a.titre);
+    if (!boxerName) return;
+    const wikiImg = await fetchWikimediaImageFE(boxerName).catch(() => null);
+    if (!wikiImg) return;
+    const imgEl = document.getElementById('card-img-' + i);
+    if (imgEl) imgEl.src = wikiImg;
+    // Mémoriser l'image Wikimedia dans l'article pour la modal
+    articles[i] = { ...articles[i], img: wikiImg };
+  });
 }
 
 async function updateHero(a) {
@@ -1593,7 +1641,123 @@ function observeAll() {
 // ════════════════════════════════════════════════════════════════
 // INIT
 
+
+// ════════════════════════════════════════════════════════════════
+// ARCHIVES — localStorage, max 60 articles sur 7 jours
+// ════════════════════════════════════════════════════════════════
+const ARCH_KEY = 'komag_archives';
+const ARCH_MAX = 60;
+const ARCH_TTL = 7 * 24 * 60 * 60 * 1000; // 7 jours
+
+function loadArchives() {
+  try {
+    const raw = localStorage.getItem(ARCH_KEY);
+    if (!raw) return [];
+    const all = JSON.parse(raw);
+    // Nettoyer les articles expirés
+    const now = Date.now();
+    return all.filter(a => a._savedAt && (now - a._savedAt) < ARCH_TTL);
+  } catch(e) { return []; }
+}
+
+function saveToArchives(newArticles) {
+  if (!newArticles || newArticles.length === 0) return;
+  try {
+    const existing = loadArchives();
+    // Dédupliquer par titre
+    const existingTitles = new Set(existing.map(a => a.titre));
+    const toAdd = newArticles
+      .filter(a => a.titre && !existingTitles.has(a.titre))
+      .map(a => ({ ...a, _savedAt: Date.now() }));
+    if (toAdd.length === 0) return;
+    // Garder les plus récents en premier, limiter à ARCH_MAX
+    const merged = [...toAdd, ...existing].slice(0, ARCH_MAX);
+    localStorage.setItem(ARCH_KEY, JSON.stringify(merged));
+    // Mettre à jour le compteur
+    document.getElementById('arch-count').textContent = merged.length;
+    console.info('[KO MAG] Archives: ' + toAdd.length + ' nouveaux articles sauvegardés (' + merged.length + ' total)');
+  } catch(e) { console.warn('Archives save error:', e.message); }
+}
+
+function clearArchives() {
+  if (!confirm('Vider toutes les archives ?')) return;
+  localStorage.removeItem(ARCH_KEY);
+  document.getElementById('arch-count').textContent = '0';
+  renderArchives([]);
+}
+
+let archiveFilter = 'all';
+
+function filterArchives(cat, el) {
+  archiveFilter = cat;
+  document.querySelectorAll('.arch-tab').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const all = loadArchives();
+  const filtered = cat === 'all' ? all : all.filter(a => a.categorie === cat);
+  renderArchives(filtered);
+}
+
+function renderArchives(list) {
+  const grid = document.getElementById('archives-grid');
+  if (!grid) return;
+  if (!list || list.length === 0) {
+    grid.innerHTML = '<div class="arch-empty" style="grid-column:1/-1;">Aucun article archivé. Revenez après quelques actualisations !</div>';
+    return;
+  }
+  const FALLBACK = 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80';
+  grid.innerHTML = list.map((a, i) => {
+    const img = (a.img && isGoodImage(a.img)) ? a.img : FALLBACK;
+    const date = a._savedAt ? new Date(a._savedAt).toLocaleDateString('fr-FR', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    return `
+    <div class="news-card fade-up" style="transition-delay:${(i%6)*.06}s" onclick="openArchiveArt(${i}, '${archiveFilter}')">
+      <div class="news-card-img">
+        <img src="${img}" alt="${a.titre}" onerror="this.src='${FALLBACK}'">
+      </div>
+      <div class="news-card-body">
+        <div class="news-card-src" style="color:var(--muted);">Archivé le ${date}</div>
+        <div class="news-card-cat">${a.categorie}</div>
+        <div class="news-card-title">${a.titre}</div>
+        <div class="news-card-excerpt">${a.resume || ''}</div>
+        <div class="news-card-footer">
+          <span class="news-card-time">${a.source || 'KO MAG'}</span>
+          <a href="#" class="read-link" onclick="event.stopPropagation();openArchiveArt(${i}, '${archiveFilter}')">LIRE →</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  observeAll();
+}
+
+async function openArchiveArt(i, cat) {
+  const all = loadArchives();
+  const list = cat === 'all' ? all : all.filter(a => a.categorie === cat);
+  const a = list[i]; if (!a) return;
+  // Réutiliser openArt en injectant l'article dans le tableau temporaire
+  const tmpIdx = articles.length;
+  articles.push(a);
+  await openArt(tmpIdx);
+  // Nettoyage
+  setTimeout(() => { if (articles.length > tmpIdx) articles.splice(tmpIdx, 1); }, 100);
+}
+
+function openArchives() {
+  // Masquer toutes les sections, afficher archives
+  document.querySelectorAll('section').forEach(s => {
+    s.style.display = s.id === 'archives' ? '' : '';
+  });
+  document.getElementById('archives').scrollIntoView({ behavior: 'smooth' });
+  const all = loadArchives();
+  document.getElementById('arch-count').textContent = all.length;
+  filterArchives(archiveFilter, document.querySelector('.arch-tab.active'));
+}
+
 async function init() {
+  // Compteur archives
+  try {
+    const archCount = loadArchives().length;
+    const el = document.getElementById('arch-count');
+    if (el) el.textContent = archCount;
+  } catch(e) {}
   // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
   renderFights('upcoming');
   loadFights('upcoming'); // Mise à jour Gemini en arrière-plan
