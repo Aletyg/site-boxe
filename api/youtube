@@ -1,0 +1,96 @@
+// api/youtube.js — Proxy recherche YouTube pour KO MAG
+// Utilise le RSS YouTube + oEmbed YouTube — 100% gratuit, sans clé API
+
+// Chaînes YouTube boxing de référence (ID de chaîne)
+const BOXING_CHANNELS = [
+  'UCKd7-SFfFMNLNKvJBiLhHlw', // ESPN Boxing
+  'UCxKWFBLG0Miy1A6U8_1hCew', // Matchroom Boxing
+  'UCBe4uJDMnT5MMNZZ2e7-0Og', // Top Rank Boxing
+  'UCQuEQKQ2vNMN6HyEjUhLGLg', // DAZN Boxing
+  'UCfkdLydtxHHJxGKq38GkVqQ', // BoxingScene
+  'UCS4MHcUKZFBkZXJIaKh0log', // Golden Boy Boxing
+];
+
+// Mots-clés boxe pour valider qu'une vidéo est pertinente
+const BOXING_KW = ['box','fight','ko','knockout','punch','champion','bout','ring','mma','ufc','kick','muay','combat','titre','heavyweight','welter','light'];
+
+function isBoxingVideo(title) {
+  const t = (title || '').toLowerCase();
+  return BOXING_KW.some(k => t.includes(k));
+}
+
+// Parser un flux RSS XML YouTube simplement avec regex (pas de DOM côté serveur)
+function parseRSS(xml) {
+  const entries = [];
+  const entryRe = /<entry>([\s\S]*?)<\/entry>/g;
+  let match;
+  while ((match = entryRe.exec(xml)) !== null) {
+    const entry = match[1];
+    const videoId = (entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/) || [])[1];
+    const title   = (entry.match(/<title>([^<]+)<\/title>/)           || [])[1];
+    if (videoId && title) entries.push({ videoId, title: decodeXML(title) });
+  }
+  return entries;
+}
+
+function decodeXML(str) {
+  return str.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
+}
+
+// Score de pertinence : combien de mots du titre de l'article apparaissent dans le titre vidéo
+function relevanceScore(articleTitle, videoTitle) {
+  const words = articleTitle.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+  const vt = videoTitle.toLowerCase();
+  return words.filter(w => vt.includes(w)).length;
+}
+
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
+
+  const { q } = req.query;
+  if (!q) return res.status(400).json({ error: 'q requis' });
+
+  try {
+    // Récupérer les flux RSS de plusieurs chaînes en parallèle
+    const feeds = await Promise.all(
+      BOXING_CHANNELS.map(channelId =>
+        fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, {
+          headers: { 'User-Agent': 'KO-MAG/1.0 (https://komag.fr)' },
+          signal: AbortSignal.timeout(5000)
+        })
+        .then(r => r.ok ? r.text() : '')
+        .catch(() => '')
+      )
+    );
+
+    // Parser et agréger toutes les vidéos
+    const allVideos = feeds.flatMap(xml => xml ? parseRSS(xml) : []);
+
+    // Filtrer uniquement les vidéos boxing
+    const boxingVideos = allVideos.filter(v => isBoxingVideo(v.title));
+
+    if (boxingVideos.length === 0) {
+      return res.status(404).json({ error: 'Aucune vidéo boxing trouvée' });
+    }
+
+    // Trier par pertinence avec le titre de l'article
+    const scored = boxingVideos
+      .map(v => ({ ...v, score: relevanceScore(q, v.title) }))
+      .sort((a, b) => b.score - a.score);
+
+    // Prendre la vidéo la plus pertinente (score > 0) ou la première récente
+    const best = scored[0].score > 0 ? scored[0] : boxingVideos[0];
+
+    res.setHeader('Cache-Control', 's-maxage=3600'); // cache 1h
+    return res.status(200).json({
+      videoId: best.videoId,
+      title: best.title,
+      score: best.score
+    });
+
+  } catch(err) {
+    return res.status(502).json({ error: err.message });
+  }
+}
