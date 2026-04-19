@@ -1,102 +1,183 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>KO MAG — Sports de Combat en Direct | Boxe, MMA, Kick-Boxing, Muay-Thai</title>
-<meta name="description" content="KO MAG, le magazine de sports de combat de référence. Boxe, MMA, Kick-Boxing, Muay-Thai. Actualités en temps réel, résultats, classements et équipement.">
-<meta name="keywords" content="boxe actualité, MMA, kick-boxing, muay thai, UFC, résultats combat, classement boxe, Usyk, Fury, Canelo, Crawford, équipement sport de combat">
-<meta name="author" content="KO MAG">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://komag.fr/">
+    <title>KO MAG — Sports de Combat en Direct</title>
+    <meta name="description" content="KO MAG, le magazine de sports de combat de référence. Boxe, MMA, Kick-Boxing, Muay-Thai.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;700&display=swap" rel="stylesheet">
 
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="KO MAG">
-<meta property="og:title" content="KO MAG — Actualité Boxe en Direct">
-<meta property="og:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
-<meta property="og:url" content="https://komag.fr/">
-<meta property="og:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
-<meta property="og:locale" content="fr_FR">
+    <style>
+        :root { --red: #E8001A; --dark: #0A0A0B; --gray: #1A1A1C; --white: #FAFAFA; }
+        
+        body, html { 
+            margin: 0; padding: 0; 
+            background: var(--dark); 
+            color: var(--white);
+            font-family: 'Barlow Condensed', sans-serif;
+            overflow-x: hidden;
+        }
 
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="KO MAG — Actualité Boxe en Direct">
-<meta name="twitter:description" content="Le magazine de boxe de référence. Actualités en temps réel, résultats, classements et équipement.">
-<meta name="twitter:image" content="https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=1200&q=85">
+        /* HEADER */
+        header {
+            background: rgba(10, 10, 11, 0.95);
+            border-bottom: 2px solid var(--red);
+            padding: 15px 5%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: 2px;
+        }
 
-<style>
-:root{--red:#E8001A;--dark:#0A0A0B;--white:#FAFAFA}
-body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--dark); overflow-x: hidden; }
+        .logo span { color: var(--red); }
 
-/* ÉCRAN DE CONSTRUCTION */
-.construction-screen {
-    height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: var(--dark);
-    color: var(--white);
-    text-align: center;
-    font-family: 'Barlow Condensed', sans-serif;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999;
-}
+        /* LOADER */
+        #loader {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-.construction-screen h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3rem, 10vw, 6rem);
-    line-height: 0.9;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-}
+        .spin {
+            width: 40px; height: 40px;
+            border: 3px solid var(--red);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
 
-.construction-screen h1 span { color: var(--red); }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-.construction-screen p {
-    font-size: 1.2rem;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    opacity: 0.8;
-}
+        /* GRID ARTICLES */
+        #news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            padding: 40px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
 
-.boxing-loader {
-    width: 50px;
-    height: 50px;
-    border: 3px solid var(--red);
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-    margin-bottom: 30px;
-}
+        .card {
+            background: var(--gray);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+        .card:hover { transform: translateY(-5px); }
 
-/* MASQUAGE DU SITE ORIGINAL */
-#original-site-content { display: none !important; }
-</style>
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--red);
+        }
+
+        .card-body { padding: 20px; flex-grow: 1; }
+
+        .badge {
+            background: var(--red);
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .card h2 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            margin: 15px 0;
+            line-height: 1;
+        }
+
+        .card p {
+            font-size: 1rem;
+            line-height: 1.4;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: var(--red);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="construction-screen">
-        <div class="boxing-loader"></div>
-        <h1>KO <span>MAG</span><br>EN CONSTRUCTION</h1>
-        <p>Prochain round imminent</p>
-    </div>
+    <header>
+        <a href="/" class="logo">KO <span>MAG</span></a>
+    </header>
 
-    <div id="original-site-content">
-        <header>
-            <div class="header-top">
-                <a href="#" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
-            </div>
-        </header>
+    <main id="main-content">
+        <div id="loader">
+            <div class="spin"></div>
+            <p style="margin-top:20px; letter-spacing:2px;">RÉCUPÉRATION DES DERNIERS ROUNDS...</p>
         </div>
+        
+        <div id="news-grid"></div>
+    </main>
 
+    <script>
+        async function fetchArticles() {
+            const grid = document.getElementById('news-grid');
+            const loader = document.getElementById('loader');
+
+            try {
+                const response = await fetch('/api/articles');
+                const data = await response.json();
+
+                if (!data.articles || data.articles.length === 0) throw new Error("Aucun article");
+
+                loader.style.display = 'none';
+                
+                data.articles.forEach(art => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    // Nettoyage du contenu (gestion des ### de l'API)
+                    const cleanContent = art.contenu.replace(/###/g, '<br><br>');
+
+                    card.innerHTML = `
+                        <img src="${art.img}" class="card-img" alt="${art.titre}">
+                        <div class="card-body">
+                            <span class="badge">${art.categorie}</span>
+                            <h2>${art.titre}</h2>
+                            <p>${art.resume}</p>
+                            <div class="card-meta">
+                                <span>${art.source}</span>
+                                <span>${art.temps}</span>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Erreur KO MAG:", error);
+                loader.innerHTML = `<p style="color:var(--red)">ERREUR DE CONNEXION AU SERVEUR</p>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchArticles);
+    </script>
 </body>
 </html>
