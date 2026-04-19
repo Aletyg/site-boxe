@@ -1306,25 +1306,38 @@ async function openArt(i) {
   document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
   const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
 
-  // Afficher la modal immédiatement avec skeleton vidéo pendant le chargement
+  // Image : Wikimedia si boxeur détecté, sinon og:image de la source, sinon fallback
   const modalImg = await getBoxingImg(a, i);
+
+  // Vidéo YouTube : 3 sources possibles par ordre de priorité
+  // 1. youtubeId extrait de la page source par le scraper (le plus pertinent)
+  // 2. URL article qui est une URL YouTube directe
+  // 3. Recherche via /api/youtube (en arrière-plan)
+  const knownVideoId = a.youtubeId || (isYoutubeUrl(a.url) ? extractYoutubeId(a.url) : null);
+
+  // Construire le bloc vidéo ou le skeleton selon qu'on a déjà l'ID
+  const ytInitial = knownVideoId
+    ? '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;margin:22px 0;">' +
+      '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO — SOURCE OFFICIELLE</div>' +
+      buildYoutubeEmbed(knownVideoId) + '</div>'
+    : '<div id="yt-block" style="margin:22px 0;">' +
+      '<div style="width:100%;height:60px;background:var(--smoke);border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;gap:10px;">' +
+      '<span style="font-size:1rem;">▶️</span>' +
+      '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.75rem;color:var(--muted);letter-spacing:.1em;">Recherche vidéo...</span>' +
+      '</div></div>';
 
   document.getElementById('modal-body').innerHTML =
     '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
     '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
-    '<img src="' + modalImg + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">' +
+    // Si on a une vidéo de la source, elle remplace l'image — sinon on montre l'image
+    (knownVideoId ? '' : '<img src="' + modalImg + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">') +
     paras.map(p => '<p>' + p + '</p>').join('') +
-    // Zone YouTube — skeleton pendant la recherche
-    '<div id="yt-block" style="margin:22px 0;">' +
-    '<div style="width:100%;height:180px;background:var(--smoke);border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;gap:12px;">' +
-    '<span style="font-size:1.4rem;">▶️</span>' +
-    '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.8rem;color:var(--muted);letter-spacing:.1em;">Recherche vidéo highlights...</span>' +
-    '</div></div>' +
-    (a.url && !getOembedEndpoint(a.url) && !isYoutubeUrl(a.url) ?
+    ytInitial +
+    (a.url && !isYoutubeUrl(a.url) ?
       '<div style="margin-top:20px;padding:16px;background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--gold);">' +
       '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📰 SOURCE ORIGINALE</div>' +
-      '<a href="' + a.url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:var(--red);color:white;text-decoration:none;padding:10px 20px;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;transition:all .2s;">' +
+      '<a href="' + a.url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:var(--red);color:white;text-decoration:none;padding:10px 20px;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;">' +
       '🔗 Lire l\'article complet sur ' + (a.source || 'le site source') + ' →</a>' +
       '</div>'
     : '') +
@@ -1334,31 +1347,23 @@ async function openArt(i) {
 
   document.getElementById('modal').classList.add('open');
 
-  // Chercher une vidéo YouTube en arrière-plan
-  const ytBlock = document.getElementById('yt-block');
-  if (!ytBlock) return;
-
-  try {
-    // 1. Si l'article a déjà une URL YouTube, l'utiliser directement
-    let videoId = null;
-    if (isYoutubeUrl(a.url)) {
-      videoId = extractYoutubeId(a.url);
-    } else {
-      // 2. Chercher via notre proxy /api/youtube
-      videoId = await findYoutubeVideo(a.titre);
+  // Si on n'avait pas de vidéo de la source → chercher via /api/youtube en arrière-plan
+  if (!knownVideoId) {
+    const ytBlock = document.getElementById('yt-block');
+    if (!ytBlock) return;
+    try {
+      const videoId = await findYoutubeVideo(a.titre);
+      if (videoId) {
+        ytBlock.innerHTML =
+          '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;">' +
+          '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO HIGHLIGHTS</div>' +
+          buildYoutubeEmbed(videoId) + '</div>';
+      } else {
+        ytBlock.innerHTML = '';
+      }
+    } catch(e) {
+      ytBlock.innerHTML = '';
     }
-
-    if (videoId) {
-      ytBlock.innerHTML =
-        '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;">' +
-        '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO HIGHLIGHTS</div>' +
-        buildYoutubeEmbed(videoId) +
-        '</div>';
-    } else {
-      ytBlock.innerHTML = ''; // Pas de vidéo trouvée → on masque le bloc
-    }
-  } catch(e) {
-    ytBlock.innerHTML = '';
   }
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
