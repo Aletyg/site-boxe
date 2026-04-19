@@ -1383,8 +1383,7 @@ function observeAll() {
 async function init() {
   // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
   renderFights('upcoming');
-  renderRanks('heavyweight');
-  loadRanks('heavyweight'); // Mise à jour Gemini en arrière-plan
+  renderRanks('heavyweight'); // Classement statique - bouton Actualiser pour mise à jour
   renderEquip('all');
   renderTipsStatic('technique');
   articles = [...STATIC_ARTICLES];
