@@ -31,16 +31,6 @@ const SOURCES_GOOGLE = [
     url: 'https://www.lequipe.fr/Boxe/',
     rss: 'https://news.google.com/rss/search?q=site:lequipe.fr+boxe&hl=fr&gl=FR&ceid=FR:fr',
   },
-  {
-    name: 'RMC Sport',
-    url: 'https://rmcsport.bfmtv.com',
-    rss: 'https://news.google.com/rss/search?q=site:rmcsport.bfmtv.com+boxe+MMA&hl=fr&gl=FR&ceid=FR:fr',
-  },
-  {
-    name: 'Boxenet',
-    url: 'https://www.boxenet.fr',
-    rss: 'https://news.google.com/rss/search?q=site:boxenet.fr&hl=fr&gl=FR&ceid=FR:fr',
-  },
 ];
 
 // Chaînes YouTube boxing de référence pour la recherche de vidéo
