@@ -91,20 +91,44 @@ function extractYoutubeId(text) {
   return null;
 }
 
+// ── Détection des mauvaises images (logo Google, placeholders...) ────────────
+const BAD_IMG_DOMAINS = [
+  'news.google.com', 'gstatic.com', 'google.com/images',
+  'placeholder', 'no-image', 'default', 'noimage', 'logo', 'icon', 'favicon',
+];
+
+function isBadImage(url) {
+  if (!url || url.length < 15) return true;
+  const u = url.toLowerCase();
+  return BAD_IMG_DOMAINS.some(k => u.includes(k));
+}
+
+// ── Extraire l'URL réelle depuis un lien Google News (qui redirige) ──────────
+// Google News encode l'URL réelle en base64 dans le lien
+function extractRealUrlFromGoogleNews(googleUrl) {
+  if (!googleUrl || !googleUrl.includes('news.google.com')) return googleUrl;
+  // Format: https://news.google.com/rss/articles/CBMi... — l'URL réelle est dans le HTML de la page
+  // On laisse fetch() suivre la redirection HTTP naturellement
+  return googleUrl;
+}
+
 function extractOgImage(html) {
   if (!html) return null;
   const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
     || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-  return m ? m[1] : null;
+  const img = m ? m[1] : null;
+  return img && !isBadImage(img) ? img : null;
 }
 
-// ── Fetcher la page source avec plusieurs User-Agents ───────────────────────
+// ── Fetcher la page source et extraire og:image + YouTube ───────────────────
 async function fetchArticlePage(url) {
   const agents = [
+    // Agent navigateur classique — le plus efficace sur la plupart des sites
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    'Googlebot/2.1 (+http://www.google.com/bot.html)',
-    'KO-MAG/1.0 (https://komag.fr)',
+    // Googlebot — utile pour les sites qui bloquent les bots inconnus
+    'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
   ];
+
   for (const agent of agents) {
     try {
       const r = await fetch(url, {
@@ -114,21 +138,27 @@ async function fetchArticlePage(url) {
           'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
           'Cache-Control': 'no-cache',
         },
-        signal: AbortSignal.timeout(8000),
+        // Suivre les redirections automatiquement (important pour Google News)
+        redirect: 'follow',
+        signal: AbortSignal.timeout(10000),
       });
       if (!r.ok) continue;
       const html = await r.text();
-      if (html.length < 500) continue; // page vide ou bloquée
-      return {
-        youtubeId: extractYoutubeId(html),
-        ogImage: extractOgImage(html),
-        html, // garder le HTML pour d'autres extractions
-      };
+      if (html.length < 500) continue;
+
+      const ogImage  = extractOgImage(html);   // null si logo Google ou placeholder
+      const youtubeId = extractYoutubeId(html);
+
+      // Si on a une bonne image, on s'arrête là
+      if (ogImage || youtubeId) {
+        return { youtubeId, ogImage };
+      }
+      // Sinon essayer le prochain User-Agent
     } catch(e) {
       continue;
     }
   }
-  return { youtubeId: null, ogImage: null, html: null };
+  return { youtubeId: null, ogImage: null };
 }
 
 // ── Recherche YouTube via RSS des chaînes de référence ───────────────────────
