@@ -180,16 +180,6 @@ section{padding:50px 0}
 .btn-aff-out{display:block;width:100%;background:transparent;color:var(--red);text-decoration:none;text-align:center;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--red);transition:all .2s;margin-top:8px}
 .btn-aff-out:hover{background:var(--red);color:white}
 
-/* TIPS */
-.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.tip-card{background:var(--charcoal);border:1px solid var(--grey);padding:26px;position:relative;overflow:hidden;transition:background .25s}
-.tip-card:hover{background:var(--smoke)}
-.tip-num{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:rgba(232,0,26,.12);position:absolute;top:8px;right:20px;line-height:1}
-.tip-icon{font-size:1.6rem;margin-bottom:12px}
-.tip-title{font-family:'Barlow Condensed',sans-serif;font-size:1.22rem;font-weight:700;color:var(--white);margin-bottom:10px;letter-spacing:.03em}
-.tip-body{font-size:.875rem;color:#999;line-height:1.65;margin-bottom:14px}
-.tip-tag{display:inline-flex;align-items:center;background:rgba(232,0,26,.1);border:1px solid rgba(232,0,26,.3);color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px}
-
 /* FIGHTERS */
 .fighters-section{background:var(--smoke)}
 .ranking-table{width:100%;border-collapse:collapse}
@@ -233,16 +223,11 @@ section{padding:50px 0}
 .tab-btn:hover:not(.active){color:var(--light)}
 
 /* NEWSLETTER */
-.newsletter{background:linear-gradient(135deg,var(--red) 0%,#8B0010 100%);position:relative;overflow:hidden}
-.newsletter::before{content:'KO';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:15rem;color:rgba(255,255,255,.04);pointer-events:none}
-.newsletter-inner{display:flex;align-items:center;justify-content:space-between;gap:40px}
-.newsletter-text h2{font-size:2rem;color:white;margin-bottom:8px}
-.newsletter-text p{color:rgba(255,255,255,.75);font-size:.9rem}
-.newsletter-form{display:flex;flex-shrink:0}
-.newsletter-form input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-right:none;color:white;padding:11px 18px;font-family:'Barlow',sans-serif;font-size:.86rem;width:260px;outline:none}
-.newsletter-form input::placeholder{color:rgba(255,255,255,.4)}
-.newsletter-form button{background:var(--dark);color:white;border:none;padding:11px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s}
-.newsletter-form button:hover{background:#111}
+
+
+
+
+
 
 /* FOOTER */
 footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26px}
@@ -307,52 +292,8 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   nav{display:none}
   .fights-grid{grid-template-columns:1fr 1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .newsletter-inner{flex-direction:column}
-}
-
-/* RESPONSIVE MOBILE */
-@media(max-width:640px){
-  /* Layout */
-  .news-grid{grid-template-columns:1fr}
-  .tips-grid{grid-template-columns:1fr}
-  .equip-grid{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr}
-  .fights-grid{grid-template-columns:1fr}
-
-  /* Header mobile */
-  .header-top{padding:0 16px;height:54px}
-  .logo{font-size:1.8rem}
-  .header-cta{display:none}
-
-  /* Hero mobile */
-  .hero-main{padding:24px 16px 80px}
-  .hero-title{font-size:1.9rem !important}
-  .hero-excerpt{font-size:.88rem;-webkit-line-clamp:2}
-
-  /* Sections */
-  .container{padding:0 14px}
-  section{padding:32px 0}
-  .section-hd{margin-bottom:18px}
-  .section-title{font-size:1.5rem}
-
-  /* Cards */
-  .news-card-title{font-size:1rem}
-  .equip-grid{gap:12px}
-  .equip-card{padding:16px}
-
-  /* Tabs scroll horizontal */
-  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab-btn{white-space:nowrap;padding:8px 14px;font-size:.78rem}
-
-  /* Ticker */
-  .ticker-label{font-size:.65rem;padding:0 10px}
-
-  /* Newsletter */
-  .newsletter-form{flex-direction:column;width:100%}
-  .newsletter-form input{width:100%;border-right:1px solid rgba(255,255,255,.3);border-bottom:none}
-  .newsletter-form button{width:100%}
-  .newsletter-text h2{font-size:1.5rem}
+  
+  
 
   /* Footer */
   footer{padding:32px 0 100px}
@@ -485,11 +426,11 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
     <nav>
       <a href="#actualites" class="active">Actualités</a>
       <a href="#archives" onclick="openArchives()">Archives</a>
-      <a href="#conseils">Conseils</a>
+      
       <a href="#classement">Classement</a>
       <a href="#equipement">Équipement</a>
     </nav>
-    <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
+    
 
   </div>
 </header>
@@ -566,24 +507,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </section>
 
-<section id="conseils">
-  <div class="container">
-    <div class="section-hd">
-      <h2 class="section-title">CON<span>SEILS</span></h2>
-      <button class="refresh-btn" id="tips-btn" onclick="loadTips(currentTipTab)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        Nouveaux conseils IA
-      </button>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTip('technique',this)">Technique</button>
-      <button class="tab-btn" onclick="switchTip('entrainement',this)">Entraînement</button>
-      <button class="tab-btn" onclick="switchTip('nutrition',this)">Nutrition</button>
-      <button class="tab-btn" onclick="switchTip('mental',this)">Mental</button>
-    </div>
-    <div class="tips-grid" id="tips-grid"></div>
-  </div>
-</section>
+
 
 <section id="classement" class="fighters-section">
   <div class="container">
@@ -626,20 +550,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </section>
 
-<section id="newsletter" class="newsletter">
-  <div class="container">
-    <div class="newsletter-inner">
-      <div class="newsletter-text">
-        <h2>RESTEZ AU CŒUR DU RING</h2>
-        <p>Actualités exclusives, analyses de combats, conseils pros et deals équipement — directement dans votre boîte mail.</p>
-      </div>
-      <div class="newsletter-form">
-        <input type="email" placeholder="votre@email.com" id="email-input">
-        <button onclick="subscribe()">S'abonner — Gratuit</button>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <footer>
   <div class="container">
@@ -651,7 +562,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
           <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
         </div>
       </div>
-      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li><a href="#conseils">Conseils</a></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
+      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
       <div class="footer-col"><h4>Disciplines</h4><ul><li><a href="#">Boxe anglaise</a></li><li><a href="#">Boxe française</a></li><li><a href="#">MMA</a></li><li><a href="#">Kick-boxing</a></li><li><a href="#">Muay-Thai</a></li></ul></div>
       <div class="footer-col"><h4>Légal</h4><ul><li><a href="#">Mentions légales</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Politique affilié</a></li><li><a href="#">Contact</a></li></ul></div>
     </div>
@@ -1373,55 +1284,6 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ════════════════════════════════════════════════════════════════
-// TIPS
-// ════════════════════════════════════════════════════════════════
-function renderTipsStatic(tab) {
-  const tips = STATIC_TIPS[tab] || STATIC_TIPS.technique;
-  document.getElementById('tips-grid').innerHTML = tips.map((c, i) => `
-    <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
-      <div class="tip-num">${c.numero}</div>
-      <div class="tip-icon">${c.emoji}</div>
-      <div class="tip-title">${c.titre}</div>
-      <div class="tip-body">${c.contenu}</div>
-      <div class="tip-tag">${c.tag}</div>
-    </div>`).join('');
-  observeAll();
-}
-
-async function loadTips(tab) {
-  currentTipTab = tab;
-  document.getElementById('tips-btn').classList.add('loading');
-  renderTipsStatic(tab);
-  try {
-    const d = await callGemini(
-      `Rédige 4 conseils d'expert de boxe sur le thème "${tab}" pour KO MAG.
-JSON : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}
-- numero : 01 à 04
-- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL
-- emoji : 1 seul emoji pertinent
-- contenu : conseil détaillé et actionnable, minimum 80 mots, avec chiffres précis, noms de techniques, références à des champions réels qui utilisent cette méthode`
-    );
-    if (d && d.conseils && d.conseils.length > 0) {
-      document.getElementById('tips-grid').innerHTML = d.conseils.map((c, i) => `
-        <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
-          <div class="tip-num">${c.numero || String(i+1).padStart(2,'0')}</div>
-          <div class="tip-icon">${c.emoji}</div>
-          <div class="tip-title">${c.titre}</div>
-          <div class="tip-body">${c.contenu}</div>
-          <div class="tip-tag">${c.tag}</div>
-        </div>`).join('');
-      observeAll();
-    }
-  } catch(e) { /* garder statique silencieusement */ }
-  document.getElementById('tips-btn').classList.remove('loading');
-}
-
-function switchTip(t, el) {
-  document.querySelectorAll('#conseils .tab-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active'); loadTips(t);
-}
-
-// ════════════════════════════════════════════════════════════════
 // FIGHTS / RANKINGS / EQUIPMENT
 // ════════════════════════════════════════════════════════════════
 function renderRanks(wc) {
@@ -1502,18 +1364,6 @@ function switchEquip(t, el) {
 
 // ════════════════════════════════════════════════════════════════
 // NEWSLETTER
-// ════════════════════════════════════════════════════════════════
-function subscribe() {
-  const inp = document.getElementById('email-input');
-  if (!inp.value.includes('@')) { inp.style.border = '1px solid #f55'; return; }
-  inp.style.border = '';
-  const b = event.target;
-  b.textContent = '✓ Abonné(e) !'; b.style.background = '#22C55E'; inp.value = '';
-  setTimeout(() => { b.textContent = "S'abonner — Gratuit"; b.style.background = ''; }, 3000);
-}
-
-// ════════════════════════════════════════════════════════════════
-// ANIMATIONS
 // ════════════════════════════════════════════════════════════════
 function observeAll() {
   const obs = new IntersectionObserver(entries => {
@@ -1697,7 +1547,6 @@ async function init() {
 
   // Charger les vraies actualités en arrière-plan — silencieux, remplace le cache
   loadNews().catch(e => console.warn('loadNews error:', e.message));
-  loadTips('technique').catch(() => {});
 
   setInterval(loadNews, REFRESH_MS);
   setInterval(() => {
