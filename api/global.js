@@ -81,11 +81,19 @@ function decodeXML(str) {
 }
 
 // ── Extraire og:image depuis la page source ───────────────────────────────────
+const BAD_IMG_DOMAINS_G = [
+  'news.google.com','gstatic.com','google.com/images',
+  'placeholder','no-image','default','noimage','logo','icon','favicon',
+];
+
 function extractOgImage(html) {
   if (!html) return null;
   const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
     || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
-  return m ? m[1] : null;
+  const img = m ? m[1] : null;
+  if (!img) return null;
+  const u = img.toLowerCase();
+  return BAD_IMG_DOMAINS_G.some(k => u.includes(k)) ? null : img;
 }
 
 function extractYoutubeId(html) {
