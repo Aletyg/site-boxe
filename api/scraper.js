@@ -23,15 +23,7 @@ const SOURCES_DIRECT = [
   },
 ];
 
-// Sources via Google News RSS (contourne les blocages de RMC / L'Equipe)
-// Google News agrège les articles et ne bloque pas les crawlers
-const SOURCES_GOOGLE = [
-  {
-    name: "L'Equipe",
-    url: 'https://www.lequipe.fr/Boxe/',
-    rss: 'https://news.google.com/rss/search?q=site:lequipe.fr+boxe&hl=fr&gl=FR&ceid=FR:fr',
-  },
-];
+const SOURCES_GOOGLE = [];
 
 // Chaînes YouTube boxing de référence pour la recherche de vidéo
 const BOXING_YT_CHANNELS = [
