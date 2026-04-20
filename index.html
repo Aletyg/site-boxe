@@ -1008,6 +1008,7 @@ async function loadNews() {
       updateSidebar(articles.slice(1, 5));
       updateTicker(articles);
       saveToArchives(articles);
+      saveLastArticles(articles); // ← cache instantané pour la prochaine visite
       aiLoaded = true;
       lastUpdate = new Date();
 
@@ -1528,6 +1529,27 @@ function observeAll() {
 // ════════════════════════════════════════════════════════════════
 // ARCHIVES — localStorage, max 60 articles sur 7 jours
 // ════════════════════════════════════════════════════════════════
+// ── Cache localStorage des derniers articles (affichage instantané) ──────────
+const LAST_ARTICLES_KEY = 'komag_last_articles';
+const LAST_ARTICLES_TTL = 4 * 60 * 60 * 1000; // 4h max
+
+function saveLastArticles(arts) {
+  try {
+    localStorage.setItem(LAST_ARTICLES_KEY, JSON.stringify({ articles: arts, savedAt: Date.now() }));
+  } catch(e) {}
+}
+
+function loadLastArticles() {
+  try {
+    const raw = localStorage.getItem(LAST_ARTICLES_KEY);
+    if (!raw) return null;
+    const { articles, savedAt } = JSON.parse(raw);
+    if (!articles || !articles.length) return null;
+    if (Date.now() - savedAt > LAST_ARTICLES_TTL) return null;
+    return articles;
+  } catch(e) { return null; }
+}
+
 const ARCH_KEY = 'komag_archives';
 const ARCH_MAX = 60;
 const ARCH_TTL = 7 * 24 * 60 * 60 * 1000; // 7 jours
@@ -1641,22 +1663,39 @@ async function init() {
     const el = document.getElementById('arch-count');
     if (el) el.textContent = archCount;
   } catch(e) {}
-  // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
-  renderRanks('heavyweight'); // Classement statique - bouton Actualiser pour mise à jour
+
+  renderRanks('heavyweight');
   renderEquip('all');
   renderTipsStatic('technique');
-  articles = [...STATIC_ARTICLES];
-  renderNews(articles);
-  updateHero(articles[0]);
-  updateSidebar(articles.slice(1,5));
-  updateTicker(articles);
-  setStatus('yellow', '🔄 Chargement des dernières actualités...', '');
-  observeAll();
 
-  // Cacher le loader immédiatement — le contenu est déjà visible
+  // ── Affichage instantané ──────────────────────────────────────────────────
+  // 1. Essayer les derniers articles du cache localStorage (< 4h)
+  const cached = loadLastArticles();
+  if (cached && cached.length > 0) {
+    articles = cached;
+    renderNews(articles);
+    updateHero(articles[0]);
+    updateSidebar(articles.slice(1, 5));
+    updateTicker(articles);
+    // Indiquer que c'est du cache et qu'on rafraîchit
+    const age = Math.floor((Date.now() - JSON.parse(localStorage.getItem(LAST_ARTICLES_KEY) || '{}').savedAt) / 60000);
+    setStatus('yellow', `🔄 Actu du cache (il y a ${age}min) — Mise à jour en cours...`, '');
+    document.getElementById('news-info').innerHTML =
+      `<span style="color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.78rem;">⚡ ${articles.length} articles en cache · Actualisation...</span>`;
+  } else {
+    // 2. Fallback : articles statiques pendant le chargement
+    articles = [...STATIC_ARTICLES];
+    renderNews(articles);
+    updateHero(articles[0]);
+    updateSidebar(articles.slice(1, 5));
+    updateTicker(articles);
+    setStatus('yellow', '🔄 Chargement des dernières actualités...', '');
+  }
+
+  observeAll();
   document.getElementById('loader').classList.add('hidden');
 
-  // Charger les vraies actualités en arrière-plan (sans bloquer)
+  // Charger les vraies actualités en arrière-plan — silencieux, remplace le cache
   loadNews().catch(e => console.warn('loadNews error:', e.message));
   loadTips('technique').catch(() => {});
 
