@@ -1067,7 +1067,15 @@ const COMBAT_IMGS = {
   }
 };
 
-const BAD_IMG_KW = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast'];
+const BAD_IMG_KW = [
+  // Autres sports
+  'soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast',
+  // Logo Google News et placeholders génériques
+  'news.google.com','gstatic.com/images','google.com/images',
+  'placeholder','no-image','default-image','no_image','noimage',
+  // Logos/icônes de sites (souvent carrées, pas des photos)
+  '/logo.','/icon.','/favicon.',
+];
 
 function isGoodImage(url) {
   if (!url || url.length < 15) return false;
