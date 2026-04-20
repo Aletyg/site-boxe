@@ -896,12 +896,7 @@ async function loadNews() {
       aiLoaded = true;
       lastUpdate = new Date();
 
-      const nbFR   = frArticles.length;
-      const nbIntl = intArticles.length;
-      const engine = globalRes.status === 'fulfilled' ? (globalRes.value.engine || '') : '';
-      const aiLabel = engine.includes('openai') ? 'GPT-4o' : 'Gemini';
-
-      setStatus('green', `🟢 ${nbFR} articles FR · ${nbIntl} articles monde (${aiLabel})`, '');
+      setStatus('green', '🟢 Actualités en direct — Mise à jour automatique', '');
       document.getElementById('news-info').innerHTML =
         '<span style="color:#22C55E;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">🟢 SOURCES MONDIALES</span>' +
         `<span style="font-family:'Barlow Condensed',sans-serif;font-size:.78rem;color:var(--muted);"> · ${articles.length} articles · ` +
