@@ -1644,7 +1644,7 @@ function renderArchives(list) {
   let html = '';
 
   if (recent.length > 0) {
-    html += recent.map((a, i) => cardHTML(a, i, 'Il y a moins d'une semaine ·')).join('');
+    html += recent.map((a, i) => cardHTML(a, i, 'Il y a moins d\u2019une semaine \xb7')).join('');
   }
 
   if (old.length > 0) {
