@@ -1,9 +1,8 @@
 // api/wikimedia.js — Proxy Wikimedia Commons pour KO MAG
-// Récupère la photo Wikipedia d'un boxeur par nom, côté serveur (pas de CORS)
+import { setCors } from './_cors.js'; // ← MODIFIÉ
 
 const cache = {};
 
-// Correspondance nom → titre exact Wikipedia pour les boxeurs principaux
 const WIKI_TITLES = {
   'usyk':       'Oleksandr Usyk',
   'fury':       'Tyson Fury',
@@ -32,9 +31,7 @@ async function getWikiImage(name) {
   const key = name.toLowerCase();
   if (cache[key]) return cache[key];
 
-  // Trouver le titre Wikipedia exact
   const title = WIKI_TITLES[key] || name;
-
   const url = `https://en.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=pageimages&pithumbsize=800&format=json`;
 
   const r = await fetch(url, {
@@ -52,8 +49,7 @@ async function getWikiImage(name) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (!setCors(req, res)) return; // ← MODIFIÉ
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const { name } = req.query;
@@ -63,7 +59,7 @@ export default async function handler(req, res) {
     const img = await getWikiImage(name.trim());
     if (!img) return res.status(404).json({ error: 'Aucune image trouvée' });
 
-    res.setHeader('Cache-Control', 's-maxage=86400'); // cache 24h
+    res.setHeader('Cache-Control', 's-maxage=86400');
     return res.status(200).json({ img });
   } catch(err) {
     return res.status(502).json({ error: err.message });
