@@ -1303,7 +1303,7 @@ function renderChampionsTable(champions) {
     </div>`;
 }
 
-function pickHeadline(arts) {
+async function pickHeadline(arts) {
   if (!arts || arts.length === 0) return 0;
   // Si déjà un cache récent (< 1h), on réutilise
   if (headlineCache && headlineCache.at && Date.now() - headlineCache.at < 3600000) {
