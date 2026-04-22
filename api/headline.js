@@ -1,12 +1,12 @@
-// api/headline.js — Gemini choisit l'article le plus important
-import { setCors } from './_cors.js'; // ← MODIFIÉ
+// api/headline.js — Gemini choisit l'article le plus important des 2-3 derniers jours
+import { setCors } from './_cors.js';
 
 const GEMINI_KEY = () => process.env.GEMINI_API_KEY;
 
-let cache = { headline: null, at: null, ttl: 3 * 60 * 60 * 1000 };
+let cache = { headline: null, at: null, ttl: 3 * 60 * 60 * 1000 }; // cache 3h
 
 export default async function handler(req, res) {
-  if (!setCors(req, res)) return; // ← MODIFIÉ
+  if (!setCors(req, res)) return;
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST requis' });
 
@@ -46,17 +46,40 @@ Voici les ${Math.min(articles.length, 15)} articles publiés ces derniers jours 
 
 ${candidates}
 
-MISSION : Choisir l'article qui mérite LA UNE du site aujourd'hui.
+MISSION : Choisir L'ARTICLE QUI VA FAIRE LE PLUS RÉAGIR les fans de sports de combat aujourd'hui — celui qui provoque de l'émotion, de la surprise, de l'indignation ou du débat.
 
 CRITÈRES DE SÉLECTION (ordre de priorité) :
-1. 🥊 Résultat d'un combat majeur avec un grand nom (KO, titre mondial, upset)
-2. 📢 Annonce officielle d'un combat très attendu par les fans
-3. 💥 Scoop ou rebondissement majeur
-4. 🎤 Interview exclusive d'un champion
-5. 📊 Analyse ou classement qui fait débat
-6. À défaut : l'article le plus récent
 
-IMPORTANT : Préfère les articles récents (moins de 24h).
+1. 💥 SCANDALE / CHOC — Ce qui provoque le plus de réactions :
+   - Annulation d'un grand combat (dopage, blessure, contrat, problème de dernière minute)
+   - Résultat surprise ou controverse (vol de décision, KO inattendu d'un favori)
+   - Exclusion, suspension ou affaire disciplinaire d'un nom connu
+   - Trahison, dispute publique entre camps, refus de combattre
+
+2. 🥊 RÉSULTAT MAJEUR — Un grand combat s'est terminé :
+   - KO ou TKO d'un champion ou ex-champion connu
+   - Changement de ceinture mondiale (WBC, WBA, WBO, IBF)
+   - Upset retentissant (outsider bat un favori)
+
+3. 📢 ANNONCE EXPLOSIVE — Ce que tout le monde attend :
+   - Combat officiel signé entre deux stars mondiales
+   - Retour surprise d'un grand champion
+   - Affrontement très attendu enfin confirmé
+
+4. 🎤 DÉCLARATION FORTE — Quelqu'un a dit quelque chose de marquant :
+   - Défi lancé publiquement
+   - Révélation personnelle importante
+   - Prise de position controversée
+
+5. 📊 ANALYSE QUI FAIT DÉBAT — Si rien d'autre :
+   - Classement contesté
+   - Comparaison de champions qui divise
+
+RÈGLES IMPORTANTES :
+- Une annulation de combat (surtout pour dopage) > une simple annonce de combat
+- Un scandale récent > un bon résultat ancien
+- Préfère TOUJOURS les articles de moins de 48h
+- Si deux articles ont le même impact, choisis le plus récent
 
 Réponds UNIQUEMENT en JSON valide :
 {
@@ -80,7 +103,7 @@ Réponds UNIQUEMENT en JSON valide :
               responseMimeType: 'application/json',
             },
             systemInstruction: {
-              parts: [{ text: 'Tu es rédacteur en chef expert en sports de combat. JSON valide uniquement.' }]
+              parts: [{ text: 'Tu es rédacteur en chef expert en sports de combat. Tu choisis la Une avec le plus grand impact émotionnel et éditorial pour les fans. Les scandales, annulations et surprises priment sur les simples annonces. JSON valide uniquement.' }]
             }
           }),
         }
@@ -107,6 +130,8 @@ Réponds UNIQUEMENT en JSON valide :
       cache.headline = headline;
       cache.at = Date.now();
 
+      console.log(`[headline] ✅ Une: [${idx}] "${articles[idx].titre}" — ${parsed.raison} (impact: ${parsed.impact})`);
+
       res.setHeader('Cache-Control', 's-maxage=10800');
       return res.status(200).json({ headline, cached: false });
 
@@ -115,6 +140,7 @@ Réponds UNIQUEMENT en JSON valide :
     }
   }
 
+  // Fallback
   return res.status(200).json({
     headline: { index: 0, article: articles[0], raison: 'Article le plus récent', impact: 'MOYEN', model: 'fallback' },
     cached: false,
