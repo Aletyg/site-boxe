@@ -2,7 +2,7 @@
 // Cherche des articles sérieux du monde entier, traduit et résume en français
 // Cron : toutes les heures via vercel.json
 
-import { setCors } from './_cors.js'; // ← MODIFIÉ
+import { setCors } from './_cors.js';
 
 const OPENAI_KEY  = () => process.env.OPENAI_API_KEY;
 const GEMINI_KEY  = () => process.env.GEMINI_API_KEY;
@@ -168,13 +168,13 @@ async function translateWithGPT(article) {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert mondial des sports de combat (boxe, MMA, kickboxing, muay thai) et rédacteur senior pour KO MAG. Tu connais tous les boxeurs professionnels, leurs bilans exacts, les dates et lieux officiels des grands combats, les champions actuels de chaque organisation (WBC, WBA, WBO, IBF). Tu enrichis toujours les articles avec tes vraies connaissances. Tu replies UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs.',
+            content: 'Tu es un expert mondial des sports de combat (boxe, MMA, kickboxing, muay thai) et rédacteur senior pour KO MAG, magazine FRANÇAIS. Tu connais tous les boxeurs professionnels, leurs bilans exacts, les dates et lieux officiels des grands combats, les champions actuels. Tu adaptes TOUJOURS les horaires en heure de Paris et les chaînes TV pour le marché français. Tu replies UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs.',
           },
           {
             role: 'user',
-            content: `Tu es un expert mondial des sports de combat et rédacteur senior pour KO MAG (magazine français).
+            content: `Tu es rédacteur senior pour KO MAG, magazine français de sports de combat. TON PUBLIC EST EXCLUSIVEMENT FRANÇAIS.
 
-ETAPE 1 - ANALYSE ET ENRICHISSEMENT:
+ETAPE 1 - ANALYSE ET ADAPTATION FRANCE:
 Article source à traiter:
 Titre: "${article.title}"
 Source: ${article.source}
@@ -182,28 +182,35 @@ ${article.fullText && article.fullText.length > 200
   ? `Texte complet lu directement sur ${article.source} (${article.fullText.length} caractères):\n"${article.fullText}"`
   : `Description RSS (résumé partiel):\n"${article.desc}"`}
 
-Avant de rédiger, réfléchis:
-- L article annonce un combat sans date précise ? -> Donne la vraie date si tu la connais.
-- L article parle de boxeurs sans leur bilan ? -> Complete avec leurs vrais records (ex: 23-0 avec 20 KO).
-- L article mentionne un lieu vague ? -> Précise la salle et la ville officielles.
-- L article présente des champions partiellement ? -> Complete la liste complète pour ces catégories.
-- L article dit "nous vous informerons" ou "à confirmer" ? -> Ne répète JAMAIS ces formules, donne les vraies infos.
-- Des infos manquent dans la source ? -> Enrichis avec tes connaissances officielles vérifiées.
+Avant de rédiger, vérifie et adapte obligatoirement:
+- HORAIRES: l article donne un horaire US (ET/PT) ou UK (GMT/BST) ? -> Convertis en heure de Paris (CET hiver UTC+1, CEST été UTC+2). Toujours préciser "heure de Paris".
+- CHAÎNES TV: l article cite ESPN, Sky Sports, BT Sport, Showtime, HBO, DAZN US, TNT Sports ? -> Remplace par l équivalent français: Canal+ Sport, RMC Sport 1/2, DAZN France, beIN Sports 1/2, L Equipe TV, TF1, France 2. Si tu ne connais pas la diffusion française exacte, écris "diffusion en France à confirmer".
+- BILANS BOXEURS: pas de bilan dans la source ? -> Complete avec les vrais records.
+- DATES: donne la date officielle si connue, jamais "à confirmer" si tu la connais.
+- LIEUX: précise la salle et la ville si connues.
+
+CHAÎNES FRANÇAISES DE RÉFÉRENCE POUR LA BOXE:
+- Canal+ Sport: grands combats mondiaux, soirées Matchroom, Top Rank
+- RMC Sport 1/2: UFC, combats MMA, certains galas boxe
+- DAZN France: Matchroom Boxing, Golden Boy
+- beIN Sports 1/2: combats internationaux
+- L Equipe TV: galas français, boxe française
+- TF1 / France 2: uniquement très grands événements (rare)
 
 ETAPE 2 - REDACTION EN FRANCAIS:
 Réponds UNIQUEMENT en JSON valide (sans apostrophe dans les valeurs):
 {
-  "titre": "titre accrocheur français max 10 mots avec les vraies infos",
+  "titre": "titre accrocheur français max 10 mots",
   "categorie": "RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS",
-  "resume": "1 phrase factuelle et percutante max 15 mots",
-  "contenu": "article 250 mots, 2 paragraphes séparés par ###. Para1: tous les faits concrets avec dates, lieux, bilans (120 mots). Para2: contexte, enjeux et analyse (130 mots). JAMAIS de phrases vagues comme a confirmer ou nous vous dirons.",
+  "resume": "1 phrase factuelle et percutante max 15 mots avec horaire français si pertinent",
+  "contenu": "article 250 mots, 2 paragraphes séparés par ###. Para1: faits concrets avec date, horaire EN HEURE DE PARIS, chaîne EN FRANCE, lieu (120 mots). Para2: contexte, bilans des boxeurs, enjeux (130 mots). JAMAIS de phrases vagues.",
   "sport": "boxing|mma|kickboxing|muaythai",
   "combats": [],
   "champions": []
 }
 
 Pour combats (si pertinent):
-[{"boxeur1":"Nom (bilan réel)","boxeur2":"Nom (bilan réel)","date":"date officielle","lieu":"Salle, Ville, Pays","titre":"Organisation + Catégorie","diffusion":"Chaîne officielle"}]
+[{"boxeur1":"Nom (bilan réel)","boxeur2":"Nom (bilan réel)","date":"date officielle","lieu":"Salle, Ville, Pays","horaire_france":"HHhMM heure de Paris","titre":"Organisation + Catégorie","diffusion":"chaîne française ou diffusion France à confirmer"}]
 
 Pour champions (si pertinent):
 [{"rang":"1","nom":"Prénom Nom","categorie":"Catégorie de poids","organisation":"WBC|WBA|WBO|IBF|IBO","bilan":"X-Y-Z","pays":"Pays","statut":"Champion|Interim|Vacant"}]`,
@@ -239,15 +246,20 @@ Pour champions (si pertinent):
   }
 }
 
-// Fallback Gemini si pas de clé OpenAI
+// ── Fallback Gemini si pas de clé OpenAI ─────────────────────────────────────
 async function translateWithGemini(article) {
   const key = GEMINI_KEY();
   if (!key) return null;
 
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
-  const prompt = `Tu es redacteur KO MAG. Traduis et resume en francais cet article de sports de combat.
-Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
-JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"article enrichi avec vraies dates/bilans/lieux si l article est vague###paragraphe2","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","titre":"org+cat","diffusion":"chaine"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]} — Enrichis avec tes vraies connaissances, ne dis jamais "a confirmer" si tu connais la reponse`;
+  const prompt = `Tu es redacteur KO MAG, magazine FRANÇAIS de sports de combat. Public exclusivement français.
+Traduis et adapte pour la France cet article: Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
+
+ADAPTATION OBLIGATOIRE:
+- Horaires -> convertis en heure de Paris (CET/CEST)
+- Chaines TV -> remplace ESPN/Sky/BT Sport par Canal+ Sport, RMC Sport, DAZN France, beIN Sports selon le combat. Si inconnu: "diffusion France a confirmer"
+
+JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"faits avec horaire heure de Paris et chaine française###contexte et bilans boxeurs","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","horaire_france":"HHhMM heure de Paris","titre":"org+cat","diffusion":"chaine française"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]}`;
 
   for (const model of MODELS) {
     try {
@@ -259,6 +271,7 @@ JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTE
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.6, maxOutputTokens: 900, responseMimeType: 'application/json' },
+            systemInstruction: { parts: [{ text: 'Tu es redacteur pour un magazine FRANÇAIS. Horaires en heure de Paris, chaines TV françaises. JSON valide, pas apostrophe.' }] }
           })
         }
       );
@@ -296,7 +309,7 @@ let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-if (!setCors(req, res)) return;
+  if (!setCors(req, res)) return;
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();
