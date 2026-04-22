@@ -1,6 +1,8 @@
 // api/scraper.js — Scrape les 4 sites boxe + résumé Gemini pour KO MAG
 // Extrait la vidéo YouTube via RSS, page HTML, et recherche YouTube RSS
 
+import { setCors } from './_cors.js'; // ← MODIFIÉ
+
 const GEMINI_KEY = () => process.env.GEMINI_API_KEY;
 
 // Sources directes (WordPress → RSS fiable)
@@ -47,24 +49,15 @@ function isBoxingArticle(title, desc) {
 function extractYoutubeId(text) {
   if (!text) return null;
   const patterns = [
-    // Embed iframe
     /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
-    // Watch URL
     /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-    // URL courte
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    // JSON videoId
-    /"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
-    // data-videoid attribut HTML
-    /data-videoid=["']([a-zA-Z0-9_-]{11})["']/,
-    // WordPress block embed
-    /wp-block-embed[^"]*"[^>]*>\s*(?:[\s\S]*?)youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-    // src avec youtube
-    /src=["'][^"']*youtube\.com\/embed\/([a-zA-Z0-9_-]{11})[^"']*["']/,
-    // ytplayer
-    /"video_id"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
-    // URL dans attributs divers
-    /youtube\.com[^"'\s]*[?&]v=([a-zA-Z0-9_-]{11})/,
+    /\"videoId\"\s*:\s*\"([a-zA-Z0-9_-]{11})\"/,
+    /data-videoid=[\"']([a-zA-Z0-9_-]{11})[\"']/,
+    /wp-block-embed[^\"]*\"[^>]*>\s*(?:[\s\S]*?)youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
+    /src=[\"'][^\"']*youtube\.com\/embed\/([a-zA-Z0-9_-]{11})[^\"']*[\"']/,
+    /\"video_id\"\s*:\s*\"([a-zA-Z0-9_-]{11})\"/,
+    /youtube\.com[^\"'\s]*[?&]v=([a-zA-Z0-9_-]{11})/,
   ];
   for (const re of patterns) {
     const m = text.match(re);
@@ -73,7 +66,7 @@ function extractYoutubeId(text) {
   return null;
 }
 
-// ── Détection des mauvaises images (logo Google, placeholders...) ────────────
+// ── Détection des mauvaises images ──────────────────────────────────────────
 const BAD_IMG_DOMAINS = [
   'news.google.com', 'gstatic.com', 'google.com/images',
   'placeholder', 'no-image', 'default', 'noimage', 'logo', 'icon', 'favicon',
@@ -85,28 +78,22 @@ function isBadImage(url) {
   return BAD_IMG_DOMAINS.some(k => u.includes(k));
 }
 
-// ── Extraire l'URL réelle depuis un lien Google News (qui redirige) ──────────
-// Google News encode l'URL réelle en base64 dans le lien
 function extractRealUrlFromGoogleNews(googleUrl) {
   if (!googleUrl || !googleUrl.includes('news.google.com')) return googleUrl;
-  // Format: https://news.google.com/rss/articles/CBMi... — l'URL réelle est dans le HTML de la page
-  // On laisse fetch() suivre la redirection HTTP naturellement
   return googleUrl;
 }
 
 function extractOgImage(html) {
   if (!html) return null;
-  const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+  const m = html.match(/<meta[^>]+property=[\"']og:image[\"'][^>]+content=[\"']([^\"']+)[\"']/i)
+    || html.match(/<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+property=[\"']og:image[\"']/i);
   const img = m ? m[1] : null;
   return img && !isBadImage(img) ? img : null;
 }
 
-// ── Fetcher la page source et extraire og:image + YouTube ───────────────────
-// Extraire le texte principal d'un article HTML (supprime nav, footer, pub, etc.)
+// ── Extraire le texte principal d'un article HTML ───────────────────────────
 function extractArticleText(html) {
   if (!html) return '';
-  // Supprimer scripts, styles, nav, footer, aside, pub
   let text = html
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -117,20 +104,18 @@ function extractArticleText(html) {
     .replace(/<figure[\s\S]*?<\/figure>/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '');
 
-  // Extraire le contenu des balises article/main en priorité
   const articleMatch = text.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
     || text.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
-    || text.match(/<div[^>]*(?:class|id)=["'][^"']*(?:content|article|post|body|story)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i);
+    || text.match(/<div[^>]*(?:class|id)=[\"'][^\"']*(?:content|article|post|body|story)[^\"']*[\"'][^>]*>([\s\S]*?)<\/div>/i);
 
   const src = articleMatch ? articleMatch[1] : text;
 
-  // Nettoyer les balises HTML restantes
   return src
     .replace(/<[^>]+>/g, ' ')
     .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim()
-    .slice(0, 3000); // max 3000 chars pour ne pas saturer le contexte
+    .slice(0, 3000);
 }
 
 async function fetchArticlePage(url) {
@@ -157,7 +142,7 @@ async function fetchArticlePage(url) {
 
       const ogImage   = extractOgImage(html);
       const youtubeId = extractYoutubeId(html);
-      const fullText  = extractArticleText(html); // ← texte complet de l'article
+      const fullText  = extractArticleText(html);
 
       return { youtubeId, ogImage, fullText };
     } catch(e) {
@@ -204,7 +189,6 @@ async function findYoutubeVideoForArticle(articleTitle) {
 
     if (allVideos.length === 0) return null;
 
-    // Scorer chaque vidéo par pertinence avec le titre de l'article
     const scored = allVideos
       .map(v => ({ ...v, score: scoreMatch(articleTitle, v.title) }))
       .filter(v => v.score > 0)
@@ -227,7 +211,7 @@ function parseRSS(xml, sourceName, sourceUrl) {
       return m ? (m[1]||m[2]||'').trim() : '';
     };
     const getAttr = (tag, attr) => {
-      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=["']([^"']+)["']`));
+      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=[\"']([^\"']+)[\"']`));
       return m ? m[1] : '';
     };
 
@@ -239,11 +223,10 @@ function parseRSS(xml, sourceName, sourceUrl) {
 
     let img = getAttr('enclosure', 'url') || getAttr('media:content', 'url') || getAttr('media:thumbnail', 'url');
     if (!img) {
-      const imgM = rawDesc.match(/<img[^>]+src=["']([^"']+)["']/);
+      const imgM = rawDesc.match(/<img[^>]+src=[\"']([^\"']+)[\"']/);
       if (imgM) img = decodeXML(imgM[1]);
     }
 
-    // YouTube directement dans le RSS (fréquent pour BoxeMag/Boxenet qui embedent des vidéos dans leurs articles)
     const ytInRss = extractYoutubeId(rawDesc) || extractYoutubeId(block);
 
     const cleanDesc = desc.replace(/<[^>]+>/g, '').replace(/\s+/g,' ').trim().slice(0, 400);
@@ -362,8 +345,7 @@ function timeAgo(str) {
 let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (!setCors(req, res, { cronOnly: true })) return; // ← MODIFIÉ
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();
@@ -375,7 +357,6 @@ export default async function handler(req, res) {
 
   console.log('[scraper] Fetch RSS sources...');
   try {
-    // 1. Lire les 4 flux RSS — essaie chaque URL de fallback
     const RSS_HEADERS = {
       'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
       'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*',
@@ -410,7 +391,6 @@ export default async function handler(req, res) {
       return [];
     }
 
-    // Fetch sources directes + Google News en parallèle
     const [directFeeds, googleFeeds] = await Promise.all([
       Promise.all(SOURCES_DIRECT.map(fetchRSS)),
       Promise.all(SOURCES_GOOGLE.map(async src => {
@@ -432,7 +412,6 @@ export default async function handler(req, res) {
     ]);
     const feeds = [...directFeeds, ...googleFeeds];
 
-    // 2. Agréger, dédupliquer, trier
     const allRaw = feeds.flat()
       .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)
       .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
@@ -441,13 +420,12 @@ export default async function handler(req, res) {
     console.log(`[scraper] ${allRaw.length} articles bruts`);
     if (allRaw.length === 0) return res.status(200).json({ articles: [], cached: false });
 
-    // 3. Fetcher chaque page source pour og:image + YouTube + texte complet
     const enrichedRaw = await Promise.all(
       allRaw.map(async article => {
         const pageData = await fetchArticlePage(article.link);
         const youtubeId = article.ytInRss || pageData.youtubeId || null;
         const img = pageData.ogImage || article.img || '';
-        const fullText = pageData.fullText || ''; // texte complet pour Gemini
+        const fullText = pageData.fullText || '';
         const hasFullText = fullText.length > 200;
         console.log(`[scraper] "${article.title.slice(0,35)}" | img:${img?'OK':'NON'} | texte:${hasFullText?fullText.length+'chars':'RSS seul'}`);
         return { ...article, youtubeId, img, fullText };
@@ -459,7 +437,6 @@ export default async function handler(req, res) {
     const withFullTxt = enrichedRaw.filter(a => a.fullText?.length > 200).length;
     console.log(`[scraper] ${withImg}/${enrichedRaw.length} img | ${withVideo}/${enrichedRaw.length} yt | ${withFullTxt}/${enrichedRaw.length} texte complet`);
 
-    // 4. Résumer avec Gemini (6 max)
     const summarized = await Promise.all(
       enrichedRaw.slice(0, 6).map(a => summarizeArticle(a).catch(() => null))
     );
