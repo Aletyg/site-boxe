@@ -1,20 +1,19 @@
 // api/news.js — Proxy NewsAPI pour KO MAG — filtre articles boxe uniquement
+import { setCors } from './_cors.js'; // ← MODIFIÉ
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (!setCors(req, res)) return; // ← MODIFIÉ
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const API_KEY = process.env.NEWS_API_KEY;
   if (!API_KEY) return res.status(500).json({ error: 'NEWS_API_KEY manquante' });
 
-  // Requêtes ciblées boxe uniquement
   const queries = [
     'boxing fight champion',
     'boxe combat titre mondial',
     'knockout boxing match'
   ];
 
-  // Mots-clés boxe pour filtrer
   const BOXING_KEYWORDS = ['box', 'fight', 'knock', 'punch', 'champion', 'bout', 
     'ring', 'heavyweight', 'welter', 'lightweight', 'middleweight', 'title', 
     'combat', 'boxe', 'pugiliste', 'usyk', 'fury', 'canelo', 'crawford', 
@@ -39,7 +38,7 @@ export default async function handler(req, res) {
       .flatMap(r => r.articles || [])
       .filter(a => {
         if (!a.title || a.title === '[Removed]' || seen.has(a.title)) return false;
-        if (!isBoxing(a)) return false; // Filtrer les non-boxe
+        if (!isBoxing(a)) return false;
         seen.add(a.title);
         return true;
       })
