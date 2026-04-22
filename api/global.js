@@ -82,8 +82,10 @@ function decodeXML(str) {
 
 // ── Extraire og:image depuis la page source ───────────────────────────────────
 const BAD_IMG_DOMAINS_G = [
-  'news.google.com','gstatic.com','google.com/images',
-  'placeholder','no-image','default','noimage','logo','icon','favicon',
+  'news.google.com','gstatic.com','google.com/images','googleusercontent.com',
+  'lh3.googleusercontent','encrypted-tbn',
+  'placeholder','no-image','noimage','default-image',
+  '/logo.','/icon.','/favicon.',
 ];
 
 function extractOgImage(html) {
