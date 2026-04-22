@@ -1227,7 +1227,6 @@ function renderNews(list) {
 // ── Sélection IA de l'article le plus important pour la Une ──────────────────
 let headlineCache = null; // éviter de rappeler si déjà choisi
 
-async // ── Calendrier des combats extrait par l'IA ───────────────────────────────────
 function renderFightsCalendar(combats) {
   if (!combats || !Array.isArray(combats) || combats.length === 0) return '';
 
