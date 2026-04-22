@@ -2,8 +2,6 @@
 // Cherche des articles sérieux du monde entier, traduit et résume en français
 // Cron : toutes les heures via vercel.json
 
-import { setCors } from './_cors.js';
-
 const OPENAI_KEY  = () => process.env.OPENAI_API_KEY;
 const GEMINI_KEY  = () => process.env.GEMINI_API_KEY;
 
@@ -20,7 +18,7 @@ const GLOBAL_SOURCES = [
   { name: 'Sky Sports Boxing',  url: 'https://www.skysports.com/boxing',   rss: 'https://www.skysports.com/rss/12040' },
   { name: 'Boxing News',        url: 'https://www.boxingnewsonline.net',   rss: 'https://www.boxingnewsonline.net/feed/' },
   { name: 'BBC Sport Boxing',   url: 'https://www.bbc.com/sport/boxing',   rss: 'https://feeds.bbci.co.uk/sport/boxing/rss.xml' },
-  // Via Google News
+  // Via Google News (sources sans RSS direct)
   { name: 'World Boxing',       url: 'https://worldboxingnews.net',        rss: 'https://news.google.com/rss/search?q=boxing+MMA+combat+world&hl=en&gl=US&ceid=US:en' },
   { name: 'UFC News',           url: 'https://www.ufc.com',                rss: 'https://news.google.com/rss/search?q=UFC+MMA+fight+results&hl=en&gl=US&ceid=US:en' },
 ];
@@ -43,7 +41,7 @@ function parseRSS(xml, sourceName, sourceUrl) {
       return m ? (m[1]||m[2]||'').trim() : '';
     };
     const getAttr = (tag, attr) => {
-      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=[\"']([^\"']+)[\"']`));
+      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=["']([^"']+)["']`));
       return m ? m[1] : '';
     };
 
@@ -52,9 +50,10 @@ function parseRSS(xml, sourceName, sourceUrl) {
     const link    = get('link') || getAttr('link', 'href');
     const pubDate = get('pubDate') || get('published') || get('dc:date') || '';
 
+    // Image : plusieurs sources possibles
     let img = getAttr('enclosure', 'url') || getAttr('media:content', 'url') || getAttr('media:thumbnail', 'url');
     if (!img) {
-      const imgM = rawDesc.match(/<img[^>]+src=[\"']([^\"']+)[\"']/);
+      const imgM = rawDesc.match(/<img[^>]+src=["']([^"']+)["']/);
       if (imgM) img = decodeXML(imgM[1]);
     }
 
@@ -89,8 +88,8 @@ const BAD_IMG_DOMAINS_G = [
 
 function extractOgImage(html) {
   if (!html) return null;
-  const m = html.match(/<meta[^>]+property=[\"']og:image[\"'][^>]+content=[\"']([^\"']+)[\"']/i)
-    || html.match(/<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+property=[\"']og:image[\"']/i);
+  const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
+    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
   const img = m ? m[1] : null;
   if (!img) return null;
   const u = img.toLowerCase();
@@ -103,7 +102,7 @@ function extractYoutubeId(html) {
     /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    /\"videoId\"\s*:\s*\"([a-zA-Z0-9_-]{11})\"/,
+    /"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
   ];
   for (const re of patterns) {
     const m = html.match(re);
@@ -112,6 +111,7 @@ function extractYoutubeId(html) {
   return null;
 }
 
+// Extraire le texte principal d'un article HTML
 function extractArticleText(html) {
   if (!html) return '';
   let text = html
@@ -168,13 +168,13 @@ async function translateWithGPT(article) {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert mondial des sports de combat (boxe, MMA, kickboxing, muay thai) et rédacteur senior pour KO MAG, magazine FRANÇAIS. Tu connais tous les boxeurs professionnels, leurs bilans exacts, les dates et lieux officiels des grands combats, les champions actuels. Tu adaptes TOUJOURS les horaires en heure de Paris et les chaînes TV pour le marché français. Tu replies UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs.',
+            content: 'Tu es un expert mondial des sports de combat (boxe, MMA, kickboxing, muay thai) et rédacteur senior pour KO MAG. Tu connais tous les boxeurs professionnels, leurs bilans exacts, les dates et lieux officiels des grands combats, les champions actuels de chaque organisation (WBC, WBA, WBO, IBF). Tu enrichis toujours les articles avec tes vraies connaissances. Tu replies UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs.',
           },
           {
             role: 'user',
-            content: `Tu es rédacteur senior pour KO MAG, magazine français de sports de combat. TON PUBLIC EST EXCLUSIVEMENT FRANÇAIS.
+            content: `Tu es un expert mondial des sports de combat et rédacteur senior pour KO MAG (magazine français).
 
-ETAPE 1 - ANALYSE ET ADAPTATION FRANCE:
+ETAPE 1 - ANALYSE ET ENRICHISSEMENT:
 Article source à traiter:
 Titre: "${article.title}"
 Source: ${article.source}
@@ -182,35 +182,28 @@ ${article.fullText && article.fullText.length > 200
   ? `Texte complet lu directement sur ${article.source} (${article.fullText.length} caractères):\n"${article.fullText}"`
   : `Description RSS (résumé partiel):\n"${article.desc}"`}
 
-Avant de rédiger, vérifie et adapte obligatoirement:
-- HORAIRES: l article donne un horaire US (ET/PT) ou UK (GMT/BST) ? -> Convertis en heure de Paris (CET hiver UTC+1, CEST été UTC+2). Toujours préciser "heure de Paris".
-- CHAÎNES TV: l article cite ESPN, Sky Sports, BT Sport, Showtime, HBO, DAZN US, TNT Sports ? -> Remplace par l équivalent français: Canal+ Sport, RMC Sport 1/2, DAZN France, beIN Sports 1/2, L Equipe TV, TF1, France 2. Si tu ne connais pas la diffusion française exacte, écris "diffusion en France à confirmer".
-- BILANS BOXEURS: pas de bilan dans la source ? -> Complete avec les vrais records.
-- DATES: donne la date officielle si connue, jamais "à confirmer" si tu la connais.
-- LIEUX: précise la salle et la ville si connues.
-
-CHAÎNES FRANÇAISES DE RÉFÉRENCE POUR LA BOXE:
-- Canal+ Sport: grands combats mondiaux, soirées Matchroom, Top Rank
-- RMC Sport 1/2: UFC, combats MMA, certains galas boxe
-- DAZN France: Matchroom Boxing, Golden Boy
-- beIN Sports 1/2: combats internationaux
-- L Equipe TV: galas français, boxe française
-- TF1 / France 2: uniquement très grands événements (rare)
+Avant de rédiger, réfléchis:
+- L article annonce un combat sans date précise ? -> Donne la vraie date si tu la connais.
+- L article parle de boxeurs sans leur bilan ? -> Complete avec leurs vrais records (ex: 23-0 avec 20 KO).
+- L article mentionne un lieu vague ? -> Précise la salle et la ville officielles.
+- L article présente des champions partiellement ? -> Complete la liste complète pour ces catégories.
+- L article dit "nous vous informerons" ou "à confirmer" ? -> Ne répète JAMAIS ces formules, donne les vraies infos.
+- Des infos manquent dans la source ? -> Enrichis avec tes connaissances officielles vérifiées.
 
 ETAPE 2 - REDACTION EN FRANCAIS:
 Réponds UNIQUEMENT en JSON valide (sans apostrophe dans les valeurs):
 {
-  "titre": "titre accrocheur français max 10 mots",
+  "titre": "titre accrocheur français max 10 mots avec les vraies infos",
   "categorie": "RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS",
-  "resume": "1 phrase factuelle et percutante max 15 mots avec horaire français si pertinent",
-  "contenu": "article 250 mots, 2 paragraphes séparés par ###. Para1: faits concrets avec date, horaire EN HEURE DE PARIS, chaîne EN FRANCE, lieu (120 mots). Para2: contexte, bilans des boxeurs, enjeux (130 mots). JAMAIS de phrases vagues.",
+  "resume": "1 phrase factuelle et percutante max 15 mots",
+  "contenu": "article 250 mots, 2 paragraphes séparés par ###. Para1: tous les faits concrets avec dates, lieux, bilans (120 mots). Para2: contexte, enjeux et analyse (130 mots). JAMAIS de phrases vagues comme a confirmer ou nous vous dirons.",
   "sport": "boxing|mma|kickboxing|muaythai",
   "combats": [],
   "champions": []
 }
 
 Pour combats (si pertinent):
-[{"boxeur1":"Nom (bilan réel)","boxeur2":"Nom (bilan réel)","date":"date officielle","lieu":"Salle, Ville, Pays","horaire_france":"HHhMM heure de Paris","titre":"Organisation + Catégorie","diffusion":"chaîne française ou diffusion France à confirmer"}]
+[{"boxeur1":"Nom (bilan réel)","boxeur2":"Nom (bilan réel)","date":"date officielle","lieu":"Salle, Ville, Pays","titre":"Organisation + Catégorie","diffusion":"Chaîne officielle"}]
 
 Pour champions (si pertinent):
 [{"rang":"1","nom":"Prénom Nom","categorie":"Catégorie de poids","organisation":"WBC|WBA|WBO|IBF|IBO","bilan":"X-Y-Z","pays":"Pays","statut":"Champion|Interim|Vacant"}]`,
@@ -246,20 +239,15 @@ Pour champions (si pertinent):
   }
 }
 
-// ── Fallback Gemini si pas de clé OpenAI ─────────────────────────────────────
+// Fallback Gemini si pas de clé OpenAI
 async function translateWithGemini(article) {
   const key = GEMINI_KEY();
   if (!key) return null;
 
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
-  const prompt = `Tu es redacteur KO MAG, magazine FRANÇAIS de sports de combat. Public exclusivement français.
-Traduis et adapte pour la France cet article: Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
-
-ADAPTATION OBLIGATOIRE:
-- Horaires -> convertis en heure de Paris (CET/CEST)
-- Chaines TV -> remplace ESPN/Sky/BT Sport par Canal+ Sport, RMC Sport, DAZN France, beIN Sports selon le combat. Si inconnu: "diffusion France a confirmer"
-
-JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"faits avec horaire heure de Paris et chaine française###contexte et bilans boxeurs","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","horaire_france":"HHhMM heure de Paris","titre":"org+cat","diffusion":"chaine française"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]}`;
+  const prompt = `Tu es redacteur KO MAG. Traduis et resume en francais cet article de sports de combat.
+Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
+JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"article enrichi avec vraies dates/bilans/lieux si l article est vague###paragraphe2","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","titre":"org+cat","diffusion":"chaine"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]} — Enrichis avec tes vraies connaissances, ne dis jamais 'a confirmer' si tu connais la reponse`;
 
   for (const model of MODELS) {
     try {
@@ -271,7 +259,6 @@ JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTE
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.6, maxOutputTokens: 900, responseMimeType: 'application/json' },
-            systemInstruction: { parts: [{ text: 'Tu es redacteur pour un magazine FRANÇAIS. Horaires en heure de Paris, chaines TV françaises. JSON valide, pas apostrophe.' }] }
           })
         }
       );
@@ -309,7 +296,8 @@ let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  if (!setCors(req, res)) return;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();
@@ -327,6 +315,7 @@ export default async function handler(req, res) {
   };
 
   try {
+    // 1. Lire tous les flux RSS en parallèle
     const feeds = await Promise.all(
       GLOBAL_SOURCES.map(async src => {
         try {
@@ -343,6 +332,7 @@ export default async function handler(req, res) {
       })
     );
 
+    // 2. Agréger, dédupliquer, trier par date, garder les 12 plus récents
     const allRaw = feeds.flat()
       .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)
       .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
@@ -353,6 +343,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ articles: [], cached: false, message: 'Aucun article trouvé' });
     }
 
+    // 3. Fetcher chaque page source pour og:image + YouTube + texte complet
     const enriched = await Promise.all(
       allRaw.map(async article => {
         const { ogImage, youtubeId, fullText } = await fetchArticlePage(article.link);
@@ -363,6 +354,7 @@ export default async function handler(req, res) {
       })
     );
 
+    // 4. Traduire + résumer avec GPT (ou Gemini en fallback), max 6 en parallèle
     const toTranslate = enriched.slice(0, 6);
     const hasOpenAI = !!OPENAI_KEY();
     console.log(`[global] Traduction via ${hasOpenAI ? 'OpenAI GPT-4o-mini' : 'Gemini (fallback)'}...`);
