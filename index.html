@@ -440,7 +440,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 
 <header>
   <div class="header-top">
-    <a href="#" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
+    <a href="/" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
     <nav>
       <a href="#actualites" class="active">Actualités</a>
       <a href="/archives" onclick="openArchives()">Archives</a>
@@ -1320,25 +1320,60 @@ function renderChampionsTable(champions) {
 
 async function pickHeadline(arts) {
   if (!arts || arts.length === 0) return 0;
-  // Si déjà un cache récent (< 1h), on réutilise
-  if (headlineCache && headlineCache.at && Date.now() - headlineCache.at < 3600000) {
-    return headlineCache.index;
+
+  // Cache 3h côté client
+  if (headlineCache && headlineCache.at && Date.now() - headlineCache.at < 3 * 3600000) {
+    // Vérifier que l'article caché est toujours dans la liste
+    const stillPresent = arts.findIndex(a => a.titre === headlineCache.titre);
+    if (stillPresent >= 0) return stillPresent;
   }
+
   try {
+    // Enrichir avec les archives des 3 derniers jours pour donner plus de contexte à Gemini
+    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+    let candidates = [...arts];
+    try {
+      const archRaw = localStorage.getItem('komag_archives');
+      if (archRaw) {
+        const arch = JSON.parse(archRaw);
+        const recent3days = arch.filter(a => a._savedAt && Date.now() - a._savedAt < THREE_DAYS);
+        // Ajouter les articles des archives récents non présents dans arts
+        for (const a of recent3days) {
+          if (!candidates.some(c => c.titre === a.titre)) {
+            candidates.push(a);
+          }
+        }
+      }
+    } catch(e) {}
+
+    // Trier par fraîcheur
+    candidates = candidates.sort((a, b) => {
+      const ta = a._savedAt || 0, tb = b._savedAt || 0;
+      return tb - ta;
+    }).slice(0, 15);
+
     const r = await fetch('/api/headline', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ articles: arts.slice(0, 12) }),
-      signal: AbortSignal.timeout(15000),
+      body: JSON.stringify({ articles: candidates }),
+      signal: AbortSignal.timeout(18000),
     });
     if (!r.ok) return 0;
     const d = await r.json();
-    const idx = d.headline?.index ?? 0;
-    headlineCache = { index: idx, at: Date.now() };
-    console.info(`[KO MAG] Une choisie par IA : [${idx}] "${arts[idx]?.titre}" — ${d.headline?.raison || ''}`);
-    return idx;
+    const chosenArticle = d.headline?.article;
+    if (!chosenArticle) return 0;
+
+    // Trouver l'index dans arts (pas dans candidates)
+    const idx = arts.findIndex(a => a.titre === chosenArticle.titre);
+    const finalIdx = idx >= 0 ? idx : 0;
+
+    headlineCache = { index: finalIdx, titre: arts[finalIdx]?.titre, at: Date.now() };
+    console.info(`[KO MAG] 🥊 Une IA : "${arts[finalIdx]?.titre}" — ${d.headline?.raison || ''} (impact: ${d.headline?.impact || '?'})`);
+    return finalIdx;
+
   } catch(e) {
-    return 0; // fallback silencieux
+    console.warn('[KO MAG] pickHeadline error:', e.message);
+    return 0;
   }
 }
 
