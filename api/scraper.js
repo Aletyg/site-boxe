@@ -23,25 +23,8 @@ const SOURCES_DIRECT = [
   },
 ];
 
-const SOURCES_GOOGLE = [
-  // Backup Google News pour les sources françaises si RSS direct échoue
-  {
-    name: 'BoxeMag',
-    url: 'https://boxemag.ouest-france.fr',
-    rss: 'https://news.google.com/rss/search?q=site:boxemag.ouest-france.fr&hl=fr&gl=FR&ceid=FR:fr',
-  },
-  {
-    name: 'Boxenet',
-    url: 'https://www.boxenet.fr',
-    rss: 'https://news.google.com/rss/search?q=site:boxenet.fr+boxe&hl=fr&gl=FR&ceid=FR:fr',
-  },
-  // Sources françaises supplémentaires
-  {
-    name: 'Boxe Actualite',
-    url: 'https://www.boxe-actualite.com',
-    rss: 'https://news.google.com/rss/search?q=boxe+combat+france+actualite&hl=fr&gl=FR&ceid=FR:fr',
-  },
-];
+const SOURCES_GOOGLE = [];
+// Note: Google News retiré car les articles n'ont pas d'image propre (logo Google)
 
 // Chaînes YouTube boxing de référence pour la recherche de vidéo
 const BOXING_YT_CHANNELS = [
@@ -93,8 +76,13 @@ function extractYoutubeId(text) {
 
 // ── Détection des mauvaises images (logo Google, placeholders...) ────────────
 const BAD_IMG_DOMAINS = [
-  'news.google.com', 'gstatic.com', 'google.com/images',
-  'placeholder', 'no-image', 'default', 'noimage', 'logo', 'icon', 'favicon',
+  // Google — toutes les variantes
+  'news.google.com', 'gstatic.com', 'google.com/images', 'googleusercontent.com',
+  'lh3.googleusercontent', 'encrypted-tbn0', 'encrypted-tbn',
+  // Placeholders génériques
+  'placeholder', 'no-image', 'noimage', 'default-image', 'no_image',
+  // Logos et icônes
+  '/logo.', '/icon.', '/favicon.',
 ];
 
 function isBadImage(url) {
