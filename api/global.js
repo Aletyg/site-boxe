@@ -111,6 +111,22 @@ function extractYoutubeId(html) {
   return null;
 }
 
+// Extraire le texte principal d'un article HTML
+function extractArticleText(html) {
+  if (!html) return '';
+  let text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+    .replace(/<aside[\s\S]*?<\/aside>/gi, '')
+    .replace(/<header[\s\S]*?<\/header>/gi, '');
+  const articleMatch = text.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
+    || text.match(/<main[^>]*>([\s\S]*?)<\/main>/i);
+  const src = articleMatch ? articleMatch[1] : text;
+  return src.replace(/<[^>]+>/g, ' ').replace(/\s{2,}/g, ' ').trim().slice(0, 3000);
+}
+
 async function fetchArticlePage(url) {
   try {
     const r = await fetch(url, {
@@ -121,11 +137,15 @@ async function fetchArticlePage(url) {
       },
       signal: AbortSignal.timeout(8000),
     });
-    if (!r.ok || r.status === 403) return { ogImage: null, youtubeId: null };
+    if (!r.ok || r.status === 403) return { ogImage: null, youtubeId: null, fullText: '' };
     const html = await r.text();
-    return { ogImage: extractOgImage(html), youtubeId: extractYoutubeId(html) };
+    return {
+      ogImage: extractOgImage(html),
+      youtubeId: extractYoutubeId(html),
+      fullText: extractArticleText(html),
+    };
   } catch(e) {
-    return { ogImage: null, youtubeId: null };
+    return { ogImage: null, youtubeId: null, fullText: '' };
   }
 }
 
@@ -143,29 +163,50 @@ async function translateWithGPT(article) {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        max_tokens: 900,
-        temperature: 0.6,
+        max_tokens: 1400,
+        temperature: 0.3,
         messages: [
           {
             role: 'system',
-            content: 'Tu es rédacteur senior pour KO MAG, magazine français de sports de combat. Tu traduis et résumes des articles anglophones en français professionnel. Tu réponds UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs (remplace par des guillemets ou supprime).',
+            content: 'Tu es un expert mondial des sports de combat (boxe, MMA, kickboxing, muay thai) et rédacteur senior pour KO MAG. Tu connais tous les boxeurs professionnels, leurs bilans exacts, les dates et lieux officiels des grands combats, les champions actuels de chaque organisation (WBC, WBA, WBO, IBF). Tu enrichis toujours les articles avec tes vraies connaissances. Tu replies UNIQUEMENT en JSON valide, sans apostrophe dans les valeurs.',
           },
           {
             role: 'user',
-            content: `Traduis et résume cet article de sports de combat en français professionnel.
+            content: `Tu es un expert mondial des sports de combat et rédacteur senior pour KO MAG (magazine français).
 
-Titre original: "${article.title}"
-Source: ${article.source} (${article.sourceUrl})
-Contenu: "${article.desc}"
+ETAPE 1 - ANALYSE ET ENRICHISSEMENT:
+Article source à traiter:
+Titre: "${article.title}"
+Source: ${article.source}
+${article.fullText && article.fullText.length > 200
+  ? `Texte complet lu directement sur ${article.source} (${article.fullText.length} caractères):\n"${article.fullText}"`
+  : `Description RSS (résumé partiel):\n"${article.desc}"`}
 
-Réponds UNIQUEMENT en JSON valide:
+Avant de rédiger, réfléchis:
+- L article annonce un combat sans date précise ? -> Donne la vraie date si tu la connais.
+- L article parle de boxeurs sans leur bilan ? -> Complete avec leurs vrais records (ex: 23-0 avec 20 KO).
+- L article mentionne un lieu vague ? -> Précise la salle et la ville officielles.
+- L article présente des champions partiellement ? -> Complete la liste complète pour ces catégories.
+- L article dit "nous vous informerons" ou "à confirmer" ? -> Ne répète JAMAIS ces formules, donne les vraies infos.
+- Des infos manquent dans la source ? -> Enrichis avec tes connaissances officielles vérifiées.
+
+ETAPE 2 - REDACTION EN FRANCAIS:
+Réponds UNIQUEMENT en JSON valide (sans apostrophe dans les valeurs):
 {
-  "titre": "titre accrocheur en français max 10 mots",
+  "titre": "titre accrocheur français max 10 mots avec les vraies infos",
   "categorie": "RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS",
-  "resume": "1 phrase impactante max 15 mots",
-  "contenu": "article 200 mots minimum 2 paragraphes séparés par ###. Para1: faits principaux avec contexte (100 mots). Para2: analyse et perspectives (100 mots)",
-  "sport": "boxing|mma|kickboxing|muaythai"
-}`,
+  "resume": "1 phrase factuelle et percutante max 15 mots",
+  "contenu": "article 250 mots, 2 paragraphes séparés par ###. Para1: tous les faits concrets avec dates, lieux, bilans (120 mots). Para2: contexte, enjeux et analyse (130 mots). JAMAIS de phrases vagues comme a confirmer ou nous vous dirons.",
+  "sport": "boxing|mma|kickboxing|muaythai",
+  "combats": [],
+  "champions": []
+}
+
+Pour combats (si pertinent):
+[{"boxeur1":"Nom (bilan réel)","boxeur2":"Nom (bilan réel)","date":"date officielle","lieu":"Salle, Ville, Pays","titre":"Organisation + Catégorie","diffusion":"Chaîne officielle"}]
+
+Pour champions (si pertinent):
+[{"rang":"1","nom":"Prénom Nom","categorie":"Catégorie de poids","organisation":"WBC|WBA|WBO|IBF|IBO","bilan":"X-Y-Z","pays":"Pays","statut":"Champion|Interim|Vacant"}]`,
           },
         ],
       }),
@@ -206,7 +247,7 @@ async function translateWithGemini(article) {
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
   const prompt = `Tu es redacteur KO MAG. Traduis et resume en francais cet article de sports de combat.
 Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
-JSON valide uniquement (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"...###...","sport":"boxing|mma|kickboxing|muaythai"}`;
+JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"article enrichi avec vraies dates/bilans/lieux si l article est vague###paragraphe2","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","titre":"org+cat","diffusion":"chaine"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]} — Enrichis avec tes vraies connaissances, ne dis jamais 'a confirmer' si tu connais la reponse`;
 
   for (const model of MODELS) {
     try {
@@ -302,13 +343,14 @@ export default async function handler(req, res) {
       return res.status(200).json({ articles: [], cached: false, message: 'Aucun article trouvé' });
     }
 
-    // 3. Fetcher chaque page source pour og:image + YouTube
+    // 3. Fetcher chaque page source pour og:image + YouTube + texte complet
     const enriched = await Promise.all(
       allRaw.map(async article => {
-        const { ogImage, youtubeId } = await fetchArticlePage(article.link);
+        const { ogImage, youtubeId, fullText } = await fetchArticlePage(article.link);
         const img = ogImage || article.img || '';
-        console.log(`[global] "${article.title.slice(0,35)}" | img:${img?'OK':'AUCUNE'} | src:${article.source}`);
-        return { ...article, img, youtubeId };
+        const hasText = fullText && fullText.length > 200;
+        console.log(`[global] "${article.title.slice(0,35)}" | img:${img?'OK':'NON'} | texte:${hasText?fullText.length+'ch':'RSS'}`);
+        return { ...article, img, youtubeId, fullText: fullText || '' };
       })
     );
 
