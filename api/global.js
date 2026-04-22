@@ -296,7 +296,7 @@ let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  if (!setCors(req, res, { cronOnly: true })) return; // ← MODIFIÉ
+if (!setCors(req, res)) return;
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();
