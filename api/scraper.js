@@ -103,11 +103,39 @@ function extractOgImage(html) {
 }
 
 // ── Fetcher la page source et extraire og:image + YouTube ───────────────────
+// Extraire le texte principal d'un article HTML (supprime nav, footer, pub, etc.)
+function extractArticleText(html) {
+  if (!html) return '';
+  // Supprimer scripts, styles, nav, footer, aside, pub
+  let text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<nav[\s\S]*?<\/nav>/gi, '')
+    .replace(/<footer[\s\S]*?<\/footer>/gi, '')
+    .replace(/<aside[\s\S]*?<\/aside>/gi, '')
+    .replace(/<header[\s\S]*?<\/header>/gi, '')
+    .replace(/<figure[\s\S]*?<\/figure>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '');
+
+  // Extraire le contenu des balises article/main en priorité
+  const articleMatch = text.match(/<article[^>]*>([\s\S]*?)<\/article>/i)
+    || text.match(/<main[^>]*>([\s\S]*?)<\/main>/i)
+    || text.match(/<div[^>]*(?:class|id)=["'][^"']*(?:content|article|post|body|story)[^"']*["'][^>]*>([\s\S]*?)<\/div>/i);
+
+  const src = articleMatch ? articleMatch[1] : text;
+
+  // Nettoyer les balises HTML restantes
+  return src
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/&#\d+;/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+    .slice(0, 3000); // max 3000 chars pour ne pas saturer le contexte
+}
+
 async function fetchArticlePage(url) {
   const agents = [
-    // Agent navigateur classique — le plus efficace sur la plupart des sites
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-    // Googlebot — utile pour les sites qui bloquent les bots inconnus
     'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
   ];
 
@@ -120,7 +148,6 @@ async function fetchArticlePage(url) {
           'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
           'Cache-Control': 'no-cache',
         },
-        // Suivre les redirections automatiquement (important pour Google News)
         redirect: 'follow',
         signal: AbortSignal.timeout(10000),
       });
@@ -128,19 +155,16 @@ async function fetchArticlePage(url) {
       const html = await r.text();
       if (html.length < 500) continue;
 
-      const ogImage  = extractOgImage(html);   // null si logo Google ou placeholder
+      const ogImage   = extractOgImage(html);
       const youtubeId = extractYoutubeId(html);
+      const fullText  = extractArticleText(html); // ← texte complet de l'article
 
-      // Si on a une bonne image, on s'arrête là
-      if (ogImage || youtubeId) {
-        return { youtubeId, ogImage };
-      }
-      // Sinon essayer le prochain User-Agent
+      return { youtubeId, ogImage, fullText };
     } catch(e) {
       continue;
     }
   }
-  return { youtubeId: null, ogImage: null };
+  return { youtubeId: null, ogImage: null, fullText: '' };
 }
 
 // ── Recherche YouTube via RSS des chaînes de référence ───────────────────────
@@ -251,27 +275,45 @@ async function summarizeArticle(article) {
   if (!key) return null;
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
-  const prompt = `Tu es redacteur senior de KO MAG, magazine de sports de combat.
-Resume et enrichis cet article en francais professionnel.
+  const today = new Date().toLocaleDateString("fr-FR", {day:"numeric",month:"long",year:"numeric"});
+  const hasFullText = article.fullText && article.fullText.length > 200;
+  const sourceContent = hasFullText
+    ? `Texte complet de l article (${article.fullText.length} caractères lus directement sur le site):\n"${article.fullText}"`
+    : `Description RSS (résumé partiel):\n"${article.desc}"`;
 
-Titre original: "${article.title}"
+  const prompt = `Tu es redacteur senior expert en sports de combat pour KO MAG. Date du jour: ${today}.
+
+ETAPE 1 - ANALYSE (reflechis avant de rediger):
+Lis cet article source attentivement:
+Titre: "${article.title}"
 Source: ${article.source}
-Description: "${article.desc}"
+${sourceContent}
 
-Reponds UNIQUEMENT en JSON valide (remplace les apostrophes par des guillemets ou supprime-les):
+Pose-toi ces questions:
+- L article dit "nous vous dirons quand" ou "date a confirmer" ? -> Si tu connais la vraie date, donne-la.
+- L article parle d un combat sans donner le lieu ? -> Si tu connais le lieu officiel, complete.
+- L article mentionne des boxeurs sans donner leur bilan ? -> Complete avec leurs vrais records.
+- L article annonce un combat sans dire la diffusion ? -> Si tu sais sur quelle chaine, precise.
+- L article presente des champions de facon incomplete ? -> Complete avec tous les champions que tu connais pour ces categories.
+- L article contient des informations vagues ou incompletes ? -> Enrichis avec tes connaissances officielles.
+
+ETAPE 2 - REDACTION:
+Reponds UNIQUEMENT en JSON valide (pas apostrophe dans les valeurs):
 {
-  "titre": "...",
+  "titre": "titre accrocheur max 10 mots",
   "categorie": "RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS",
-  "resume": "...",
-  "contenu": "...",
-  "sport": "boxing|mma|kickboxing|muaythai"
+  "resume": "1 phrase impactante max 15 mots avec les vraies infos",
+  "contenu": "article enrichi 200 mots, 2 paragraphes separes par ###. NE PAS ecrire nous vous dirons ou date a confirmer - donner les vraies infos si tu les connais. Etre factuel et precis.",
+  "sport": "boxing|mma|kickboxing|muaythai",
+  "combats": [],
+  "champions": []
 }
 
-CONSIGNES:
-- titre: accrocheur en francais, max 10 mots
-- resume: 1 phrase impactante max 15 mots
-- contenu: 150-200 mots, 2 paragraphes separes par ###
-- Pas apostrophe dans les valeurs JSON`;
+Pour combats - inclure si pertinent:
+[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle ou TBD si vraiment inconnue","lieu":"salle, ville, pays","titre":"organisation + categorie","diffusion":"chaine officielle"}]
+
+Pour champions - inclure si pertinent:
+[{"rang":"1","nom":"Prenom Nom","categorie":"categorie de poids","organisation":"WBC|WBA|WBO|IBF|IBO","bilan":"X-Y-Z","pays":"pays","statut":"Champion|Interim|Vacant"}]`;
 
   for (const model of MODELS) {
     try {
@@ -282,8 +324,8 @@ CONSIGNES:
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.6, maxOutputTokens: 800, responseMimeType: 'application/json' },
-            systemInstruction: { parts: [{ text: 'Redacteur KO MAG. JSON valide uniquement. Pas apostrophe dans valeurs.' }] }
+            generationConfig: { temperature: 0.4, maxOutputTokens: 1400, responseMimeType: 'application/json' },
+            systemInstruction: { parts: [{ text: 'Tu es un expert mondial des sports de combat. Tu connais tous les boxeurs, leurs bilans, les dates et lieux officiels des combats, les champions de chaque organisation. Tu enrichis toujours les articles avec tes vraies connaissances. JSON valide uniquement. Pas apostrophe.' }] }
           })
         }
       );
@@ -399,22 +441,23 @@ export default async function handler(req, res) {
     console.log(`[scraper] ${allRaw.length} articles bruts`);
     if (allRaw.length === 0) return res.status(200).json({ articles: [], cached: false });
 
-    // 3. Fetcher chaque page source pour og:image + YouTube intégré dans la page
-    // youtubeId = UNIQUEMENT pour l'embed dans la modal (pas pour l'image de carte)
-    // og:image = image officielle du site (BoxeMag y met déjà la miniature YouTube)
+    // 3. Fetcher chaque page source pour og:image + YouTube + texte complet
     const enrichedRaw = await Promise.all(
       allRaw.map(async article => {
         const pageData = await fetchArticlePage(article.link);
         const youtubeId = article.ytInRss || pageData.youtubeId || null;
         const img = pageData.ogImage || article.img || '';
-        console.log(`[scraper] "${article.title.slice(0,35)}" | img:${img?'OK':'AUCUNE'} | yt:${youtubeId?'OUI':'NON'}`);
-        return { ...article, youtubeId, img };
+        const fullText = pageData.fullText || ''; // texte complet pour Gemini
+        const hasFullText = fullText.length > 200;
+        console.log(`[scraper] "${article.title.slice(0,35)}" | img:${img?'OK':'NON'} | texte:${hasFullText?fullText.length+'chars':'RSS seul'}`);
+        return { ...article, youtubeId, img, fullText };
       })
     );
 
-    const withVideo = enrichedRaw.filter(a => a.youtubeId).length;
-    const withImg   = enrichedRaw.filter(a => a.img).length;
-    console.log(`[scraper] ${withImg}/${enrichedRaw.length} avec image | ${withVideo}/${enrichedRaw.length} avec vidéo`);
+    const withVideo   = enrichedRaw.filter(a => a.youtubeId).length;
+    const withImg     = enrichedRaw.filter(a => a.img).length;
+    const withFullTxt = enrichedRaw.filter(a => a.fullText?.length > 200).length;
+    console.log(`[scraper] ${withImg}/${enrichedRaw.length} img | ${withVideo}/${enrichedRaw.length} yt | ${withFullTxt}/${enrichedRaw.length} texte complet`);
 
     // 4. Résumer avec Gemini (6 max)
     const summarized = await Promise.all(
