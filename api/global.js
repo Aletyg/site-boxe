@@ -2,6 +2,8 @@
 // Cherche des articles sérieux du monde entier, traduit et résume en français
 // Cron : toutes les heures via vercel.json
 
+import { setCors } from './_cors.js'; // ← MODIFIÉ
+
 const OPENAI_KEY  = () => process.env.OPENAI_API_KEY;
 const GEMINI_KEY  = () => process.env.GEMINI_API_KEY;
 
@@ -18,7 +20,7 @@ const GLOBAL_SOURCES = [
   { name: 'Sky Sports Boxing',  url: 'https://www.skysports.com/boxing',   rss: 'https://www.skysports.com/rss/12040' },
   { name: 'Boxing News',        url: 'https://www.boxingnewsonline.net',   rss: 'https://www.boxingnewsonline.net/feed/' },
   { name: 'BBC Sport Boxing',   url: 'https://www.bbc.com/sport/boxing',   rss: 'https://feeds.bbci.co.uk/sport/boxing/rss.xml' },
-  // Via Google News (sources sans RSS direct)
+  // Via Google News
   { name: 'World Boxing',       url: 'https://worldboxingnews.net',        rss: 'https://news.google.com/rss/search?q=boxing+MMA+combat+world&hl=en&gl=US&ceid=US:en' },
   { name: 'UFC News',           url: 'https://www.ufc.com',                rss: 'https://news.google.com/rss/search?q=UFC+MMA+fight+results&hl=en&gl=US&ceid=US:en' },
 ];
@@ -41,7 +43,7 @@ function parseRSS(xml, sourceName, sourceUrl) {
       return m ? (m[1]||m[2]||'').trim() : '';
     };
     const getAttr = (tag, attr) => {
-      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=["']([^"']+)["']`));
+      const m = block.match(new RegExp(`<${tag}[^>]*${attr}=[\"']([^\"']+)[\"']`));
       return m ? m[1] : '';
     };
 
@@ -50,10 +52,9 @@ function parseRSS(xml, sourceName, sourceUrl) {
     const link    = get('link') || getAttr('link', 'href');
     const pubDate = get('pubDate') || get('published') || get('dc:date') || '';
 
-    // Image : plusieurs sources possibles
     let img = getAttr('enclosure', 'url') || getAttr('media:content', 'url') || getAttr('media:thumbnail', 'url');
     if (!img) {
-      const imgM = rawDesc.match(/<img[^>]+src=["']([^"']+)["']/);
+      const imgM = rawDesc.match(/<img[^>]+src=[\"']([^\"']+)[\"']/);
       if (imgM) img = decodeXML(imgM[1]);
     }
 
@@ -88,8 +89,8 @@ const BAD_IMG_DOMAINS_G = [
 
 function extractOgImage(html) {
   if (!html) return null;
-  const m = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i)
-    || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i);
+  const m = html.match(/<meta[^>]+property=[\"']og:image[\"'][^>]+content=[\"']([^\"']+)[\"']/i)
+    || html.match(/<meta[^>]+content=[\"']([^\"']+)[\"'][^>]+property=[\"']og:image[\"']/i);
   const img = m ? m[1] : null;
   if (!img) return null;
   const u = img.toLowerCase();
@@ -102,7 +103,7 @@ function extractYoutubeId(html) {
     /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
     /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
     /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    /"videoId"\s*:\s*"([a-zA-Z0-9_-]{11})"/,
+    /\"videoId\"\s*:\s*\"([a-zA-Z0-9_-]{11})\"/,
   ];
   for (const re of patterns) {
     const m = html.match(re);
@@ -111,7 +112,6 @@ function extractYoutubeId(html) {
   return null;
 }
 
-// Extraire le texte principal d'un article HTML
 function extractArticleText(html) {
   if (!html) return '';
   let text = html
@@ -247,7 +247,7 @@ async function translateWithGemini(article) {
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
   const prompt = `Tu es redacteur KO MAG. Traduis et resume en francais cet article de sports de combat.
 Titre: "${article.title}" | Source: ${article.source} | Contenu: "${article.desc}"
-JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"article enrichi avec vraies dates/bilans/lieux si l article est vague###paragraphe2","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","titre":"org+cat","diffusion":"chaine"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]} — Enrichis avec tes vraies connaissances, ne dis jamais 'a confirmer' si tu connais la reponse`;
+JSON valide (pas apostrophe): {"titre":"...","categorie":"RESULTATS|ANALYSE|INTERVIEW|ENTRAINEMENT|EVENEMENT|TRANSFERTS","resume":"...","contenu":"article enrichi avec vraies dates/bilans/lieux si l article est vague###paragraphe2","sport":"boxing|mma|kickboxing|muaythai","combats":[{"boxeur1":"Nom (bilan)","boxeur2":"Nom (bilan)","date":"date officielle","lieu":"salle ville","titre":"org+cat","diffusion":"chaine"}],"champions":[{"rang":"1","nom":"Nom","categorie":"cat","organisation":"WBC","bilan":"X-Y","pays":"pays","statut":"Champion"}]} — Enrichis avec tes vraies connaissances, ne dis jamais "a confirmer" si tu connais la reponse`;
 
   for (const model of MODELS) {
     try {
@@ -296,8 +296,7 @@ let cache = { articles: null, at: null, ttl: 60 * 60 * 1000 };
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (!setCors(req, res, { cronOnly: true })) return; // ← MODIFIÉ
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();
@@ -315,7 +314,6 @@ export default async function handler(req, res) {
   };
 
   try {
-    // 1. Lire tous les flux RSS en parallèle
     const feeds = await Promise.all(
       GLOBAL_SOURCES.map(async src => {
         try {
@@ -332,7 +330,6 @@ export default async function handler(req, res) {
       })
     );
 
-    // 2. Agréger, dédupliquer, trier par date, garder les 12 plus récents
     const allRaw = feeds.flat()
       .filter((a, i, arr) => arr.findIndex(b => b.title === a.title) === i)
       .sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate))
@@ -343,7 +340,6 @@ export default async function handler(req, res) {
       return res.status(200).json({ articles: [], cached: false, message: 'Aucun article trouvé' });
     }
 
-    // 3. Fetcher chaque page source pour og:image + YouTube + texte complet
     const enriched = await Promise.all(
       allRaw.map(async article => {
         const { ogImage, youtubeId, fullText } = await fetchArticlePage(article.link);
@@ -354,7 +350,6 @@ export default async function handler(req, res) {
       })
     );
 
-    // 4. Traduire + résumer avec GPT (ou Gemini en fallback), max 6 en parallèle
     const toTranslate = enriched.slice(0, 6);
     const hasOpenAI = !!OPENAI_KEY();
     console.log(`[global] Traduction via ${hasOpenAI ? 'OpenAI GPT-4o-mini' : 'Gemini (fallback)'}...`);
