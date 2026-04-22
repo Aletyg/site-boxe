@@ -1,8 +1,8 @@
 // api/gemini.js — Proxy Gemini pour KO MAG
+import { setCors } from './_cors.js'; // ← MODIFIÉ
+
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (!setCors(req, res)) return; // ← MODIFIÉ
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
@@ -36,7 +36,6 @@ export default async function handler(req, res) {
     }
   }
 
-  // Modèles disponibles
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-1.5-flash'];
 
   let lastError = null;
@@ -75,13 +74,12 @@ export default async function handler(req, res) {
 
       const clean = txt.replace(/```json|```/g, '').trim();
       
-      // Valider que le JSON est complet
       try {
         JSON.parse(clean);
       } catch(jsonErr) {
         lastError = 'JSON incomplet: ' + jsonErr.message;
         console.error(`Model ${model} JSON invalide:`, lastError);
-        continue; // essayer le modèle suivant
+        continue;
       }
 
       res.setHeader('Cache-Control', 's-maxage=600');
