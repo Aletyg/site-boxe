@@ -882,13 +882,34 @@ async function loadNews() {
 
     console.info(`[KO MAG] FR: ${frArticles.length} | MONDE: ${intArticles.length}`);
 
-    // Mélanger : alterner FR / MONDE pour une grille variée
-    let scraped = [];
-    const maxLen = Math.max(frArticles.length, intArticles.length);
-    for (let i = 0; i < maxLen; i++) {
-      if (frArticles[i])  scraped.push(frArticles[i]);
-      if (intArticles[i]) scraped.push(intArticles[i]);
+    // Fusionner toutes les sources, dédupliquer par titre, trier par date
+    const allArticles = [...frArticles, ...intArticles];
+
+    // Normaliser les dates pour le tri (gérer les formats variés)
+    function parseArticleDate(a) {
+      // Essayer pubDate d'abord, puis extraire depuis a.temps
+      if (a.pubDate) {
+        const d = new Date(a.pubDate);
+        if (!isNaN(d.getTime())) return d.getTime();
+      }
+      // Extraire depuis "Il y a Xh" ou "Il y a Xmin"
+      if (a.temps) {
+        const now = Date.now();
+        const h = a.temps.match(/(\d+)h/);
+        const m = a.temps.match(/(\d+)min/);
+        const j = a.temps.match(/(\d+)j/);
+        if (h) return now - parseInt(h[1]) * 3600000;
+        if (m) return now - parseInt(m[1]) * 60000;
+        if (j) return now - parseInt(j[1]) * 86400000;
+      }
+      return 0;
     }
+
+    let scraped = allArticles
+      // Dédupliquer par titre
+      .filter((a, i, arr) => arr.findIndex(b => b.titre === a.titre) === i)
+      // Trier du plus récent au plus ancien
+      .sort((a, b) => parseArticleDate(b) - parseArticleDate(a));
 
     // ÉTAPE 2 — Fallback sur /api/articles si tout est vide
     if (scraped.length === 0) {
@@ -903,12 +924,7 @@ async function loadNews() {
     }
 
     if (scraped.length > 0) {
-      // Trier par date — plus récents en premier
-      articles = scraped.sort((a, b) => {
-        const da = new Date(a.pubDate || 0);
-        const db = new Date(b.pubDate || 0);
-        return db - da;
-      });
+      articles = scraped; // déjà trié par date
       renderNews(articles);
 
       // Afficher d'abord le premier article en Une (le plus récent)
