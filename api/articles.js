@@ -1,7 +1,5 @@
 // api/articles.js — Cache articles sports de combat (1h)
 // Articles longs avec retry automatique si JSON incomplet
-import { setCors } from './_cors.js'; // ← MODIFIÉ
-
 const GEMINI_KEY = () => process.env.GEMINI_API_KEY;
 const NEWS_KEY = () => process.env.NEWS_API_KEY;
 
@@ -21,6 +19,7 @@ const UNSPLASH = {
 
 const BAD_IMG = ['soccer','football','basket','tennis','golf','rugby','swim','cricket','baseball','hockey','nfl','nba','volleyball'];
 
+// ── Wikimedia Commons : photo réelle du boxeur par nom ──────────────────────
 const wikiImgCache = {};
 const BOXER_NAMES = ['Usyk','Fury','Canelo','Crawford','Davis','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Tank','Beterbiev','Bivol','Inoue','Navarrete','Estrada'];
 
@@ -77,6 +76,7 @@ function detectBoxerName(titre) {
 }
 
 function getBestImg(titre, categorie, sport, originalImg) {
+  // Garder l'image originale si elle semble pertinente
   if (originalImg && originalImg.length > 10 && !BAD_IMG.some(k => originalImg.toLowerCase().includes(k))) {
     return originalImg;
   }
@@ -116,6 +116,7 @@ async function fetchNews() {
   } catch(e) { return []; }
 }
 
+// Appel Gemini avec retry si JSON incomplet
 async function callGemini(prompt, maxRetries = 2) {
   const key = GEMINI_KEY();
   const MODELS = ['gemini-2.5-flash', 'gemini-2.5-flash-lite'];
@@ -132,7 +133,7 @@ async function callGemini(prompt, maxRetries = 2) {
               contents: [{parts:[{text: attempt > 0 ? prompt + '\n\nIMPORTANT: JSON doit etre COMPLET et se terminer par }]}' : prompt}]}],
               generationConfig: {
                 temperature: 0.75,
-                maxOutputTokens: 1500,
+                maxOutputTokens: 1500, // Plus de tokens pour articles longs
                 responseMimeType: 'application/json'
               },
               systemInstruction: {
@@ -145,21 +146,24 @@ async function callGemini(prompt, maxRetries = 2) {
         if (!r.ok) { console.error(`[${model}] HTTP ${r.status}:`, d.error?.message); continue; }
         let txt = (d.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g,'').trim();
         
+        // Tenter de réparer si JSON incomplet
         try {
           JSON.parse(txt);
         } catch(jsonErr) {
           console.warn(`[${model}] JSON incomplet (attempt ${attempt}), réparation...`);
+          // Couper à la dernière entrée complète
           const lastBrace = txt.lastIndexOf('}');
           if (lastBrace > 0) {
             txt = txt.slice(0, lastBrace + 1);
+            // Fermer les structures
             let opens = (txt.match(/\[/g)||[]).length - (txt.match(/\]/g)||[]).length;
             let openB = (txt.match(/\{/g)||[]).length - (txt.match(/\}/g)||[]).length;
             for(let i=0;i<openB;i++) txt += '}';
             for(let i=0;i<opens;i++) txt += ']';
           }
           try { JSON.parse(txt); } catch(e2) {
-            if (attempt < maxRetries) break;
-            continue;
+            if (attempt < maxRetries) break; // retry
+            continue; // prochain modèle
           }
         }
         
@@ -254,6 +258,7 @@ CONSIGNES:
     .filter(r => r?.articles?.length > 0)
     .flatMap(r => r.articles);
 
+  // Enrichissement Wikimedia Commons : photo réelle si boxeur détecté dans le titre
   const enriched = await Promise.all(rawArticles.map(async a => {
     let img = getBestImg(a.titre, a.categorie, a.sport, a.img);
     const boxerName = detectBoxerName(a.titre);
@@ -268,7 +273,8 @@ CONSIGNES:
 }
 
 export default async function handler(req, res) {
-  if (!setCors(req, res)) return; // ← MODIFIÉ
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
   const now = Date.now();

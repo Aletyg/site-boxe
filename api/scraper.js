@@ -24,7 +24,6 @@ const SOURCES_DIRECT = [
 ];
 
 const SOURCES_GOOGLE = [];
-// Note: Google News retiré car les articles n'ont pas d'image propre (logo Google)
 
 // Chaînes YouTube boxing de référence pour la recherche de vidéo
 const BOXING_YT_CHANNELS = [
@@ -76,13 +75,8 @@ function extractYoutubeId(text) {
 
 // ── Détection des mauvaises images (logo Google, placeholders...) ────────────
 const BAD_IMG_DOMAINS = [
-  // Google — toutes les variantes
-  'news.google.com', 'gstatic.com', 'google.com/images', 'googleusercontent.com',
-  'lh3.googleusercontent', 'encrypted-tbn0', 'encrypted-tbn',
-  // Placeholders génériques
-  'placeholder', 'no-image', 'noimage', 'default-image', 'no_image',
-  // Logos et icônes
-  '/logo.', '/icon.', '/favicon.',
+  'news.google.com', 'gstatic.com', 'google.com/images',
+  'placeholder', 'no-image', 'default', 'noimage', 'logo', 'icon', 'favicon',
 ];
 
 function isBadImage(url) {

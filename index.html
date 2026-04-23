@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8ZT0WBM287"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8ZT0WBM287');
+</script>
+
+<!-- Google AdSense — remplace ca-pub-XXXXXXXXXX par ton ID éditeur -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX" crossorigin="anonymous"></script>
+
 <!-- SEO PRIMAIRE -->
 <title>KO MAG — Sports de Combat en Direct | Boxe, MMA, Kick-Boxing, Muay-Thai</title>
 <meta name="description" content="KO MAG, le magazine de sports de combat de référence. Boxe, MMA, Kick-Boxing, Muay-Thai. Actualités en temps réel, résultats, classements et équipement.">
@@ -180,16 +192,6 @@ section{padding:50px 0}
 .btn-aff-out{display:block;width:100%;background:transparent;color:var(--red);text-decoration:none;text-align:center;padding:8px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;border:1px solid var(--red);transition:all .2s;margin-top:8px}
 .btn-aff-out:hover{background:var(--red);color:white}
 
-/* TIPS */
-.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.tip-card{background:var(--charcoal);border:1px solid var(--grey);padding:26px;position:relative;overflow:hidden;transition:background .25s}
-.tip-card:hover{background:var(--smoke)}
-.tip-num{font-family:'Bebas Neue',sans-serif;font-size:4rem;color:rgba(232,0,26,.12);position:absolute;top:8px;right:20px;line-height:1}
-.tip-icon{font-size:1.6rem;margin-bottom:12px}
-.tip-title{font-family:'Barlow Condensed',sans-serif;font-size:1.22rem;font-weight:700;color:var(--white);margin-bottom:10px;letter-spacing:.03em}
-.tip-body{font-size:.875rem;color:#999;line-height:1.65;margin-bottom:14px}
-.tip-tag{display:inline-flex;align-items:center;background:rgba(232,0,26,.1);border:1px solid rgba(232,0,26,.3);color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.66rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px}
-
 /* FIGHTERS */
 .fighters-section{background:var(--smoke)}
 .ranking-table{width:100%;border-collapse:collapse}
@@ -233,16 +235,11 @@ section{padding:50px 0}
 .tab-btn:hover:not(.active){color:var(--light)}
 
 /* NEWSLETTER */
-.newsletter{background:linear-gradient(135deg,var(--red) 0%,#8B0010 100%);position:relative;overflow:hidden}
-.newsletter::before{content:'KO';position:absolute;right:-20px;top:50%;transform:translateY(-50%);font-family:'Bebas Neue',sans-serif;font-size:15rem;color:rgba(255,255,255,.04);pointer-events:none}
-.newsletter-inner{display:flex;align-items:center;justify-content:space-between;gap:40px}
-.newsletter-text h2{font-size:2rem;color:white;margin-bottom:8px}
-.newsletter-text p{color:rgba(255,255,255,.75);font-size:.9rem}
-.newsletter-form{display:flex;flex-shrink:0}
-.newsletter-form input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);border-right:none;color:white;padding:11px 18px;font-family:'Barlow',sans-serif;font-size:.86rem;width:260px;outline:none}
-.newsletter-form input::placeholder{color:rgba(255,255,255,.4)}
-.newsletter-form button{background:var(--dark);color:white;border:none;padding:11px 22px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:background .2s}
-.newsletter-form button:hover{background:#111}
+
+
+
+
+
 
 /* FOOTER */
 footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26px}
@@ -307,52 +304,8 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   nav{display:none}
   .fights-grid{grid-template-columns:1fr 1fr}
   .footer-grid{grid-template-columns:1fr 1fr}
-  .newsletter-inner{flex-direction:column}
-}
-
-/* RESPONSIVE MOBILE */
-@media(max-width:640px){
-  /* Layout */
-  .news-grid{grid-template-columns:1fr}
-  .tips-grid{grid-template-columns:1fr}
-  .equip-grid{grid-template-columns:1fr}
-  .footer-grid{grid-template-columns:1fr}
-  .fights-grid{grid-template-columns:1fr}
-
-  /* Header mobile */
-  .header-top{padding:0 16px;height:54px}
-  .logo{font-size:1.8rem}
-  .header-cta{display:none}
-
-  /* Hero mobile */
-  .hero-main{padding:24px 16px 80px}
-  .hero-title{font-size:1.9rem !important}
-  .hero-excerpt{font-size:.88rem;-webkit-line-clamp:2}
-
-  /* Sections */
-  .container{padding:0 14px}
-  section{padding:32px 0}
-  .section-hd{margin-bottom:18px}
-  .section-title{font-size:1.5rem}
-
-  /* Cards */
-  .news-card-title{font-size:1rem}
-  .equip-grid{gap:12px}
-  .equip-card{padding:16px}
-
-  /* Tabs scroll horizontal */
-  .tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab-btn{white-space:nowrap;padding:8px 14px;font-size:.78rem}
-
-  /* Ticker */
-  .ticker-label{font-size:.65rem;padding:0 10px}
-
-  /* Newsletter */
-  .newsletter-form{flex-direction:column;width:100%}
-  .newsletter-form input{width:100%;border-right:1px solid rgba(255,255,255,.3);border-bottom:none}
-  .newsletter-form button{width:100%}
-  .newsletter-text h2{font-size:1.5rem}
+  
+  
 
   /* Footer */
   footer{padding:32px 0 100px}
@@ -452,30 +405,27 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 }
 @media(max-width:640px){.ptr-indicator{display:block;opacity:0}}
 .ptr-indicator.show{opacity:1}
+
+/* ADS */
+.ad-card{background:var(--charcoal);border:1px solid var(--grey);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:250px;position:relative}
+.ad-card::before{content:'PUBLICITÉ';position:absolute;top:8px;left:50%;transform:translateX(-50%);font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.25em;color:var(--muted);text-transform:uppercase}
+.ad-card ins{display:block;width:100%}
+.ad-modal{margin:20px 0;text-align:center;position:relative}
+.ad-modal::before{content:'PUBLICITÉ';display:block;font-family:'Barlow Condensed',sans-serif;font-size:.58rem;font-weight:700;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+
+.archives-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.arch-tab{background:var(--smoke);border:1px solid var(--grey);color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;padding:6px 16px;cursor:pointer;transition:all .2s}
+.arch-tab.active,.arch-tab:hover{background:var(--red);border-color:var(--red);color:white}
+.arch-empty{text-align:center;padding:60px 20px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:1rem;letter-spacing:.1em}
+.arch-count{display:inline-flex;align-items:center;background:rgba(232,0,26,.15);border:1px solid rgba(232,0,26,.3);color:var(--red);font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.15em;padding:2px 8px;margin-left:10px}
 </style>
 </head>
 <body>
 
 <div id="loader">
   <div class="loader-logo">KO <span>MAG</span></div>
-  <div class="loader-tagline">Le magazine des sports de combat</div>
   <div class="loader-bar"></div>
   <div class="loader-text" id="loader-text">Connexion aux sources d'actualités...</div>
-  <div class="loader-steps">
-    <div class="loader-step active" id="step-news">
-      <div class="loader-step-icon">📡</div>
-      <div class="loader-step-label">Actualités</div>
-    </div>
-    <div class="loader-step" id="step-articles">
-      <div class="loader-step-icon">✍️</div>
-      <div class="loader-step-label">Rédaction</div>
-    </div>
-    <div class="loader-step" id="step-ready">
-      <div class="loader-step-icon">✅</div>
-      <div class="loader-step-label">Prêt</div>
-    </div>
-  </div>
-  <div class="loader-spinner"></div>
 </div>
 
 <div class="modal-overlay" id="modal" onclick="if(event.target.id==='modal')closeModal()">
@@ -490,15 +440,15 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 
 <header>
   <div class="header-top">
-    <a href="#" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
+    <a href="/" class="logo">KO <span>MAG</span> <span class="logo-badge">LIVE</span></a>
     <nav>
       <a href="#actualites" class="active">Actualités</a>
-      <a href="#combats">Combats</a>
-      <a href="#conseils">Conseils</a>
+      <a href="/archives" onclick="openArchives()">Archives</a>
+      
       <a href="#classement">Classement</a>
       <a href="#equipement">Équipement</a>
     </nav>
-    <button class="header-cta" onclick="document.getElementById('newsletter').scrollIntoView({behavior:'smooth'})">Newsletter Gratuite</button>
+    
 
   </div>
 </header>
@@ -537,21 +487,6 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </div>
 
-<section id="combats">
-  <div class="container">
-    <div class="section-hd">
-      <h2 class="section-title">COM<span>BATS</span></h2>
-      <a href="#" class="section-link">Planning complet →</a>
-    </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchFight('upcoming',this)">À venir</button>
-      <button class="tab-btn" onclick="switchFight('results',this)">Résultats</button>
-      <button class="tab-btn" onclick="switchFight('predictions',this)">Pronostics</button>
-    </div>
-    <div class="fights-grid" id="fights-grid"></div>
-  </div>
-</section>
-
 <section id="actualites">
   <div class="container">
     <div class="section-hd">
@@ -561,7 +496,6 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           Actualiser
         </button>
-        <a href="#" class="section-link">Voir tout →</a>
       </div>
     </div>
     <div id="news-info" style="margin-bottom:14px;"></div>
@@ -571,24 +505,26 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
 
 
 
-<section id="conseils">
+<section id="archives" style="display:none">
   <div class="container">
     <div class="section-hd">
-      <h2 class="section-title">CON<span>SEILS</span></h2>
-      <button class="refresh-btn" id="tips-btn" onclick="loadTips(currentTipTab)">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        Nouveaux conseils IA
-      </button>
+      <h2 class="section-title">ARCH<span>IVES</span><span class="arch-count" id="arch-count">0</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="arch-tab active" onclick="filterArchives('all',this)">Tout</button>
+        <button class="arch-tab" onclick="filterArchives('RÉSULTATS',this)">Résultats</button>
+        <button class="arch-tab" onclick="filterArchives('ANALYSE',this)">Analyses</button>
+        <button class="arch-tab" onclick="filterArchives('INTERVIEW',this)">Interviews</button>
+        <button class="arch-tab" onclick="filterArchives('ÉVÉNEMENT',this)">Événements</button>
+        <button class="arch-tab" onclick="clearArchives()" style="margin-left:auto;background:transparent;border-color:var(--muted);color:var(--muted);">Vider</button>
+      </div>
     </div>
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTip('technique',this)">Technique</button>
-      <button class="tab-btn" onclick="switchTip('entrainement',this)">Entraînement</button>
-      <button class="tab-btn" onclick="switchTip('nutrition',this)">Nutrition</button>
-      <button class="tab-btn" onclick="switchTip('mental',this)">Mental</button>
+    <div class="news-grid" id="archives-grid">
+      <div class="arch-empty">Aucun article archivé. Les articles sont sauvegardés automatiquement à chaque actualisation.</div>
     </div>
-    <div class="tips-grid" id="tips-grid"></div>
   </div>
 </section>
+
+
 
 <section id="classement" class="fighters-section">
   <div class="container">
@@ -631,20 +567,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
   </div>
 </section>
 
-<section id="newsletter" class="newsletter">
-  <div class="container">
-    <div class="newsletter-inner">
-      <div class="newsletter-text">
-        <h2>RESTEZ AU CŒUR DU RING</h2>
-        <p>Actualités exclusives, analyses de combats, conseils pros et deals équipement — directement dans votre boîte mail.</p>
-      </div>
-      <div class="newsletter-form">
-        <input type="email" placeholder="votre@email.com" id="email-input">
-        <button onclick="subscribe()">S'abonner — Gratuit</button>
-      </div>
-    </div>
-  </div>
-</section>
+
 
 <footer>
   <div class="container">
@@ -656,7 +579,7 @@ footer{background:var(--dark);border-top:3px solid var(--red);padding:50px 0 26p
           <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">📘</a><a href="#" class="social-btn">📸</a><a href="#" class="social-btn">▶</a>
         </div>
       </div>
-      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li><a href="#combats">Combats</a></li><li><a href="#conseils">Conseils</a></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
+      <div class="footer-col"><h4>Rubriques</h4><ul><li><a href="#actualites">Actualités</a></li><li></li><li><a href="#classement">Classement</a></li><li><a href="#equipement">Équipement</a></li></ul></div>
       <div class="footer-col"><h4>Disciplines</h4><ul><li><a href="#">Boxe anglaise</a></li><li><a href="#">Boxe française</a></li><li><a href="#">MMA</a></li><li><a href="#">Kick-boxing</a></li><li><a href="#">Muay-Thai</a></li></ul></div>
       <div class="footer-col"><h4>Légal</h4><ul><li><a href="#">Mentions légales</a></li><li><a href="#">Confidentialité</a></li><li><a href="#">Politique affilié</a></li><li><a href="#">Contact</a></li></ul></div>
     </div>
@@ -726,32 +649,6 @@ const STATIC_ARTICLES = [
     contenu:"Les entraîneurs des plus grands clubs professionnels partagent leur programme type sur 8 semaines. Semaines 1-2 : construction aérobie (corde, course, shadow boxing). Semaines 3-4 : travail technique intensif sur les pattes et le sac. Semaines 5-6 : sparring progressif 4 puis 6 rounds. Semaines 7-8 : affûtage, travail de vitesse et gestion du poids.###La clé est la progression : augmenter l'intensité de 10% chaque semaine maximum pour éviter les blessures et le surmenage. Associez ce programme à une nutrition adaptée pour des résultats optimaux en 2 mois." },
 ];
 
-const STATIC_TIPS = {
-  technique:[
-    {numero:'01',emoji:'👊',titre:'Le jab parfait en 3 points',contenu:"Partez de la garde, tendez le bras complètement en faisant pivoter le poing à 90° à l'impact, puis ramenez immédiatement. Le jab doit partir et revenir sur le même trajet. Travaillez-le 100 fois chaque séance — c'est votre arme principale.",tag:'ESSENTIEL'},
-    {numero:'02',emoji:'💥',titre:'Direct du droit : la puissance vient des hanches',contenu:"Pivotez l'épaule droite vers l'avant en poussant sur la jambe arrière. Transférez le poids du pied droit vers le gauche. Cette rotation peut tripler votre puissance par rapport à un bras seul. Pratiquez devant un miroir pour corriger la mécanique.",tag:'INTERMÉDIAIRE'},
-    {numero:'03',emoji:'🔄',titre:'Le crochet : timing et précision',contenu:"Le crochet se déclenche à 90° du coude, jamais en balançant. Explosez latéralement avec la rotation de l'épaule. Combinez-le toujours après un jab (1-2-3) pour surprendre. Travaillez ce combo sur les pattes 200 fois par session.",tag:'AVANCÉ'},
-    {numero:'04',emoji:'🛡️',titre:'Défense : slip et roll',contenu:"Le slip déplace la tête de côté pour esquiver un direct. Le roll évite les crochets en baissant le buste en arc de cercle. Ces deux mouvements combinés forment la défense offensive — esquiver sans reculer, comme Muhammad Ali.",tag:'INTERMÉDIAIRE'},
-  ],
-  entrainement:[
-    {numero:'01',emoji:'⏱️',titre:'Structurer ses rounds',contenu:"Un round dure 3 minutes, 1 minute de repos. Basez tout votre entraînement sur ce rythme : 3 min d'effort intense, 1 min de récupération active. 6 à 12 rounds par session selon votre niveau pour développer l'endurance spécifique boxe.",tag:'ESSENTIEL'},
-    {numero:'02',emoji:'🏃',titre:'La corde : secret des champions',contenu:"30 minutes de corde par jour minimum. Alternez : 2 min vitesse normale, 30 sec sprint maximal. La corde améliore la coordination, le cardio et la vitesse des jambes. Floyd Mayweather en faisait 45 minutes chaque matin sans exception.",tag:'AVANCÉ'},
-    {numero:'03',emoji:'💪',titre:'Renforcement fonctionnel',contenu:"Pompes (100/jour), tractions (50/jour), burpees (30/jour), gainage (3x2 min). Ces exercices développent la force explosive et la stabilité du tronc essentielles pour encaisser et frapper. Oubliez les machines, misez sur le poids de corps.",tag:'INTERMÉDIAIRE'},
-    {numero:'04',emoji:'🛌',titre:"La récupération : l'entraînement invisible",contenu:"Les muscles se construisent pendant le repos. 8h de sommeil minimum, 3L d'eau par jour, 1-2 jours de récupération active par semaine. Un boxeur sous-récupéré plafonne ou se blesse. La récupération est aussi importante que l'effort.",tag:'ESSENTIEL'},
-  ],
-  nutrition:[
-    {numero:'01',emoji:'🥩',titre:'Protéines : la brique musculaire',contenu:"Visez 2g de protéines par kg de poids de corps par jour. Sources optimales : poulet, thon, oeufs, fromage blanc 0%, légumineuses. Répartissez sur 4-5 repas. Un boxeur de 75kg a besoin d'au moins 150g de protéines quotidiennement.",tag:'ESSENTIEL'},
-    {numero:'02',emoji:'⚡',titre:'Glucides : carburant du combattant',contenu:"Riz, avoine, patate douce, pâtes complètes — votre carburant principal. Chargez 3h avant l'entraînement. Après l'effort, fenêtre anabolique de 30 minutes : glucides rapides + protéines pour optimiser la récupération musculaire.",tag:'INTERMÉDIAIRE'},
-    {numero:'03',emoji:'💧',titre:'Hydratation : performance et sécurité',contenu:"Une déshydratation de 2% diminue les performances de 20%. Buvez 500ml d'eau 2h avant l'effort, puis 200ml toutes les 15 minutes pendant l'entraînement. Pour les séances de plus de 60 min, ajoutez des électrolytes.",tag:'ESSENTIEL'},
-    {numero:'04',emoji:'🌿',titre:'Compléments validés par la science',contenu:"Créatine monohydrate (3-5g/jour pour la puissance), bêta-alanine (3,2g/jour pour l'endurance), caféine (3-6mg/kg avant l'effort). Évitez les pré-workouts aux formules douteuses. La base reste toujours l'alimentation complète.",tag:'AVANCÉ'},
-  ],
-  mental:[
-    {numero:'01',emoji:'🧠',titre:'La visualisation : entraînement mental',contenu:"15 minutes par jour : visualisez vos combos, vos déplacements, vos victoires. Les études montrent que la visualisation active les mêmes circuits neuronaux que l'entraînement physique. Muhammad Ali pratiquait cette technique chaque jour.",tag:'PRO'},
-    {numero:'02',emoji:'😤',titre:'Gérer le stress avant le combat',contenu:"Respiration en boîte : 4 sec inhaler, 4 tenir, 4 exhaler, 4 tenir. Répétez 5 fois. Cette méthode active le système parasympathique et réduit le cortisol en quelques minutes. Technique utilisée par les forces spéciales et les sportifs de haut niveau.",tag:'ESSENTIEL'},
-    {numero:'03',emoji:'🎯',titre:'Concentration pendant le round',contenu:"Définissez 2-3 objectifs tactiques simples avant chaque round. Ne pensez pas au score — concentrez-vous sur votre plan de jeu. La simplicité cognitive sous pression est la marque des grands champions. Trop d'infos = paralysie de l'action.",tag:'AVANCÉ'},
-    {numero:'04',emoji:'🏆',titre:'Construire une mentalité de champion',contenu:"Tyson Fury a traversé une dépression sévère avant ses plus grands triomphes. La résilience se construit dans les défaites et les difficultés. Analysez chaque échec comme un cours magistral gratuit sur la voie du progrès.",tag:'PRO'},
-  ],
-};
 
 const EQUIP = [
   {cat:'gants',emoji:'🥊',badge:'BEST-SELLER',name:'Everlast Pro Style Elite',desc:"Mousse multi-couches. Référence du marché depuis 1910. Idéal débutants et confirmés.",price:'À partir de 39€',link:AFF.g_everlast},
@@ -800,29 +697,11 @@ const RANKS = {
   ],
 };
 
-const FIGHTS = {
-  upcoming:[
-    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Unification Poids Lourds',date:'2025 TBD',extra:null,link:'https://www.dazn.com'},
-    {f1:'Canelo',r1:'61-2-2',f2:'Berlanga',r2:'22-0',title:'Défense Titres Super-Moyens',date:'SEPT 2025',extra:null,link:'https://www.dazn.com'},
-    {f1:'Crawford',r1:'40-0',f2:'Ennis',r2:'31-0',title:'Choc des invaincus Welters',date:'TBD 2025',extra:null,link:'https://www.espn.com'},
-  ],
-  results:[
-    {f1:'Crawford',r1:'40-0',f2:'Madrimov',r2:'9-1',title:'Champion Unifié WBA/WBC/WBO S-Welters',date:'03 AOÛT 2024',extra:'🏆 Crawford KO9',link:'#'},
-    {f1:'Davis',r1:'31-0',f2:'Martin',r2:'26-0',title:'Championnat WBA Poids Légers',date:'10 JUIN 2024',extra:'🏆 Davis KO8',link:'#'},
-    {f1:'Dubois',r1:'21-1',f2:'Parker',r2:'34-3',title:'Championnat IBF Poids Lourds',date:'28 SEPT 2024',extra:'🏆 Dubois UD12',link:'#'},
-  ],
-  predictions:[
-    {f1:'Usyk',r1:'23-0',f2:'Fury',r2:'34-1-1',title:'Pronostic — Poids Lourds',date:'PRONOSTIC',extra:'Usyk UD12 — Favori',link:'#'},
-    {f1:'Garcia',r1:'24-1',f2:'Haney',r2:'31-1',title:'Revanche potentielle 2026',date:'PRONOSTIC',extra:'Garcia KO6 — Légèrement favori',link:'#'},
-    {f1:'Davis',r1:'31-0',f2:'Garcia',r2:'24-1',title:'Duel rêvé Poids Légers',date:'PRONOSTIC',extra:'Davis UD12 — Favori',link:'#'},
-  ],
-};
 
 // ════════════════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════════════════
 let articles = [...STATIC_ARTICLES];
-let currentTipTab = 'technique';
 let lastUpdate = null;
 let aiLoaded = false;
 
@@ -981,105 +860,110 @@ async function fetchProxy() {
 }
 
 // ════════════════════════════════════════════════════════════════
-// LOAD NEWS
+// LOAD NEWS — Sources réelles : Boxenet, BoxeMag, RMC, L'Équipe
 // ════════════════════════════════════════════════════════════════
 async function loadNews() {
   const btn = document.getElementById('refresh-btn');
   btn.classList.add('loading');
 
-  // Statique déjà affiché par init() — on passe directement aux vraies news
-
-  // ÉTAPE 2 — Vraies news via proxy Vercel
-  const realNews = await fetchProxy();
-
-  // ÉTAPE 3 — Rédaction et enrichissement
-  const today = new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  // Préparer les vraies news avec URL pour traduction
-  const realNewsForGemini = realNews ? realNews.slice(0, 6).map(a => ({
-    titre: a.title,
-    resume: (a.description || '').slice(0, 200),
-    url: a.url,
-    source: a.source?.name || 'Source',
-    date: a.publishedAt
-  })) : [];
-  const ctx = realNewsForGemini.length > 0
-    ? realNewsForGemini.map((a, i) => `[${i}] "${a.titre}" — ${a.resume} (source: ${a.source}, url: ${a.url})`).join('\n')
-    : '';
-
   try {
-    // Appel au cache serveur — articles déjà générés et mis en cache 1h
-    let d = { articles: [] };
-    try {
-      const cacheResp = await fetch('/api/articles', { cache: 'no-store' });
-      if (cacheResp.ok) {
-        const cacheData = await cacheResp.json();
-        d = { articles: cacheData.articles || [] };
-        const wasCached = cacheData.cached;
-        console.info('[KO MAG] Articles:', wasCached ? 'servis depuis le cache ⚡' : 'fraîchement générés 🔄');
+    // ÉTAPE 1 — Sources françaises + sources mondiales en parallèle
+    const [scraperRes, globalRes] = await Promise.allSettled([
+      fetch('/api/scraper?t=' + Math.floor(Date.now()/3600000), {
+        cache: 'no-store', signal: AbortSignal.timeout(30000)
+      }).then(r => r.ok ? r.json() : { articles: [] }),
+      fetch('/api/global?t=' + Math.floor(Date.now()/3600000), {
+        cache: 'no-store', signal: AbortSignal.timeout(35000)
+      }).then(r => r.ok ? r.json() : { articles: [] }),
+    ]);
+
+    const frArticles  = scraperRes.status === 'fulfilled' ? (scraperRes.value.articles || []) : [];
+    const intArticles = globalRes.status  === 'fulfilled' ? (globalRes.value.articles  || []) : [];
+
+    console.info(`[KO MAG] FR: ${frArticles.length} | MONDE: ${intArticles.length}`);
+
+    // Fusionner toutes les sources, dédupliquer par titre, trier par date
+    const allArticles = [...frArticles, ...intArticles];
+
+    // Normaliser les dates pour le tri (gérer les formats variés)
+    function parseArticleDate(a) {
+      // Essayer pubDate d'abord, puis extraire depuis a.temps
+      if (a.pubDate) {
+        const d = new Date(a.pubDate);
+        if (!isNaN(d.getTime())) return d.getTime();
       }
-    } catch(e) {
-      console.warn('[KO MAG] /api/articles indisponible, fallback IA directe');
-      // Fallback : générer directement si le cache est indisponible
-      const cats = ['RÉSULTATS','ANALYSE','INTERVIEW','ENTRAÎNEMENT','ÉVÉNEMENT','TRANSFERTS'];
-      const sources = ['LEquipe','RMC Sport','Eurosport','ESPN','Sky Sports','BBC Sport'];
-      const results = await Promise.all(cats.map((cat, i) =>
-        callGemini(`KO MAG. JSON: {"articles":[{"titre":"...","categorie":"${cat}","resume":"...","contenu":"...","temps":"Il y a ${i+1}h","source":"${sources[i]}","url":""}]} 1 article boxe. resume 10 mots. contenu 2x80 mots separes ###.`).catch(() => null)
-      ));
-      d = { articles: results.filter(r => r?.articles?.length > 0).flatMap(r => r.articles) };
+      // Extraire depuis "Il y a Xh" ou "Il y a Xmin"
+      if (a.temps) {
+        const now = Date.now();
+        const h = a.temps.match(/(\d+)h/);
+        const m = a.temps.match(/(\d+)min/);
+        const j = a.temps.match(/(\d+)j/);
+        if (h) return now - parseInt(h[1]) * 3600000;
+        if (m) return now - parseInt(m[1]) * 60000;
+        if (j) return now - parseInt(j[1]) * 86400000;
+      }
+      return 0;
     }
 
-    if (d && d.articles && d.articles.length > 0) {
-      let aiArts = d.articles.map(a => ({ ...a, isReal: false }));
-      let final = aiArts;
+    let scraped = allArticles
+      // Dédupliquer par titre
+      .filter((a, i, arr) => arr.findIndex(b => b.titre === a.titre) === i)
+      // Trier du plus récent au plus ancien
+      .sort((a, b) => parseArticleDate(b) - parseArticleDate(a));
 
-      // Les vraies news sont déjà traduites par Gemini dans aiArts
-      // On garde juste les images des vraies news si disponibles
-      if (realNews && realNews.length > 0) {
-        aiArts = aiArts.map((art, i) => ({
-          ...art,
-          img: art.img || (realNews[i] ? realNews[i].urlToImage : null),
-          isReal: !!art.url,
-        }));
-      }
-      final = aiArts;
+    // ÉTAPE 2 — Fallback sur /api/articles si tout est vide
+    if (scraped.length === 0) {
+      console.info('[KO MAG] Fallback /api/articles...');
+      try {
+        const r = await fetch('/api/articles?t=' + Math.floor(Date.now()/3600000), { cache: 'no-store' });
+        if (r.ok) {
+          const d = await r.json();
+          scraped = (d.articles || []).map(a => ({ ...a, isReal: false }));
+        }
+      } catch(e) { console.warn('[KO MAG] /api/articles indisponible'); }
+    }
 
-      // Afficher d'abord sans images Gemini
-      articles = final;
+    if (scraped.length > 0) {
+      articles = scraped; // déjà trié par date
       renderNews(articles);
+
+      // Afficher d'abord le premier article en Une (le plus récent)
       updateHero(articles[0]);
-      updateSidebar(articles.slice(1,5));
+      updateSidebar(articles.slice(1, 5));
       updateTicker(articles);
 
-      // Pas d'illustrations Imagen (non disponible) — afficher directement
+      // Demander à Gemini de choisir l'article le plus important pour la Une
+      pickHeadline(articles).then(headlineIdx => {
+        if (headlineIdx > 0) {
+          updateHero(articles[headlineIdx]);
+          // Remonter l'article choisi en premier dans la sidebar
+          const rest = articles.filter((_, i) => i !== headlineIdx);
+          updateSidebar(rest.slice(0, 4));
+        }
+      }).catch(() => {}); // silencieux si ça échoue
 
+      saveToArchives(articles);
+      saveLastArticles(articles);
       aiLoaded = true;
       lastUpdate = new Date();
 
-      const mode = (realNews && realNews.length > 0) ? 'real+ai' : 'ai';
-      setStatus('green',
-        mode === 'real+ai'
-          ? '🟢 Actualités en direct — Mise à jour automatique'
-          : '🟢 Actualités — Mise à jour automatique toutes les 15 min',
-        '');
+      setStatus('green', '🟢 Actualités en direct — Mise à jour automatique', '');
       document.getElementById('news-info').innerHTML =
-        '<span style="color:' + (mode==='real+ai'?'#22C55E':'var(--gold)') + ';font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">' +
-        (mode==='real+ai' ? '🟢 EN DIRECT' : '📰 RÉDACTION KO MAG') +
-        '</span><span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · ' +
-        articles.length + ' articles · ' + new Date().toLocaleTimeString('fr-FR') + '</span>';
+        '<span style="color:#22C55E;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;letter-spacing:.1em;">🟢 SOURCES MONDIALES</span>' +
+        `<span style="font-family:'Barlow Condensed',sans-serif;font-size:.78rem;color:var(--muted);"> · ${articles.length} articles · ` +
+        new Date().toLocaleTimeString('fr-FR') + '</span>';
     }
   } catch(e) {
-    console.warn('[KO MAG] Rédaction indisponible :', e.message);
+    console.warn('[KO MAG] loadNews erreur:', e.message);
     if (!aiLoaded) {
-      setStatus('yellow', '📰 Articles de référence — Déployé sur Vercel pour les actus IA', '');
-      document.getElementById('news-info').innerHTML =
-        '<span style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.78rem;">📰 RÉDACTION KO MAG</span>' +
-        '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.78rem;color:var(--muted);"> · Articles de référence </span>';
+      setStatus('yellow', '📰 Articles de référence — Connexion en cours...', '');
     }
   }
 
   btn.classList.remove('loading');
   observeAll();
 }
+
 
 function timeAgo(str) {
   if (!str) return 'Récemment';
@@ -1114,7 +998,15 @@ const COMBAT_IMGS = {
   }
 };
 
-const BAD_IMG_KW = ['soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast'];
+const BAD_IMG_KW = [
+  // Autres sports
+  'soccer','football','basket','tennis','golf','rugby','swim','run','cycl','cricket','baseball','hockey','nfl','nba','volleyball','gymnast',
+  // Logo Google News et placeholders génériques
+  'news.google.com','gstatic.com/images','google.com/images',
+  'placeholder','no-image','default-image','no_image','noimage',
+  // Logos/icônes de sites (souvent carrées, pas des photos)
+  '/logo.','/icon.','/favicon.',
+];
 
 function isGoodImage(url) {
   if (!url || url.length < 15) return false;
@@ -1122,10 +1014,153 @@ function isGoodImage(url) {
   return !BAD_IMG_KW.some(k => u.includes(k));
 }
 
-function getBoxingImg(article, index) {
-  // 1. Vraie image de l'article si elle est cohérente
+// ── Wikimedia Commons : photo réelle du boxeur ───────────────────────────────
+const wikiImgCache = {};
+const BOXER_NAMES_FE = ['Usyk','Fury','Canelo','Crawford','Davis','Tank','Garcia','Benavidez','Joshua','Wilder','Lomachenko','Haney','Beterbiev','Bivol','Inoue'];
+
+const WIKI_TITLES_FE = {
+  'usyk':       'Oleksandr Usyk',
+  'fury':       'Tyson Fury',
+  'canelo':     'Saúl Álvarez',
+  'crawford':   'Terence Crawford',
+  'davis':      'Gervonta Davis',
+  'tank':       'Gervonta Davis',
+  'garcia':     'Ryan Garcia',
+  'benavidez':  'David Benavidez',
+  'joshua':     'Anthony Joshua',
+  'wilder':     'Deontay Wilder',
+  'lomachenko': 'Vasyl Lomachenko',
+  'haney':      'Devin Haney',
+  'beterbiev':  'Artur Beterbiev',
+  'bivol':      'Dmitry Bivol',
+  'inoue':      'Naoya Inoue',
+  'navarrete':  'Emanuel Navarrete',
+  'estrada':    'Juan Francisco Estrada',
+  'plant':      'Caleb Plant',
+  'charlo':     'Jermell Charlo',
+  'spence':     'Errol Spence Jr.',
+  'loma':       'Vasyl Lomachenko',
+};
+
+function detectBoxerInTitle(titre) {
+  if (!titre) return null;
+  return BOXER_NAMES_FE.find(n => titre.toLowerCase().includes(n.toLowerCase())) || null;
+}
+
+async function fetchWikimediaImageFE(name) {
+  if (!name) return null;
+  const key = name.toLowerCase();
+  if (wikiImgCache[key]) return wikiImgCache[key];
+  try {
+    const r = await fetch(`/api/wikimedia?name=${encodeURIComponent(key)}`, {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    const img = d.img || null;
+    if (img) wikiImgCache[key] = img;
+    return img;
+  } catch(e) { return null; }
+}
+
+// ── YouTube oEmbed : embed vidéos dans les modals ────────────────────────────
+// YouTube oEmbed est 100% gratuit, sans clé API
+
+function isYoutubeUrl(url) {
+  if (!url) return false;
+  return url.includes('youtube.com/watch') || url.includes('youtu.be/');
+}
+
+function extractYoutubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+// Chercher une vidéo YouTube liée au titre de l'article via l'API oEmbed YouTube
+// On construit une URL de recherche YouTube et on tente d'en obtenir l'embed
+async function findYoutubeVideo(titre) {
+  if (!titre) return null;
+  try {
+    // Construire une requête de recherche YouTube pertinente
+    const query = encodeURIComponent(titre + ' boxing highlights');
+    // YouTube Data API v3 nécessite une clé — on utilise plutôt le flux RSS YouTube
+    // qui ne nécessite pas de clé et retourne des vidéos publiques
+    const rssUrl = `https://www.youtube.com/feeds/videos.xml?search_term=${query}`;
+    // RSS YouTube ne supporte pas CORS depuis le navigateur, on passe par un proxy
+    const r = await fetch(`/api/youtube?q=${encodeURIComponent(titre)}`, {
+      signal: AbortSignal.timeout(6000)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.videoId || null;
+  } catch(e) { return null; }
+}
+
+async function fetchYoutubeOembed(videoId) {
+  if (!videoId) return null;
+  try {
+    const url = `https://www.youtube.com/watch?v=${videoId}`;
+    const r = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`, {
+      signal: AbortSignal.timeout(5000)
+    });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.html || null;
+  } catch(e) { return null; }
+}
+
+function buildYoutubeEmbed(videoId) {
+  return `<iframe 
+    width="100%" 
+    height="315" 
+    src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen
+    style="border-radius:2px;display:block;">
+  </iframe>`;
+}
+
+// oEmbed Instagram / X (conservé pour compatibilité)
+const OEMBED_PROVIDERS = [
+  { host: 'instagram.com', endpoint: 'https://graph.facebook.com/v18.0/instagram_oembed?url=' },
+  { host: 'twitter.com',   endpoint: 'https://publish.twitter.com/oembed?url=' },
+  { host: 'x.com',         endpoint: 'https://publish.twitter.com/oembed?url=' },
+];
+
+function getOembedEndpoint(url) {
+  if (!url) return null;
+  const provider = OEMBED_PROVIDERS.find(p => url.includes(p.host));
+  return provider ? provider.endpoint + encodeURIComponent(url) : null;
+}
+
+async function fetchOembed(url) {
+  const endpoint = getOembedEndpoint(url);
+  if (!endpoint) return null;
+  try {
+    const r = await fetch(endpoint, { signal: AbortSignal.timeout(5000) });
+    if (!r.ok) return null;
+    const d = await r.json();
+    return d.html || null;
+  } catch(e) { return null; }
+}
+
+function getYoutubeThumbnail(videoId) {
+  if (!videoId) return null;
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
+function getBoxingImg(article) {
+  // 1. og:image de la source — TOUJOURS prioritaire (c'est l'image choisie par le site)
+  //    Pour BoxeMag : c'est déjà la miniature YouTube officielle de leur article
+  //    Pour ESPN, BBC, etc. : c'est la vraie photo du combat
   if (article.img && isGoodImage(article.img)) return article.img;
-  // 2. Image Unsplash selon le sport détecté
+
+  // 2. Seulement si pas d'image source : thumbnail YouTube de secours
+  if (article.youtubeId) return getYoutubeThumbnail(article.youtubeId);
+
+  // 3. Fallback Unsplash selon sport/catégorie
   const sport = (article.sport||'boxing').toLowerCase();
   const sportImgs = sport.includes('mma')||sport.includes('ufc') ? COMBAT_IMGS.mma
     : sport.includes('kick')||sport.includes('muay') ? COMBAT_IMGS.kickboxing
@@ -1133,14 +1168,61 @@ function getBoxingImg(article, index) {
   return sportImgs[article.categorie] || sportImgs['default'] || COMBAT_IMGS.boxing.default;
 }
 
+
+
+// ID éditeur AdSense — remplace par le tien quand tu l'as
+const ADSENSE_CLIENT = 'ca-pub-XXXXXXXXXX';
+// Slots pub (à créer dans AdSense et remplacer ici)
+const AD_SLOTS = {
+  grid:  'XXXXXXXXXX', // pub dans la grille d'articles
+  modal: 'XXXXXXXXXX', // pub dans la modal d'article
+};
+
+function adGridBlock() {
+  // Ne pas afficher si AdSense pas encore configuré
+  if (ADSENSE_CLIENT === 'ca-pub-XXXXXXXXXX') return '';
+  return `<div class="ad-card">
+    <ins class="adsbygoogle"
+      style="display:block;width:100%;height:250px"
+      data-ad-client="${ADSENSE_CLIENT}"
+      data-ad-slot="${AD_SLOTS.grid}"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script>
+  </div>`;
+}
+
+function adModalBlock() {
+  if (ADSENSE_CLIENT === 'ca-pub-XXXXXXXXXX') return '';
+  return `<div class="ad-modal">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="${ADSENSE_CLIENT}"
+      data-ad-slot="${AD_SLOTS.modal}"
+      data-ad-format="auto"
+      data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script>
+  </div>`;
+}
+
 function renderNews(list) {
-  document.getElementById('news-grid').innerHTML = list.map((a, i) => {
-    const imgSrc = getBoxingImg(a, i);
-    return `
-    <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${i})">
+  const FALLBACK = 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80';
+  let html = '';
+  list.forEach((a, i) => {
+    // Insérer une pub toutes les 3 cartes (après la 3ème, 6ème, 9ème...)
+    if (i > 0 && i % 3 === 0) html += adGridBlock();
+
+    const realIdx = articles.indexOf(a);
+    const artIdx = realIdx >= 0 ? realIdx : i;
+    const initImg = getBoxingImg(a);
+    const onerror = a.youtubeId
+      ? `this.src=this.src.includes('maxresdefault')?'https://img.youtube.com/vi/${a.youtubeId}/hqdefault.jpg':'${a.img||FALLBACK}'`
+      : `this.src='${FALLBACK}'`;
+    html += `
+    <div class="news-card fade-up" style="transition-delay:${i*.06}s" onclick="openArt(${artIdx})" id="card-${i}">
       <div class="news-card-img">
-        <img src="${imgSrc}" alt="${a.titre}" onerror="this.src='https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80'">
-        ${a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
+        <img src="${initImg}" alt="${a.titre}" id="card-img-${i}" onerror="${onerror}">
+        ${a.isGlobal ? '<div class="badge-live" style="background:#7C3AED;">🌍 MONDE</div>' : a.isReal ? '<div class="badge-live">LIVE</div>' : ''}
       </div>
       <div class="news-card-body">
         <div class="news-card-src">${a.source || 'KO MAG'}</div>
@@ -1149,11 +1231,150 @@ function renderNews(list) {
         <div class="news-card-excerpt">${a.resume || ''}</div>
         <div class="news-card-footer">
           <span class="news-card-time">${a.temps}</span>
-          <a href="#" class="read-link" onclick="event.stopPropagation();openArt(${i})">LIRE →</a>
+          <a href="#" class="read-link" onclick="event.stopPropagation();openArt(${artIdx})">LIRE →</a>
         </div>
       </div>
     </div>`;
+  });
+  document.getElementById('news-grid').innerHTML = html;
+  // Images gérées directement depuis la source
+}
+
+// ── Sélection IA de l'article le plus important pour la Une ──────────────────
+let headlineCache = null; // éviter de rappeler si déjà choisi
+
+function renderFightsCalendar(combats) {
+  if (!combats || !Array.isArray(combats) || combats.length === 0) return '';
+
+  const rows = combats.map(c => `
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--grey);background:var(--charcoal);">
+      <div style="text-align:right;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--white);letter-spacing:.04em;">${c.boxeur1 || '?'}</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--red);letter-spacing:.1em;">VS</div>
+      </div>
+      <div style="text-align:left;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--white);letter-spacing:.04em;">${c.boxeur2 || '?'}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--grey);">
+      ${c.date ? `<div style="flex:1;padding:7px 16px;background:var(--smoke);font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);">📅 ${c.date}</div>` : ''}
+      ${c.lieu ? `<div style="flex:1;padding:7px 16px;background:var(--smoke);font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">📍 ${c.lieu}</div>` : ''}
+      ${c.diffusion ? `<div style="flex:1;padding:7px 16px;background:var(--smoke);font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);">📺 ${c.diffusion}</div>` : ''}
+    </div>
+    ${c.titre ? `<div style="padding:6px 16px;background:rgba(232,0,26,.08);font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--red);">🏆 ${c.titre}</div>` : ''}
+  `).join('');
+
+  return `
+    <div style="margin:22px 0;border:1px solid var(--grey);border-left:3px solid var(--gold);overflow:hidden;">
+      <div style="background:var(--smoke);padding:10px 16px;border-bottom:1px solid var(--grey);display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);">📅 CALENDRIER DES COMBATS</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:.62rem;color:var(--muted);">${combats.length} combat${combats.length > 1 ? 's' : ''} programmé${combats.length > 1 ? 's' : ''}</span>
+      </div>
+      ${rows}
+    </div>`;
+}
+
+// ── Tableau des champions extrait par l'IA ────────────────────────────────────
+const ORG_COLORS = { WBC:'#22C55E', WBA:'#F5B800', WBO:'#7C3AED', IBF:'#3B82F6', IBO:'#E8001A' };
+
+function renderChampionsTable(champions) {
+  if (!champions || !Array.isArray(champions) || champions.length === 0) return '';
+
+  // Grouper par organisation si plusieurs orgs présentes
+  const orgs = [...new Set(champions.map(c => c.organisation).filter(Boolean))];
+  const multiOrg = orgs.length > 1;
+
+  const rows = champions.map((c, i) => {
+    const orgColor = ORG_COLORS[c.organisation] || 'var(--muted)';
+    const isChamp = (c.statut || '').toLowerCase().includes('champion') && !c.statut.toLowerCase().includes('interim');
+    return `<div style="display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04);${isChamp ? 'background:rgba(232,0,26,.04);' : ''}">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:${i===0?'var(--gold)':i===1?'#aaa':i===2?'#cd7f32':'var(--muted)'};text-align:center;">${c.rang || i+1}</div>
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;color:var(--white);letter-spacing:.03em;">
+          ${isChamp ? '👑 ' : ''}${c.nom || ''}
+          ${c.pays ? `<span style="font-size:.7rem;color:var(--muted);font-weight:400;margin-left:6px;">${c.pays}</span>` : ''}
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;">
+          ${c.categorie ? `<span style="color:var(--muted);">${c.categorie}</span>` : ''}
+          ${c.statut && c.statut !== 'Champion' ? `<span style="color:var(--muted);margin-left:8px;">· ${c.statut}</span>` : ''}
+        </div>
+      </div>
+      <div style="text-align:right;">
+        ${c.organisation ? `<span style="background:${orgColor};color:${c.organisation==='WBA'?'#000':'white'};font-family:'Barlow Condensed',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.15em;padding:2px 7px;display:block;margin-bottom:3px;">${c.organisation}</span>` : ''}
+        ${c.bilan ? `<span style="font-family:'Barlow Condensed',sans-serif;font-size:.7rem;color:var(--muted);">${c.bilan}</span>` : ''}
+      </div>
+    </div>`;
   }).join('');
+
+  return `
+    <div style="margin:22px 0;border:1px solid var(--grey);border-left:3px solid var(--gold);overflow:hidden;">
+      <div style="background:var(--smoke);padding:10px 16px;border-bottom:1px solid var(--grey);display:flex;align-items:center;gap:10px;">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);">🏆 CHAMPIONS & CLASSEMENTS</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:.62rem;color:var(--muted);">${champions.length} boxeur${champions.length > 1 ? 's' : ''}</span>
+      </div>
+      ${rows}
+    </div>`;
+}
+
+async function pickHeadline(arts) {
+  if (!arts || arts.length === 0) return 0;
+
+  // Cache 3h côté client
+  if (headlineCache && headlineCache.at && Date.now() - headlineCache.at < 3 * 3600000) {
+    // Vérifier que l'article caché est toujours dans la liste
+    const stillPresent = arts.findIndex(a => a.titre === headlineCache.titre);
+    if (stillPresent >= 0) return stillPresent;
+  }
+
+  try {
+    // Enrichir avec les archives des 3 derniers jours pour donner plus de contexte à Gemini
+    const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+    let candidates = [...arts];
+    try {
+      const archRaw = localStorage.getItem('komag_archives');
+      if (archRaw) {
+        const arch = JSON.parse(archRaw);
+        const recent3days = arch.filter(a => a._savedAt && Date.now() - a._savedAt < THREE_DAYS);
+        // Ajouter les articles des archives récents non présents dans arts
+        for (const a of recent3days) {
+          if (!candidates.some(c => c.titre === a.titre)) {
+            candidates.push(a);
+          }
+        }
+      }
+    } catch(e) {}
+
+    // Trier par fraîcheur
+    candidates = candidates.sort((a, b) => {
+      const ta = a._savedAt || 0, tb = b._savedAt || 0;
+      return tb - ta;
+    }).slice(0, 15);
+
+    const r = await fetch('/api/headline', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ articles: candidates }),
+      signal: AbortSignal.timeout(18000),
+    });
+    if (!r.ok) return 0;
+    const d = await r.json();
+    const chosenArticle = d.headline?.article;
+    if (!chosenArticle) return 0;
+
+    // Trouver l'index dans arts (pas dans candidates)
+    const idx = arts.findIndex(a => a.titre === chosenArticle.titre);
+    const finalIdx = idx >= 0 ? idx : 0;
+
+    headlineCache = { index: finalIdx, titre: arts[finalIdx]?.titre, at: Date.now() };
+    console.info(`[KO MAG] 🥊 Une IA : "${arts[finalIdx]?.titre}" — ${d.headline?.raison || ''} (impact: ${d.headline?.impact || '?'})`);
+    return finalIdx;
+
+  } catch(e) {
+    console.warn('[KO MAG] pickHeadline error:', e.message);
+    return 0;
+  }
 }
 
 function updateHero(a) {
@@ -1165,15 +1386,12 @@ function updateHero(a) {
     '<span style="background:var(--grey);padding:2px 10px;color:var(--red);font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase">' + a.categorie + '</span>' +
     '<span class="hero-meta-src">' + (a.source || 'KO MAG') + '</span>' +
     '<span>' + a.temps + '</span>';
-  // Image hero
-  const heroImg = (a.img && isGoodImage(a.img)) 
-    ? a.img 
-    : (BOXING_IMGS[a.categorie] || BOXING_IMGS.default).replace('w=800', 'w=1200');
+  // Image hero — thumbnail YouTube si dispo, sinon og:image source
+  const heroImg = getBoxingImg(a);
   const heroMain = document.querySelector('.hero-main');
   heroMain.style.backgroundImage = `linear-gradient(to top, rgba(10,10,11,0.95) 40%, rgba(10,10,11,0.5) 100%), url('${heroImg}')`;
   heroMain.style.backgroundSize = 'cover';
   heroMain.style.backgroundPosition = 'center';
-  // badge live masqué — pas de distinction source
   document.getElementById('hero-btn').onclick = e => { e.preventDefault(); openArt(0); };
 }
 
@@ -1195,136 +1413,79 @@ function updateTicker(list) {
 // ════════════════════════════════════════════════════════════════
 // MODAL
 // ════════════════════════════════════════════════════════════════
-function openArt(i) {
+async function openArt(i) {
   const a = articles[i]; if (!a) return;
   document.getElementById('modal-title').textContent = (a.emoji || '🥊') + ' ' + a.titre;
   const paras = (a.contenu || a.resume || '').split('###').map(p => p.trim()).filter(Boolean);
+
+  // Image : Wikimedia si boxeur détecté, sinon og:image de la source, sinon fallback
+  const modalImg = getBoxingImg(a);
+
+  // Vidéo YouTube : 3 sources possibles par ordre de priorité
+  // 1. youtubeId extrait de la page source par le scraper (le plus pertinent)
+  // 2. URL article qui est une URL YouTube directe
+  // 3. Recherche via /api/youtube (en arrière-plan)
+  const knownVideoId = a.youtubeId || (isYoutubeUrl(a.url) ? extractYoutubeId(a.url) : null);
+
+  // Construire le bloc vidéo ou le skeleton selon qu'on a déjà l'ID
+  const ytInitial = knownVideoId
+    ? '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;margin:22px 0;">' +
+      '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO — SOURCE OFFICIELLE</div>' +
+      buildYoutubeEmbed(knownVideoId) + '</div>'
+    : '<div id="yt-block" style="margin:22px 0;">' +
+      '<div style="width:100%;height:60px;background:var(--smoke);border:1px solid var(--grey);display:flex;align-items:center;justify-content:center;gap:10px;">' +
+      '<span style="font-size:1rem;">▶️</span>' +
+      '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.75rem;color:var(--muted);letter-spacing:.1em;">Recherche vidéo...</span>' +
+      '</div></div>';
+
   document.getElementById('modal-body').innerHTML =
     '<div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">' +
     '<span style="background:var(--red);color:white;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:3px 10px;">' + a.categorie + '</span>' +
     '<span style="font-family:\'Barlow Condensed\',sans-serif;font-size:.76rem;color:var(--muted);">' + (a.source || 'KO MAG') + ' · ' + a.temps + '</span></div>' +
-    '<img src="' + (a.img || 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80') + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'"> ' +
+    (knownVideoId ? '' : '<img src="' + modalImg + '" style="width:100%;aspect-ratio:16/9;object-fit:cover;margin-bottom:18px;" onerror="this.style.display=\'none\'">') +
     paras.map(p => '<p>' + p + '</p>').join('') +
-    (a.url ? '<div style="margin-top:16px;"><a href="' + a.url + '" target="_blank" rel="noopener" style="color:var(--gold);font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;">🔗 Lire l\'article original →</a></div>' : '') +
+    renderFightsCalendar(a.combats) +
+    renderChampionsTable(a.champions) +
+    ytInitial +
+    (a.url && !isYoutubeUrl(a.url) ?
+      '<div style="margin-top:20px;padding:16px;background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--gold);">' +
+      '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;">📰 SOURCE ORIGINALE</div>' +
+      '<a href="' + a.url + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:var(--red);color:white;text-decoration:none;padding:10px 20px;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;">' +
+      '🔗 Lire l\'article complet sur ' + (a.source || 'le site source') + ' →</a>' +
+      '</div>'
+    : '') +
+    adModalBlock() +
     '<div style="background:var(--smoke);border:1px solid var(--grey);border-left:3px solid var(--red);padding:18px;margin-top:22px;">' +
     '<div style="font-family:\'Barlow Condensed\',sans-serif;font-weight:700;font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;">🛒 ÉQUIPEMENT RECOMMANDÉ</div>' +
     '<a href="' + AFF.g_everlast + '" target="_blank" rel="noopener sponsored" class="btn-aff" style="max-width:300px;display:inline-flex;justify-content:center;">Voir les gants de boxe sur Amazon →</a></div>';
+
   document.getElementById('modal').classList.add('open');
+
+  // Si on n'avait pas de vidéo de la source → chercher via /api/youtube en arrière-plan
+  if (!knownVideoId) {
+    const ytBlock = document.getElementById('yt-block');
+    if (!ytBlock) return;
+    try {
+      const videoId = await findYoutubeVideo(a.titre);
+      if (videoId) {
+        ytBlock.innerHTML =
+          '<div style="border:1px solid var(--grey);border-left:3px solid var(--red);overflow:hidden;">' +
+          '<div style="background:var(--smoke);padding:8px 14px;font-family:\'Barlow Condensed\',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);">▶ VIDÉO HIGHLIGHTS</div>' +
+          buildYoutubeEmbed(videoId) + '</div>';
+      } else {
+        ytBlock.innerHTML = '';
+      }
+    } catch(e) {
+      ytBlock.innerHTML = '';
+    }
+  }
 }
 function closeModal() { document.getElementById('modal').classList.remove('open'); }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ════════════════════════════════════════════════════════════════
-// TIPS
-// ════════════════════════════════════════════════════════════════
-function renderTipsStatic(tab) {
-  const tips = STATIC_TIPS[tab] || STATIC_TIPS.technique;
-  document.getElementById('tips-grid').innerHTML = tips.map((c, i) => `
-    <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
-      <div class="tip-num">${c.numero}</div>
-      <div class="tip-icon">${c.emoji}</div>
-      <div class="tip-title">${c.titre}</div>
-      <div class="tip-body">${c.contenu}</div>
-      <div class="tip-tag">${c.tag}</div>
-    </div>`).join('');
-  observeAll();
-}
-
-async function loadTips(tab) {
-  currentTipTab = tab;
-  document.getElementById('tips-btn').classList.add('loading');
-  renderTipsStatic(tab);
-  try {
-    const d = await callGemini(
-      `Rédige 4 conseils d'expert de boxe sur le thème "${tab}" pour KO MAG.
-JSON : {"conseils":[{"titre":"...","contenu":"...","emoji":"...","tag":"...","numero":"01"}]}
-- numero : 01 à 04
-- tag : DÉBUTANT, INTERMÉDIAIRE, AVANCÉ, PRO, ou ESSENTIEL
-- emoji : 1 seul emoji pertinent
-- contenu : conseil détaillé et actionnable, minimum 80 mots, avec chiffres précis, noms de techniques, références à des champions réels qui utilisent cette méthode`
-    );
-    if (d && d.conseils && d.conseils.length > 0) {
-      document.getElementById('tips-grid').innerHTML = d.conseils.map((c, i) => `
-        <div class="tip-card fade-up" style="transition-delay:${i*.08}s">
-          <div class="tip-num">${c.numero || String(i+1).padStart(2,'0')}</div>
-          <div class="tip-icon">${c.emoji}</div>
-          <div class="tip-title">${c.titre}</div>
-          <div class="tip-body">${c.contenu}</div>
-          <div class="tip-tag">${c.tag}</div>
-        </div>`).join('');
-      observeAll();
-    }
-  } catch(e) { /* garder statique silencieusement */ }
-  document.getElementById('tips-btn').classList.remove('loading');
-}
-
-function switchTip(t, el) {
-  document.querySelectorAll('#conseils .tab-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active'); loadTips(t);
-}
-
-// ════════════════════════════════════════════════════════════════
 // FIGHTS / RANKINGS / EQUIPMENT
 // ════════════════════════════════════════════════════════════════
-function renderFights(tab) {
-  document.getElementById('fights-grid').innerHTML = FIGHTS[tab].map(f => `
-    <div class="fight-card fade-up">
-      <div class="fight-header">
-        <div class="fight-date">${f.date}</div>
-        <div class="fight-badge">${tab==='results'?'✅ RÉSULTAT':tab==='predictions'?'🎯 PRONOSTIC':'📅 À VENIR'}</div>
-      </div>
-      <div class="fight-body">
-        <div class="fight-vs">
-          <div class="fight-fighter"><div class="fight-fighter-name">${f.f1}</div><div class="fight-fighter-rec">${f.r1}</div></div>
-          <div class="vs-badge">VS</div>
-          <div class="fight-fighter"><div class="fight-fighter-name">${f.f2}</div><div class="fight-fighter-rec">${f.r2}</div></div>
-        </div>
-        <div class="fight-title-small">${f.title}</div>
-        ${f.extra ? '<div style="text-align:center;font-family:\'Barlow Condensed\',sans-serif;font-weight:700;color:' + (tab==='results'?'#22C55E':'var(--gold)') + ';font-size:.86rem;letter-spacing:.08em;">' + f.extra + '</div>' : ''}
-      </div>
-      <div class="fight-footer">
-        <a href="${f.link}" target="_blank" rel="noopener" class="btn-watch">
-          ${tab==='upcoming'?'🎟️ Streaming & billets →':tab==='predictions'?'🎯 Voir le pronostic →':'📺 Revoir →'}
-        </a>
-      </div>
-    </div>`).join('');
-  observeAll();
-}
-function switchFight(t, el) {
-  document.querySelectorAll('#combats .tab-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  if (FIGHTS_LOADED[t]) {
-    renderFights(t);
-  } else {
-    loadFights(t);
-  }
-}
-
-const FIGHTS_LOADED = {};
-
-async function loadFights(tab) {
-  document.getElementById('fights-grid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);">Chargement des combats...</div>';
-  try {
-    const tabNames = { upcoming: 'à venir prochainement en 2026', results: 'résultats récents 2025-2026', predictions: 'pronostics et analyses 2026' };
-    const d = await callGemini(
-      `Combats de boxe et sports de combat ${tabNames[tab]||tab}. Date: 19 avril 2026.
-JSON: {"fights":[{"f1":"...","r1":"...","f2":"...","r2":"...","title":"...","date":"...","extra":"...","link":"https://www.dazn.com"}]}
-- 3 combats max
-- f1/f2: noms courts (max 12 caracteres)
-- r1/r2: bilan format X-Y
-- title: categorie et enjeu court
-- date: format "DD MMM YYYY" ou "TBD 2026"
-- extra: ${tab==='results'?'resultat ex: Crawford KO9':tab==='predictions'?'pronostic ex: Favori: Canelo':'null'}
-- Vrais combats reels 2026 uniquement`
-    );
-    if (d && d.fights && d.fights.length > 0) {
-      FIGHTS[tab] = d.fights.map(f => ({...f, extra: f.extra==='null'?null:f.extra}));
-      FIGHTS_LOADED[tab] = true;
-    }
-  } catch(e) { console.info('Combats: fallback statique'); }
-  renderFights(tab);
-}
-
 function renderRanks(wc) {
   const medals = ['gold','silver','bronze'];
   document.getElementById('ranking-table').innerHTML =
@@ -1404,18 +1565,6 @@ function switchEquip(t, el) {
 // ════════════════════════════════════════════════════════════════
 // NEWSLETTER
 // ════════════════════════════════════════════════════════════════
-function subscribe() {
-  const inp = document.getElementById('email-input');
-  if (!inp.value.includes('@')) { inp.style.border = '1px solid #f55'; return; }
-  inp.style.border = '';
-  const b = event.target;
-  b.textContent = '✓ Abonné(e) !'; b.style.background = '#22C55E'; inp.value = '';
-  setTimeout(() => { b.textContent = "S'abonner — Gratuit"; b.style.background = ''; }, 3000);
-}
-
-// ════════════════════════════════════════════════════════════════
-// ANIMATIONS
-// ════════════════════════════════════════════════════════════════
 function observeAll() {
   const obs = new IntersectionObserver(entries => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
@@ -1426,27 +1575,197 @@ function observeAll() {
 // ════════════════════════════════════════════════════════════════
 // INIT
 
-async function init() {
-  // Afficher le contenu statique ET cacher le loader IMMÉDIATEMENT
-  renderFights('upcoming');
-  loadFights('upcoming'); // Mise à jour Gemini en arrière-plan
-  renderRanks('heavyweight'); // Classement statique - bouton Actualiser pour mise à jour
-  renderEquip('all');
-  renderTipsStatic('technique');
-  articles = [...STATIC_ARTICLES];
-  renderNews(articles);
-  updateHero(articles[0]);
-  updateSidebar(articles.slice(1,5));
-  updateTicker(articles);
-  setStatus('yellow', '🔄 Chargement des dernières actualités...', '');
-  observeAll();
 
-  // Cacher le loader immédiatement — le contenu est déjà visible
+// ════════════════════════════════════════════════════════════════
+// ARCHIVES — localStorage, max 60 articles sur 7 jours
+// ════════════════════════════════════════════════════════════════
+// ── Cache localStorage des derniers articles (affichage instantané) ──────────
+const LAST_ARTICLES_KEY = 'komag_last_articles';
+const LAST_ARTICLES_TTL = 4 * 60 * 60 * 1000; // 4h max
+
+function saveLastArticles(arts) {
+  try {
+    localStorage.setItem(LAST_ARTICLES_KEY, JSON.stringify({ articles: arts, savedAt: Date.now() }));
+  } catch(e) {}
+}
+
+function loadLastArticles() {
+  try {
+    const raw = localStorage.getItem(LAST_ARTICLES_KEY);
+    if (!raw) return null;
+    const { articles, savedAt } = JSON.parse(raw);
+    if (!articles || !articles.length) return null;
+    if (Date.now() - savedAt > LAST_ARTICLES_TTL) return null;
+    return articles;
+  } catch(e) { return null; }
+}
+
+const ARCH_KEY = 'komag_archives';
+const ARCH_MAX = 60;
+const ARCH_TTL = 7 * 24 * 60 * 60 * 1000; // 7 jours
+
+function loadArchives() {
+  try {
+    const raw = localStorage.getItem(ARCH_KEY);
+    if (!raw) return [];
+    const all = JSON.parse(raw);
+    // Nettoyer les articles expirés
+    const now = Date.now();
+    return all.filter(a => a._savedAt && (now - a._savedAt) < ARCH_TTL);
+  } catch(e) { return []; }
+}
+
+function saveToArchives(newArticles) {
+  if (!newArticles || newArticles.length === 0) return;
+  try {
+    const existing = loadArchives();
+    // Dédupliquer par titre
+    const existingTitles = new Set(existing.map(a => a.titre));
+    const toAdd = newArticles
+      .filter(a => a.titre && !existingTitles.has(a.titre))
+      .map(a => ({ ...a, _savedAt: Date.now() }));
+    if (toAdd.length === 0) return;
+    // Garder les plus récents en premier, limiter à ARCH_MAX
+    const merged = [...toAdd, ...existing].slice(0, ARCH_MAX);
+    localStorage.setItem(ARCH_KEY, JSON.stringify(merged));
+    // Mettre à jour le compteur
+    document.getElementById('arch-count').textContent = merged.length;
+    console.info('[KO MAG] Archives: ' + toAdd.length + ' nouveaux articles sauvegardés (' + merged.length + ' total)');
+  } catch(e) { console.warn('Archives save error:', e.message); }
+}
+
+function clearArchives() {
+  if (!confirm('Vider toutes les archives ?')) return;
+  localStorage.removeItem(ARCH_KEY);
+  document.getElementById('arch-count').textContent = '0';
+  renderArchives([]);
+}
+
+let archiveFilter = 'all';
+
+function filterArchives(cat, el) {
+  archiveFilter = cat;
+  document.querySelectorAll('.arch-tab').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  const all = loadArchives();
+  const filtered = cat === 'all' ? all : all.filter(a => a.categorie === cat);
+  renderArchives(filtered);
+}
+
+function renderArchives(list) {
+  const grid = document.getElementById('archives-grid');
+  if (!grid) return;
+  if (!list || list.length === 0) {
+    grid.innerHTML = '<div class="arch-empty" style="grid-column:1/-1;">Aucun article archivé.</div>';
+    return;
+  }
+  const FALLBACK = 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=800&q=80';
+  const now = Date.now();
+  const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+
+  // Trier par date (plus récents en premier)
+  const sorted = [...list].sort((a, b) => (b._savedAt||0) - (a._savedAt||0));
+
+  // Séparer récents (< 7j) et anciens (> 7j)
+  const recent = sorted.filter(a => now - (a._savedAt||0) < ONE_WEEK);
+  const old    = sorted.filter(a => now - (a._savedAt||0) >= ONE_WEEK);
+
+  function cardHTML(a, i, label) {
+    const img = (a.img && isGoodImage(a.img)) ? a.img : FALLBACK;
+    const date = a._savedAt ? new Date(a._savedAt).toLocaleDateString('fr-FR', {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+    return `
+    <div class="news-card fade-up" style="transition-delay:${(i%6)*.06}s" onclick="openArchiveArt(${i}, '${archiveFilter}')">
+      <div class="news-card-img">
+        <img src="${img}" alt="${a.titre}" onerror="this.src='${FALLBACK}'">
+      </div>
+      <div class="news-card-body">
+        <div class="news-card-src" style="color:var(--muted);">${label} ${date}</div>
+        <div class="news-card-cat">${a.categorie}</div>
+        <div class="news-card-title">${a.titre}</div>
+        <div class="news-card-excerpt">${a.resume || ''}</div>
+        <div class="news-card-footer">
+          <span class="news-card-time">${a.source || 'KO MAG'}</span>
+          <a href="#" class="read-link" onclick="event.stopPropagation();openArchiveArt(${i}, '${archiveFilter}')">LIRE →</a>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  let html = '';
+
+  if (recent.length > 0) {
+    html += recent.map((a, i) => cardHTML(a, i, 'Il y a moins d\u2019une semaine \xb7')).join('');
+  }
+
+  if (old.length > 0) {
+    // Séparateur visuel pour les anciennes archives
+    html += `<div style="grid-column:1/-1;padding:18px 0 8px;border-top:2px solid var(--grey);margin-top:16px;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--muted);letter-spacing:.08em;">ARCHIVES — PLUS D'UNE SEMAINE</span>
+    </div>`;
+    html += old.map((a, i) => cardHTML(a, recent.length + i, '📁 Archive ·')).join('');
+  }
+
+  grid.innerHTML = html;
+  observeAll();
+}
+
+async function openArchiveArt(i, cat) {
+  const all = loadArchives();
+  const list = cat === 'all' ? all : all.filter(a => a.categorie === cat);
+  const a = list[i]; if (!a) return;
+  // Réutiliser openArt en injectant l'article dans le tableau temporaire
+  const tmpIdx = articles.length;
+  articles.push(a);
+  await openArt(tmpIdx);
+  // Nettoyage
+  setTimeout(() => { if (articles.length > tmpIdx) articles.splice(tmpIdx, 1); }, 100);
+}
+
+function openArchives() {
+  // Masquer toutes les sections, afficher archives
+  document.querySelectorAll('section').forEach(s => {
+    s.style.display = s.id === 'archives' ? '' : '';
+  });
+  document.getElementById('archives').scrollIntoView({ behavior: 'smooth' });
+  const all = loadArchives();
+  document.getElementById('arch-count').textContent = all.length;
+  filterArchives(archiveFilter, document.querySelector('.arch-tab.active'));
+}
+
+async function init() {
+  // Compteur archives
+  try {
+    const archCount = loadArchives().length;
+    const el = document.getElementById('arch-count');
+    if (el) el.textContent = archCount;
+  } catch(e) {}
+
+  renderRanks('heavyweight');
+  renderEquip('all');
+
+  // ── Affichage instantané ──────────────────────────────────────────────────
+  // 1. Essayer les derniers articles du cache localStorage (< 4h)
+  const cached = loadLastArticles();
+  if (cached && cached.length > 0) {
+    articles = cached;
+    renderNews(articles);
+    updateHero(articles[0]);
+    updateSidebar(articles.slice(1, 5));
+    updateTicker(articles);
+  } else {
+    // 2. Fallback : articles statiques pendant le chargement
+    articles = [...STATIC_ARTICLES];
+    renderNews(articles);
+    updateHero(articles[0]);
+    updateSidebar(articles.slice(1, 5));
+    updateTicker(articles);
+  }
+
+  observeAll();
   document.getElementById('loader').classList.add('hidden');
 
-  // Charger les vraies actualités en arrière-plan (sans bloquer)
+  // Charger les vraies actualités en arrière-plan — silencieux, remplace le cache
   loadNews().catch(e => console.warn('loadNews error:', e.message));
-  loadTips('technique').catch(() => {});
 
   setInterval(loadNews, REFRESH_MS);
   setInterval(() => {
@@ -1512,10 +1831,6 @@ function updateSEOMeta(article) {
     <a href="#actualites" class="mobile-nav-btn" onclick="setMobileNav(this)">
       <svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v2"/><path d="M4 11h12"/><path d="M4 16h8"/><path d="M2 7h6v6H2z"/></svg>
       Actus
-    </a>
-    <a href="#combats" class="mobile-nav-btn" onclick="setMobileNav(this)">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      Combats
     </a>
     <a href="#equipement" class="mobile-nav-btn" onclick="setMobileNav(this)">
       <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
